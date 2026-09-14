@@ -4,8 +4,8 @@ pragma solidity ^0.8.20;
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import {IScholarshipEscrow} from "./interfaces/IScholarshipEscrow.sol";
-import {AttestationLib} from "./libraries/AttestationLib.sol";
 
 contract ScholarshipEscrowContract is IScholarshipEscrow, AccessControl, ReentrancyGuard {
     bytes32 public constant ADMIN_ROLE = DEFAULT_ADMIN_ROLE;
@@ -17,19 +17,19 @@ contract ScholarshipEscrowContract is IScholarshipEscrow, AccessControl, Reentra
     uint256 private _nextFundId = 1;
     mapping(uint256 => ScholarshipFund) public funds;
     
-    // fundId => studentHash => trancheIndex => released
-    mapping(uint256 => mapping(bytes32 => mapping(uint256 => bool))) public hasReleased;
+    // fundId => trancheIndex => merkleRoot
+    mapping(uint256 => mapping(uint256 => bytes32)) public trancheRoots;
+    
+    // fundId => studentHash => trancheIndex => claimed
+    mapping(uint256 => mapping(bytes32 => mapping(uint256 => bool))) public hasClaimed;
 
-    address public trustedAttestor;
-    bytes32 public immutable DOMAIN_SEPARATOR;
+    address public trustedAttestor; // The entity allowed to publish roots
 
     constructor(address admin, address attestor, address _usdcToken) {
         _grantRole(ADMIN_ROLE, admin);
         _grantRole(ATTESTOR_ROLE, attestor);
         trustedAttestor = attestor;
         usdcToken = IERC20(_usdcToken);
-
-        DOMAIN_SEPARATOR = AttestationLib.domainSeparator(address(this));
     }
 
     function createFund(
@@ -59,42 +59,50 @@ contract ScholarshipEscrowContract is IScholarshipEscrow, AccessControl, Reentra
         return fundId;
     }
 
-    function releaseTranche(
+    function publishTrancheRoot(
+        uint256 fundId,
+        uint256 trancheIndex,
+        bytes32 merkleRoot
+    ) external onlyRole(ATTESTOR_ROLE) {
+        require(funds[fundId].totalAmount > 0, "Fund does not exist");
+        require(!funds[fundId].paused, "Fund is paused");
+        require(trancheIndex < funds[fundId].trancheCount, "Invalid tranche index");
+        require(trancheRoots[fundId][trancheIndex] == bytes32(0), "Root already published");
+
+        trancheRoots[fundId][trancheIndex] = merkleRoot;
+        
+        emit MerkleRootPublished(fundId, trancheIndex, merkleRoot);
+    }
+
+    function claimTranche(
         uint256 fundId,
         bytes32 studentHash,
         uint256 trancheIndex,
         address recipient,
-        bytes calldata signature
+        bytes32[] calldata merkleProof
     ) external nonReentrant {
         ScholarshipFund storage fund = funds[fundId];
         require(fund.totalAmount > 0, "Fund does not exist");
         require(!fund.paused, "Fund is paused");
         require(trancheIndex < fund.trancheCount, "Invalid tranche index");
-        require(!hasReleased[fundId][studentHash][trancheIndex], "Tranche already released");
+        require(!hasClaimed[fundId][studentHash][trancheIndex], "Tranche already claimed");
         require(fund.totalAmount - fund.releasedAmount >= fund.trancheAmount, "Insufficient funds");
 
-        uint256 nonce = AttestationLib.computeNonce(fundId, studentHash, trancheIndex);
-        
-        // Construct the struct inside memory manually to avoid struct definition mismatch with library
-        AttestationLib.TrancheAttestation memory att = AttestationLib.TrancheAttestation({
-            fundId: fundId,
-            studentHash: studentHash,
-            trancheIndex: trancheIndex,
-            recipient: recipient,
-            nonce: nonce
-        });
+        bytes32 root = trancheRoots[fundId][trancheIndex];
+        require(root != bytes32(0), "Tranche root not published yet");
 
-        address signer = AttestationLib.recoverSigner(att, DOMAIN_SEPARATOR, signature);
+        // Verify the merkle proof
+        // Leaf = keccak256(abi.encodePacked(fundId, studentHash, trancheIndex, recipient, fund.trancheAmount))
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(fundId, studentHash, trancheIndex, recipient, fund.trancheAmount))));
         
-        require(signer == trustedAttestor, "Invalid or unauthorized attestation");
-        require(hasRole(ATTESTOR_ROLE, signer), "Signer lacks attestor role");
+        require(MerkleProof.verify(merkleProof, root, leaf), "Invalid Merkle proof");
 
-        hasReleased[fundId][studentHash][trancheIndex] = true;
+        hasClaimed[fundId][studentHash][trancheIndex] = true;
         fund.releasedAmount += fund.trancheAmount;
 
         require(usdcToken.transfer(recipient, fund.trancheAmount), "USDC transfer failed");
 
-        emit TrancheReleased(fundId, studentHash, trancheIndex, fund.trancheAmount, recipient);
+        emit TrancheClaimed(fundId, studentHash, trancheIndex, fund.trancheAmount, recipient);
     }
 
     function pauseFund(uint256 fundId) external onlyRole(ADMIN_ROLE) {

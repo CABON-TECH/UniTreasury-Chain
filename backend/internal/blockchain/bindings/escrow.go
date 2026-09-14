@@ -35,7 +35,7 @@ var (
 
 // ScholarshipEscrowContractMetaData contains all meta data concerning the ScholarshipEscrowContract contract.
 var ScholarshipEscrowContractMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"admin\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"attestor\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_usdcToken\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"ATTESTOR_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"DEFAULT_ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"DOMAIN_SEPARATOR\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SPONSOR_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"createFund\",\"inputs\":[{\"name\":\"sponsor\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"totalAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheCount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"funds\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"sponsor\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"totalAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"releasedAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheCount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"paused\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getRoleAdmin\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"grantRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"hasReleased\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"hasRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"pauseFund\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"releaseTranche\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"studentHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"trancheIndex\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"signature\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"renounceRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"callerConfirmation\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"revokeRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setTrustedAttestor\",\"inputs\":[{\"name\":\"newAttestor\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"supportsInterface\",\"inputs\":[{\"name\":\"interfaceId\",\"type\":\"bytes4\",\"internalType\":\"bytes4\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"trustedAttestor\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"unpauseFund\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"usdcToken\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIERC20\"}],\"stateMutability\":\"view\"},{\"type\":\"event\",\"name\":\"FundCreated\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"sponsor\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"totalAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"trancheCount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"trancheAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleAdminChanged\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"previousAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"newAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleGranted\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleRevoked\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"TrancheReleased\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"studentHash\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"trancheIndex\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"AccessControlBadConfirmation\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"AccessControlUnauthorizedAccount\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"neededRole\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"ReentrancyGuardReentrantCall\",\"inputs\":[]}]",
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"admin\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"attestor\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_usdcToken\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"ATTESTOR_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"DEFAULT_ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SPONSOR_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"claimTranche\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"studentHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"trancheIndex\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"merkleProof\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"createFund\",\"inputs\":[{\"name\":\"sponsor\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"totalAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheCount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"funds\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"sponsor\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"totalAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"releasedAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheCount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"paused\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getRoleAdmin\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"grantRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"hasClaimed\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"hasRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"pauseFund\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"publishTrancheRoot\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheIndex\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"merkleRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"renounceRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"callerConfirmation\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"revokeRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setTrustedAttestor\",\"inputs\":[{\"name\":\"newAttestor\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"supportsInterface\",\"inputs\":[{\"name\":\"interfaceId\",\"type\":\"bytes4\",\"internalType\":\"bytes4\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"trancheRoots\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"trustedAttestor\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"unpauseFund\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"usdcToken\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIERC20\"}],\"stateMutability\":\"view\"},{\"type\":\"event\",\"name\":\"FundCreated\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"sponsor\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"totalAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"trancheCount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"trancheAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"MerkleRootPublished\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"trancheIndex\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"merkleRoot\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleAdminChanged\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"previousAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"newAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleGranted\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleRevoked\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"TrancheClaimed\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"studentHash\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"trancheIndex\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"AccessControlBadConfirmation\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"AccessControlUnauthorizedAccount\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"neededRole\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"ReentrancyGuardReentrantCall\",\"inputs\":[]}]",
 }
 
 // ScholarshipEscrowContractABI is the input ABI used to generate the binding from.
@@ -277,37 +277,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) DEFAUL
 	return _ScholarshipEscrowContract.Contract.DEFAULTADMINROLE(&_ScholarshipEscrowContract.CallOpts)
 }
 
-// DOMAINSEPARATOR is a free data retrieval call binding the contract method 0x3644e515.
-//
-// Solidity: function DOMAIN_SEPARATOR() view returns(bytes32)
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) DOMAINSEPARATOR(opts *bind.CallOpts) ([32]byte, error) {
-	var out []interface{}
-	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "DOMAIN_SEPARATOR")
-
-	if err != nil {
-		return *new([32]byte), err
-	}
-
-	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
-	return out0, err
-
-}
-
-// DOMAINSEPARATOR is a free data retrieval call binding the contract method 0x3644e515.
-//
-// Solidity: function DOMAIN_SEPARATOR() view returns(bytes32)
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) DOMAINSEPARATOR() ([32]byte, error) {
-	return _ScholarshipEscrowContract.Contract.DOMAINSEPARATOR(&_ScholarshipEscrowContract.CallOpts)
-}
-
-// DOMAINSEPARATOR is a free data retrieval call binding the contract method 0x3644e515.
-//
-// Solidity: function DOMAIN_SEPARATOR() view returns(bytes32)
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) DOMAINSEPARATOR() ([32]byte, error) {
-	return _ScholarshipEscrowContract.Contract.DOMAINSEPARATOR(&_ScholarshipEscrowContract.CallOpts)
-}
-
 // SPONSORROLE is a free data retrieval call binding the contract method 0xc2d79444.
 //
 // Solidity: function SPONSOR_ROLE() view returns(bytes32)
@@ -435,12 +404,12 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) GetRol
 	return _ScholarshipEscrowContract.Contract.GetRoleAdmin(&_ScholarshipEscrowContract.CallOpts, role)
 }
 
-// HasReleased is a free data retrieval call binding the contract method 0x6fd02f3a.
+// HasClaimed is a free data retrieval call binding the contract method 0xf6cf3dca.
 //
-// Solidity: function hasReleased(uint256 , bytes32 , uint256 ) view returns(bool)
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) HasReleased(opts *bind.CallOpts, arg0 *big.Int, arg1 [32]byte, arg2 *big.Int) (bool, error) {
+// Solidity: function hasClaimed(uint256 , bytes32 , uint256 ) view returns(bool)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) HasClaimed(opts *bind.CallOpts, arg0 *big.Int, arg1 [32]byte, arg2 *big.Int) (bool, error) {
 	var out []interface{}
-	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "hasReleased", arg0, arg1, arg2)
+	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "hasClaimed", arg0, arg1, arg2)
 
 	if err != nil {
 		return *new(bool), err
@@ -452,18 +421,18 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) HasReleased(o
 
 }
 
-// HasReleased is a free data retrieval call binding the contract method 0x6fd02f3a.
+// HasClaimed is a free data retrieval call binding the contract method 0xf6cf3dca.
 //
-// Solidity: function hasReleased(uint256 , bytes32 , uint256 ) view returns(bool)
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) HasReleased(arg0 *big.Int, arg1 [32]byte, arg2 *big.Int) (bool, error) {
-	return _ScholarshipEscrowContract.Contract.HasReleased(&_ScholarshipEscrowContract.CallOpts, arg0, arg1, arg2)
+// Solidity: function hasClaimed(uint256 , bytes32 , uint256 ) view returns(bool)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) HasClaimed(arg0 *big.Int, arg1 [32]byte, arg2 *big.Int) (bool, error) {
+	return _ScholarshipEscrowContract.Contract.HasClaimed(&_ScholarshipEscrowContract.CallOpts, arg0, arg1, arg2)
 }
 
-// HasReleased is a free data retrieval call binding the contract method 0x6fd02f3a.
+// HasClaimed is a free data retrieval call binding the contract method 0xf6cf3dca.
 //
-// Solidity: function hasReleased(uint256 , bytes32 , uint256 ) view returns(bool)
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) HasReleased(arg0 *big.Int, arg1 [32]byte, arg2 *big.Int) (bool, error) {
-	return _ScholarshipEscrowContract.Contract.HasReleased(&_ScholarshipEscrowContract.CallOpts, arg0, arg1, arg2)
+// Solidity: function hasClaimed(uint256 , bytes32 , uint256 ) view returns(bool)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) HasClaimed(arg0 *big.Int, arg1 [32]byte, arg2 *big.Int) (bool, error) {
+	return _ScholarshipEscrowContract.Contract.HasClaimed(&_ScholarshipEscrowContract.CallOpts, arg0, arg1, arg2)
 }
 
 // HasRole is a free data retrieval call binding the contract method 0x91d14854.
@@ -528,6 +497,37 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) Suppor
 	return _ScholarshipEscrowContract.Contract.SupportsInterface(&_ScholarshipEscrowContract.CallOpts, interfaceId)
 }
 
+// TrancheRoots is a free data retrieval call binding the contract method 0x4b23c222.
+//
+// Solidity: function trancheRoots(uint256 , uint256 ) view returns(bytes32)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) TrancheRoots(opts *bind.CallOpts, arg0 *big.Int, arg1 *big.Int) ([32]byte, error) {
+	var out []interface{}
+	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "trancheRoots", arg0, arg1)
+
+	if err != nil {
+		return *new([32]byte), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
+
+	return out0, err
+
+}
+
+// TrancheRoots is a free data retrieval call binding the contract method 0x4b23c222.
+//
+// Solidity: function trancheRoots(uint256 , uint256 ) view returns(bytes32)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) TrancheRoots(arg0 *big.Int, arg1 *big.Int) ([32]byte, error) {
+	return _ScholarshipEscrowContract.Contract.TrancheRoots(&_ScholarshipEscrowContract.CallOpts, arg0, arg1)
+}
+
+// TrancheRoots is a free data retrieval call binding the contract method 0x4b23c222.
+//
+// Solidity: function trancheRoots(uint256 , uint256 ) view returns(bytes32)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) TrancheRoots(arg0 *big.Int, arg1 *big.Int) ([32]byte, error) {
+	return _ScholarshipEscrowContract.Contract.TrancheRoots(&_ScholarshipEscrowContract.CallOpts, arg0, arg1)
+}
+
 // TrustedAttestor is a free data retrieval call binding the contract method 0xac6bffbd.
 //
 // Solidity: function trustedAttestor() view returns(address)
@@ -588,6 +588,27 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) UsdcToken() 
 // Solidity: function usdcToken() view returns(address)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) UsdcToken() (common.Address, error) {
 	return _ScholarshipEscrowContract.Contract.UsdcToken(&_ScholarshipEscrowContract.CallOpts)
+}
+
+// ClaimTranche is a paid mutator transaction binding the contract method 0xa1595236.
+//
+// Solidity: function claimTranche(uint256 fundId, bytes32 studentHash, uint256 trancheIndex, address recipient, bytes32[] merkleProof) returns()
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) ClaimTranche(opts *bind.TransactOpts, fundId *big.Int, studentHash [32]byte, trancheIndex *big.Int, recipient common.Address, merkleProof [][32]byte) (*types.Transaction, error) {
+	return _ScholarshipEscrowContract.contract.Transact(opts, "claimTranche", fundId, studentHash, trancheIndex, recipient, merkleProof)
+}
+
+// ClaimTranche is a paid mutator transaction binding the contract method 0xa1595236.
+//
+// Solidity: function claimTranche(uint256 fundId, bytes32 studentHash, uint256 trancheIndex, address recipient, bytes32[] merkleProof) returns()
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) ClaimTranche(fundId *big.Int, studentHash [32]byte, trancheIndex *big.Int, recipient common.Address, merkleProof [][32]byte) (*types.Transaction, error) {
+	return _ScholarshipEscrowContract.Contract.ClaimTranche(&_ScholarshipEscrowContract.TransactOpts, fundId, studentHash, trancheIndex, recipient, merkleProof)
+}
+
+// ClaimTranche is a paid mutator transaction binding the contract method 0xa1595236.
+//
+// Solidity: function claimTranche(uint256 fundId, bytes32 studentHash, uint256 trancheIndex, address recipient, bytes32[] merkleProof) returns()
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) ClaimTranche(fundId *big.Int, studentHash [32]byte, trancheIndex *big.Int, recipient common.Address, merkleProof [][32]byte) (*types.Transaction, error) {
+	return _ScholarshipEscrowContract.Contract.ClaimTranche(&_ScholarshipEscrowContract.TransactOpts, fundId, studentHash, trancheIndex, recipient, merkleProof)
 }
 
 // CreateFund is a paid mutator transaction binding the contract method 0x1c02efc3.
@@ -653,25 +674,25 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) Pa
 	return _ScholarshipEscrowContract.Contract.PauseFund(&_ScholarshipEscrowContract.TransactOpts, fundId)
 }
 
-// ReleaseTranche is a paid mutator transaction binding the contract method 0xa353b14a.
+// PublishTrancheRoot is a paid mutator transaction binding the contract method 0x5e3e05fa.
 //
-// Solidity: function releaseTranche(uint256 fundId, bytes32 studentHash, uint256 trancheIndex, address recipient, bytes signature) returns()
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) ReleaseTranche(opts *bind.TransactOpts, fundId *big.Int, studentHash [32]byte, trancheIndex *big.Int, recipient common.Address, signature []byte) (*types.Transaction, error) {
-	return _ScholarshipEscrowContract.contract.Transact(opts, "releaseTranche", fundId, studentHash, trancheIndex, recipient, signature)
+// Solidity: function publishTrancheRoot(uint256 fundId, uint256 trancheIndex, bytes32 merkleRoot) returns()
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) PublishTrancheRoot(opts *bind.TransactOpts, fundId *big.Int, trancheIndex *big.Int, merkleRoot [32]byte) (*types.Transaction, error) {
+	return _ScholarshipEscrowContract.contract.Transact(opts, "publishTrancheRoot", fundId, trancheIndex, merkleRoot)
 }
 
-// ReleaseTranche is a paid mutator transaction binding the contract method 0xa353b14a.
+// PublishTrancheRoot is a paid mutator transaction binding the contract method 0x5e3e05fa.
 //
-// Solidity: function releaseTranche(uint256 fundId, bytes32 studentHash, uint256 trancheIndex, address recipient, bytes signature) returns()
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) ReleaseTranche(fundId *big.Int, studentHash [32]byte, trancheIndex *big.Int, recipient common.Address, signature []byte) (*types.Transaction, error) {
-	return _ScholarshipEscrowContract.Contract.ReleaseTranche(&_ScholarshipEscrowContract.TransactOpts, fundId, studentHash, trancheIndex, recipient, signature)
+// Solidity: function publishTrancheRoot(uint256 fundId, uint256 trancheIndex, bytes32 merkleRoot) returns()
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) PublishTrancheRoot(fundId *big.Int, trancheIndex *big.Int, merkleRoot [32]byte) (*types.Transaction, error) {
+	return _ScholarshipEscrowContract.Contract.PublishTrancheRoot(&_ScholarshipEscrowContract.TransactOpts, fundId, trancheIndex, merkleRoot)
 }
 
-// ReleaseTranche is a paid mutator transaction binding the contract method 0xa353b14a.
+// PublishTrancheRoot is a paid mutator transaction binding the contract method 0x5e3e05fa.
 //
-// Solidity: function releaseTranche(uint256 fundId, bytes32 studentHash, uint256 trancheIndex, address recipient, bytes signature) returns()
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) ReleaseTranche(fundId *big.Int, studentHash [32]byte, trancheIndex *big.Int, recipient common.Address, signature []byte) (*types.Transaction, error) {
-	return _ScholarshipEscrowContract.Contract.ReleaseTranche(&_ScholarshipEscrowContract.TransactOpts, fundId, studentHash, trancheIndex, recipient, signature)
+// Solidity: function publishTrancheRoot(uint256 fundId, uint256 trancheIndex, bytes32 merkleRoot) returns()
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) PublishTrancheRoot(fundId *big.Int, trancheIndex *big.Int, merkleRoot [32]byte) (*types.Transaction, error) {
+	return _ScholarshipEscrowContract.Contract.PublishTrancheRoot(&_ScholarshipEscrowContract.TransactOpts, fundId, trancheIndex, merkleRoot)
 }
 
 // RenounceRole is a paid mutator transaction binding the contract method 0x36568abe.
@@ -908,6 +929,160 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchFundCr
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseFundCreated(log types.Log) (*ScholarshipEscrowContractFundCreated, error) {
 	event := new(ScholarshipEscrowContractFundCreated)
 	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "FundCreated", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// ScholarshipEscrowContractMerkleRootPublishedIterator is returned from FilterMerkleRootPublished and is used to iterate over the raw logs and unpacked data for MerkleRootPublished events raised by the ScholarshipEscrowContract contract.
+type ScholarshipEscrowContractMerkleRootPublishedIterator struct {
+	Event *ScholarshipEscrowContractMerkleRootPublished // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *ScholarshipEscrowContractMerkleRootPublishedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(ScholarshipEscrowContractMerkleRootPublished)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(ScholarshipEscrowContractMerkleRootPublished)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *ScholarshipEscrowContractMerkleRootPublishedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *ScholarshipEscrowContractMerkleRootPublishedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// ScholarshipEscrowContractMerkleRootPublished represents a MerkleRootPublished event raised by the ScholarshipEscrowContract contract.
+type ScholarshipEscrowContractMerkleRootPublished struct {
+	FundId       *big.Int
+	TrancheIndex *big.Int
+	MerkleRoot   [32]byte
+	Raw          types.Log // Blockchain specific contextual infos
+}
+
+// FilterMerkleRootPublished is a free log retrieval operation binding the contract event 0xe649294352ae0b15ac227a22fb744ab148b2c5e053d26fd38e97890ad47dbd8f.
+//
+// Solidity: event MerkleRootPublished(uint256 indexed fundId, uint256 indexed trancheIndex, bytes32 merkleRoot)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterMerkleRootPublished(opts *bind.FilterOpts, fundId []*big.Int, trancheIndex []*big.Int) (*ScholarshipEscrowContractMerkleRootPublishedIterator, error) {
+
+	var fundIdRule []interface{}
+	for _, fundIdItem := range fundId {
+		fundIdRule = append(fundIdRule, fundIdItem)
+	}
+	var trancheIndexRule []interface{}
+	for _, trancheIndexItem := range trancheIndex {
+		trancheIndexRule = append(trancheIndexRule, trancheIndexItem)
+	}
+
+	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "MerkleRootPublished", fundIdRule, trancheIndexRule)
+	if err != nil {
+		return nil, err
+	}
+	return &ScholarshipEscrowContractMerkleRootPublishedIterator{contract: _ScholarshipEscrowContract.contract, event: "MerkleRootPublished", logs: logs, sub: sub}, nil
+}
+
+// WatchMerkleRootPublished is a free log subscription operation binding the contract event 0xe649294352ae0b15ac227a22fb744ab148b2c5e053d26fd38e97890ad47dbd8f.
+//
+// Solidity: event MerkleRootPublished(uint256 indexed fundId, uint256 indexed trancheIndex, bytes32 merkleRoot)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchMerkleRootPublished(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractMerkleRootPublished, fundId []*big.Int, trancheIndex []*big.Int) (event.Subscription, error) {
+
+	var fundIdRule []interface{}
+	for _, fundIdItem := range fundId {
+		fundIdRule = append(fundIdRule, fundIdItem)
+	}
+	var trancheIndexRule []interface{}
+	for _, trancheIndexItem := range trancheIndex {
+		trancheIndexRule = append(trancheIndexRule, trancheIndexItem)
+	}
+
+	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "MerkleRootPublished", fundIdRule, trancheIndexRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(ScholarshipEscrowContractMerkleRootPublished)
+				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "MerkleRootPublished", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseMerkleRootPublished is a log parse operation binding the contract event 0xe649294352ae0b15ac227a22fb744ab148b2c5e053d26fd38e97890ad47dbd8f.
+//
+// Solidity: event MerkleRootPublished(uint256 indexed fundId, uint256 indexed trancheIndex, bytes32 merkleRoot)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseMerkleRootPublished(log types.Log) (*ScholarshipEscrowContractMerkleRootPublished, error) {
+	event := new(ScholarshipEscrowContractMerkleRootPublished)
+	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "MerkleRootPublished", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log
@@ -1400,9 +1575,9 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseRoleRe
 	return event, nil
 }
 
-// ScholarshipEscrowContractTrancheReleasedIterator is returned from FilterTrancheReleased and is used to iterate over the raw logs and unpacked data for TrancheReleased events raised by the ScholarshipEscrowContract contract.
-type ScholarshipEscrowContractTrancheReleasedIterator struct {
-	Event *ScholarshipEscrowContractTrancheReleased // Event containing the contract specifics and raw log
+// ScholarshipEscrowContractTrancheClaimedIterator is returned from FilterTrancheClaimed and is used to iterate over the raw logs and unpacked data for TrancheClaimed events raised by the ScholarshipEscrowContract contract.
+type ScholarshipEscrowContractTrancheClaimedIterator struct {
+	Event *ScholarshipEscrowContractTrancheClaimed // Event containing the contract specifics and raw log
 
 	contract *bind.BoundContract // Generic contract to use for unpacking event data
 	event    string              // Event name to use for unpacking event data
@@ -1416,7 +1591,7 @@ type ScholarshipEscrowContractTrancheReleasedIterator struct {
 // Next advances the iterator to the subsequent event, returning whether there
 // are any more events found. In case of a retrieval or parsing error, false is
 // returned and Error() can be queried for the exact failure.
-func (it *ScholarshipEscrowContractTrancheReleasedIterator) Next() bool {
+func (it *ScholarshipEscrowContractTrancheClaimedIterator) Next() bool {
 	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
@@ -1425,7 +1600,7 @@ func (it *ScholarshipEscrowContractTrancheReleasedIterator) Next() bool {
 	if it.done {
 		select {
 		case log := <-it.logs:
-			it.Event = new(ScholarshipEscrowContractTrancheReleased)
+			it.Event = new(ScholarshipEscrowContractTrancheClaimed)
 			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 				it.fail = err
 				return false
@@ -1440,7 +1615,7 @@ func (it *ScholarshipEscrowContractTrancheReleasedIterator) Next() bool {
 	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
-		it.Event = new(ScholarshipEscrowContractTrancheReleased)
+		it.Event = new(ScholarshipEscrowContractTrancheClaimed)
 		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
 			it.fail = err
 			return false
@@ -1456,19 +1631,19 @@ func (it *ScholarshipEscrowContractTrancheReleasedIterator) Next() bool {
 }
 
 // Error returns any retrieval or parsing error occurred during filtering.
-func (it *ScholarshipEscrowContractTrancheReleasedIterator) Error() error {
+func (it *ScholarshipEscrowContractTrancheClaimedIterator) Error() error {
 	return it.fail
 }
 
 // Close terminates the iteration process, releasing any pending underlying
 // resources.
-func (it *ScholarshipEscrowContractTrancheReleasedIterator) Close() error {
+func (it *ScholarshipEscrowContractTrancheClaimedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
 
-// ScholarshipEscrowContractTrancheReleased represents a TrancheReleased event raised by the ScholarshipEscrowContract contract.
-type ScholarshipEscrowContractTrancheReleased struct {
+// ScholarshipEscrowContractTrancheClaimed represents a TrancheClaimed event raised by the ScholarshipEscrowContract contract.
+type ScholarshipEscrowContractTrancheClaimed struct {
 	FundId       *big.Int
 	StudentHash  [32]byte
 	TrancheIndex *big.Int
@@ -1477,10 +1652,10 @@ type ScholarshipEscrowContractTrancheReleased struct {
 	Raw          types.Log // Blockchain specific contextual infos
 }
 
-// FilterTrancheReleased is a free log retrieval operation binding the contract event 0x2129c9a6480523d75c1202cac7598d7c9a459064e5d5ccd7d7d3e25a0413ebc7.
+// FilterTrancheClaimed is a free log retrieval operation binding the contract event 0x7beb97e8a642fc5efdb2a6eafecdd3f6dc96464d6d2098ae9d32061c79487455.
 //
-// Solidity: event TrancheReleased(uint256 indexed fundId, bytes32 indexed studentHash, uint256 trancheIndex, uint256 amount, address recipient)
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterTrancheReleased(opts *bind.FilterOpts, fundId []*big.Int, studentHash [][32]byte) (*ScholarshipEscrowContractTrancheReleasedIterator, error) {
+// Solidity: event TrancheClaimed(uint256 indexed fundId, bytes32 indexed studentHash, uint256 trancheIndex, uint256 amount, address recipient)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterTrancheClaimed(opts *bind.FilterOpts, fundId []*big.Int, studentHash [][32]byte) (*ScholarshipEscrowContractTrancheClaimedIterator, error) {
 
 	var fundIdRule []interface{}
 	for _, fundIdItem := range fundId {
@@ -1491,17 +1666,17 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterTranc
 		studentHashRule = append(studentHashRule, studentHashItem)
 	}
 
-	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "TrancheReleased", fundIdRule, studentHashRule)
+	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "TrancheClaimed", fundIdRule, studentHashRule)
 	if err != nil {
 		return nil, err
 	}
-	return &ScholarshipEscrowContractTrancheReleasedIterator{contract: _ScholarshipEscrowContract.contract, event: "TrancheReleased", logs: logs, sub: sub}, nil
+	return &ScholarshipEscrowContractTrancheClaimedIterator{contract: _ScholarshipEscrowContract.contract, event: "TrancheClaimed", logs: logs, sub: sub}, nil
 }
 
-// WatchTrancheReleased is a free log subscription operation binding the contract event 0x2129c9a6480523d75c1202cac7598d7c9a459064e5d5ccd7d7d3e25a0413ebc7.
+// WatchTrancheClaimed is a free log subscription operation binding the contract event 0x7beb97e8a642fc5efdb2a6eafecdd3f6dc96464d6d2098ae9d32061c79487455.
 //
-// Solidity: event TrancheReleased(uint256 indexed fundId, bytes32 indexed studentHash, uint256 trancheIndex, uint256 amount, address recipient)
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchTrancheReleased(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractTrancheReleased, fundId []*big.Int, studentHash [][32]byte) (event.Subscription, error) {
+// Solidity: event TrancheClaimed(uint256 indexed fundId, bytes32 indexed studentHash, uint256 trancheIndex, uint256 amount, address recipient)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchTrancheClaimed(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractTrancheClaimed, fundId []*big.Int, studentHash [][32]byte) (event.Subscription, error) {
 
 	var fundIdRule []interface{}
 	for _, fundIdItem := range fundId {
@@ -1512,7 +1687,7 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchTranch
 		studentHashRule = append(studentHashRule, studentHashItem)
 	}
 
-	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "TrancheReleased", fundIdRule, studentHashRule)
+	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "TrancheClaimed", fundIdRule, studentHashRule)
 	if err != nil {
 		return nil, err
 	}
@@ -1522,8 +1697,8 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchTranch
 			select {
 			case log := <-logs:
 				// New log arrived, parse the event and forward to the user
-				event := new(ScholarshipEscrowContractTrancheReleased)
-				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "TrancheReleased", log); err != nil {
+				event := new(ScholarshipEscrowContractTrancheClaimed)
+				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "TrancheClaimed", log); err != nil {
 					return err
 				}
 				event.Raw = log
@@ -1544,12 +1719,12 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchTranch
 	}), nil
 }
 
-// ParseTrancheReleased is a log parse operation binding the contract event 0x2129c9a6480523d75c1202cac7598d7c9a459064e5d5ccd7d7d3e25a0413ebc7.
+// ParseTrancheClaimed is a log parse operation binding the contract event 0x7beb97e8a642fc5efdb2a6eafecdd3f6dc96464d6d2098ae9d32061c79487455.
 //
-// Solidity: event TrancheReleased(uint256 indexed fundId, bytes32 indexed studentHash, uint256 trancheIndex, uint256 amount, address recipient)
-func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseTrancheReleased(log types.Log) (*ScholarshipEscrowContractTrancheReleased, error) {
-	event := new(ScholarshipEscrowContractTrancheReleased)
-	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "TrancheReleased", log); err != nil {
+// Solidity: event TrancheClaimed(uint256 indexed fundId, bytes32 indexed studentHash, uint256 trancheIndex, uint256 amount, address recipient)
+func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseTrancheClaimed(log types.Log) (*ScholarshipEscrowContractTrancheClaimed, error) {
+	event := new(ScholarshipEscrowContractTrancheClaimed)
+	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "TrancheClaimed", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

@@ -114,3 +114,24 @@ func (r *StudentRepo) UpdateCreditsByHash(ctx context.Context, hash string, cred
 	_, err := r.pool.Exec(ctx, q, credits, hash)
 	return err
 }
+
+func (r *StudentRepo) ListAll(ctx context.Context) ([]*domain.Student, error) {
+	rows, err := r.pool.Query(ctx, "SELECT id, student_id, hash, name, program, year, credits, created_at, updated_at FROM students")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var students []*domain.Student
+	for rows.Next() {
+		var s domain.Student
+		if err := rows.Scan(
+			&s.ID, &s.StudentID, &s.Hash, &s.Name, &s.Program,
+			&s.Year, &s.Credits, &s.CreatedAt, &s.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		students = append(students, &s)
+	}
+	return students, nil
+}

@@ -131,25 +131,12 @@ func runOrchestrator(
 				continue
 			}
 
-			students, _, err := studentRepo.List(ctx, 0, 100)
-			if err != nil {
-				log.Error("orchestrator: list students", zap.Error(err))
-				continue
-			}
 
 			for _, fund := range funds {
-				for _, student := range students {
-					recipient := "0x0000000000000000000000000000000000000001"
-					
-					// Evaluate tranche 0
-					err := svc.EvaluateAndRelease(ctx, fund.ID, student.StudentID, 0, recipient)
-					if err != nil {
-						if err.Error() != "fund is paused" && 
-						   err.Error() != "student not found" && 
-						   len(err.Error()) > 30 && err.Error()[:30] != "student does not meet credit" {
-							log.Error("orchestrator: evaluate failed (this is expected if contracts aren't deployed!)", zap.Error(err))
-						}
-					}
+				recipient := "0x0000000000000000000000000000000000000001"
+				err := svc.EvaluateAndPublishRoot(ctx, fund.ID, 0, recipient)
+				if err != nil {
+					log.Error("orchestrator: publish root failed", zap.Error(err))
 				}
 			}
 		}

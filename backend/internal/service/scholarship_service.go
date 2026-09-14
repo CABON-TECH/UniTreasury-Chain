@@ -1,14 +1,15 @@
 package service
 
 import (
+	"time"
 	"context"
 	"crypto/ecdsa"
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
+	
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
+	
 	"go.uber.org/zap"
 
 	"github.com/cabon-tech/unitreasury-chain/backend/internal/blockchain"
@@ -22,7 +23,7 @@ type ScholarshipService struct {
 	txMgr        *blockchain.TxManager
 	escrow       *bindings.ScholarshipEscrowContract
 	attestorKey  *ecdsa.PrivateKey
-	domainSep    [32]byte
+	
 	log          *zap.Logger
 }
 
@@ -34,11 +35,7 @@ func NewScholarshipService(
 	attestorKey *ecdsa.PrivateKey,
 	log *zap.Logger,
 ) (*ScholarshipService, error) {
-	// Fetch DOMAIN_SEPARATOR from contract
-	domainSep, err := escrow.ScholarshipEscrowContractCaller.DOMAINSEPARATOR(&bind.CallOpts{})
-	if err != nil {
-		return nil, fmt.Errorf("fetch domain separator: %w", err)
-	}
+	
 
 	return &ScholarshipService{
 		repo:        repo,
@@ -46,13 +43,13 @@ func NewScholarshipService(
 		txMgr:       txMgr,
 		escrow:      escrow,
 		attestorKey: attestorKey,
-		domainSep:   domainSep,
+		
 		log:         log,
 	}, nil
 }
 
-// EvaluateAndRelease is called by the orchestrator job.
-func (s *ScholarshipService) EvaluateAndRelease(ctx context.Context, fundID int64, studentID string, trancheIndex int, recipient string) error {
+// EvaluateAndPublishRoot evaluates all students for a fund and publishes a Merkle Root.
+func (s *ScholarshipService) EvaluateAndPublishRoot(ctx context.Context, fundID int64, trancheIndex int, recipient string) error {
 	fund, err := s.repo.GetFundByID(ctx, fundID)
 	if err != nil || fund == nil {
 		return fmt.Errorf("fund not found")
@@ -61,107 +58,158 @@ func (s *ScholarshipService) EvaluateAndRelease(ctx context.Context, fundID int6
 		return fmt.Errorf("fund is paused")
 	}
 
-	student, err := s.studentRepo.GetByStudentID(ctx, studentID)
-	if err != nil || student == nil {
-		return fmt.Errorf("student not found")
-	}
-
-	// 1. Evaluate credits (business rule: e.g. 15 credits per tranche)
-	requiredCredits := (trancheIndex + 1) * 15
-	if student.Credits < requiredCredits {
-		return fmt.Errorf("student does not meet credit threshold (has %d, needs %d)", student.Credits, requiredCredits)
-	}
-
-	// 2. Check if already released
-	released, err := s.repo.HasReleased(ctx, fund.ID, student.Hash, trancheIndex)
+	students, err := s.studentRepo.ListAll(ctx)
 	if err != nil {
-		return fmt.Errorf("check has_released: %w", err)
-	}
-	if released {
-		return nil // already processed
+		return err
 	}
 
-	var sHash [32]byte
-	copy(sHash[:], common.FromHex(student.Hash))
-	recipAddr := common.HexToAddress(recipient)
+	var eligibleLeaves [][]byte
+	var eligibleStudents []*domain.Student
+
 	onChainFundId := new(big.Int).SetUint64(fund.OnChainID)
+	tIndex := big.NewInt(int64(trancheIndex))
+	recipAddr := common.HexToAddress(recipient)
+	amount := new(big.Int).SetUint64(fund.TrancheAmount)
 
-	// 3. Compute EIP-712 Signature
-	// uint256 nonce = uint256(keccak256(abi.encode(fundId, studentHash, trancheIndex)));
-	nonceHash := crypto.Keccak256(
-		common.LeftPadBytes(onChainFundId.Bytes(), 32),
-		sHash[:],
-		common.LeftPadBytes(big.NewInt(int64(trancheIndex)).Bytes(), 32),
-	)
-	nonce := new(big.Int).SetBytes(nonceHash)
+	requiredCredits := (trancheIndex + 1) * 15
 
-	// TRANCHE_RELEASE_TYPEHASH = keccak256("TrancheRelease(uint256 fundId,bytes32 studentHash,uint256 trancheIndex,address recipient,uint256 nonce)")
-	typeHash := crypto.Keccak256([]byte("TrancheRelease(uint256 fundId,bytes32 studentHash,uint256 trancheIndex,address recipient,uint256 nonce)"))
-
-	// structHash = keccak256(abi.encode(typeHash, fundId, studentHash, trancheIndex, recipient, nonce))
-	structHash := crypto.Keccak256(
-		typeHash,
-		common.LeftPadBytes(onChainFundId.Bytes(), 32),
-		sHash[:],
-		common.LeftPadBytes(big.NewInt(int64(trancheIndex)).Bytes(), 32),
-		common.LeftPadBytes(recipAddr.Bytes(), 32),
-		common.LeftPadBytes(nonce.Bytes(), 32),
-	)
-
-	// digest = keccak256(abi.encodePacked("\x19\x01", DOMAIN_SEPARATOR, structHash))
-	digest := crypto.Keccak256(
-		[]byte{0x19, 0x01},
-		s.domainSep[:],
-		structHash,
-	)
-
-	sig, err := crypto.Sign(digest, s.attestorKey)
-	if err != nil {
-		return fmt.Errorf("sign EIP-712 digest: %w", err)
-	}
-	// Ethereum v is 27 or 28, but crypto.Sign outputs 0 or 1.
-	sig[64] += 27
-
-	// 4. Record pending release in DB
-	tr := &domain.TrancheRelease{
-		FundID:        fund.ID,
-		OnChainFundID: fund.OnChainID,
-		StudentHash:   student.Hash,
-		TrancheIndex:  trancheIndex,
-		Amount:        fund.TrancheAmount,
-		Recipient:     recipient,
-	}
-	if err := s.repo.CreateTrancheRelease(ctx, tr); err != nil {
-		return fmt.Errorf("create tranche release record: %w", err)
+	for _, student := range students {
+		if student.Credits < requiredCredits {
+			continue
+		}
+		
+		released, err := s.repo.HasReleased(ctx, fund.ID, student.Hash, trancheIndex)
+		if err == nil && !released {
+			var sHash [32]byte
+			copy(sHash[:], common.FromHex(student.Hash))
+			leaf := blockchain.GenerateLeaf(onChainFundId, sHash, tIndex, recipAddr, amount)
+			eligibleLeaves = append(eligibleLeaves, leaf)
+			eligibleStudents = append(eligibleStudents, student)
+		}
 	}
 
-	// 5. Submit to blockchain
+	if len(eligibleLeaves) == 0 {
+		return nil // Nobody eligible
+	}
+
+	tree := blockchain.GenerateTree(eligibleLeaves)
+	root := tree[len(tree)-1][0]
+	var root32 [32]byte
+	copy(root32[:], root)
+
 	opts, confirm, rollback, err := s.txMgr.TransactOpts(ctx)
 	if err != nil {
 		return fmt.Errorf("transact opts: %w", err)
 	}
 
-	tx, err := s.escrow.ScholarshipEscrowContractTransactor.ReleaseTranche(
+	tx, err := s.escrow.ScholarshipEscrowContractTransactor.PublishTrancheRoot(
 		opts,
 		onChainFundId,
-		sHash,
-		big.NewInt(int64(trancheIndex)),
-		recipAddr,
-		sig,
+		tIndex,
+		root32,
 	)
 	if err != nil {
 		rollback()
-		// Delete the pending release so the orchestrator tries again next time
-		_ = s.repo.DeleteTrancheRelease(ctx, fund.ID, student.Hash, trancheIndex)
-		return fmt.Errorf("releaseTranche tx: %w", err)
+		return fmt.Errorf("publish root: %w", err)
 	}
+
 	confirm()
+
+	// Save all to database (as pending claims)
+	for _, student := range eligibleStudents {
+		tr := &domain.TrancheRelease{
+			FundID:        fund.ID,
+			OnChainFundID: fund.OnChainID,
+			StudentHash:   student.Hash,
+			TrancheIndex:  trancheIndex,
+			Amount:        fund.TrancheAmount,
+			Recipient:     recipient,
+			TxHash:        tx.Hash().Hex(),
+			ReleasedAt:    time.Now(),
+		}
+		_ = s.repo.CreateTrancheRelease(ctx, tr)
+	}
+
+	return nil
+}
+
+// SimulateStudentClaim simulates a student submitting their Merkle proof to the blockchain.
+func (s *ScholarshipService) SimulateStudentClaim(ctx context.Context, fundID int64, studentID string, trancheIndex int, recipient string) error {
+	fund, err := s.repo.GetFundByID(ctx, fundID)
+	if err != nil || fund == nil {
+		return fmt.Errorf("fund not found")
+	}
+
+	student, err := s.studentRepo.GetByStudentID(ctx, studentID)
+	if err != nil || student == nil {
+		return fmt.Errorf("student not found")
+	}
+
+	students, err := s.studentRepo.ListAll(ctx)
+	if err != nil {
+		return err
+	}
+
+	var eligibleLeaves [][]byte
+	onChainFundId := new(big.Int).SetUint64(fund.OnChainID)
+	tIndex := big.NewInt(int64(trancheIndex))
+	recipAddr := common.HexToAddress(recipient)
+	amount := new(big.Int).SetUint64(fund.TrancheAmount)
+
+	requiredCredits := (trancheIndex + 1) * 15
+
+	var studentLeaf []byte
+	for _, st := range students {
+		if st.Credits < requiredCredits {
+			continue
+		}
+		var sHash [32]byte
+		copy(sHash[:], common.FromHex(st.Hash))
+		
+		leaf := blockchain.GenerateLeaf(onChainFundId, sHash, tIndex, recipAddr, amount)
+		eligibleLeaves = append(eligibleLeaves, leaf)
+		
+		if st.StudentID == studentID {
+			studentLeaf = leaf
+		}
+	}
+
+	if studentLeaf == nil {
+		return fmt.Errorf("student not eligible for this tranche")
+	}
+
+	tree := blockchain.GenerateTree(eligibleLeaves)
+	proof := blockchain.GenerateProof(tree, studentLeaf)
 	
-	s.log.Info("tranche released", 
-		zap.Int64("fund_id", fund.ID), 
-		zap.String("student", student.StudentID),
-		zap.Int("tranche", trancheIndex),
-		zap.String("tx_hash", tx.Hash().Hex()),
+	// Convert proof to [][32]byte
+	var proof32 [][32]byte
+	for _, p := range proof {
+		var p32 [32]byte
+		copy(p32[:], p)
+		proof32 = append(proof32, p32)
+	}
+
+	opts, confirm, rollback, err := s.txMgr.TransactOpts(ctx)
+	if err != nil {
+		return fmt.Errorf("transact opts: %w", err)
+	}
+
+	var sHash [32]byte
+	copy(sHash[:], common.FromHex(student.Hash))
+
+	_, err = s.escrow.ScholarshipEscrowContractTransactor.ClaimTranche(
+		opts,
+		onChainFundId,
+		sHash,
+		tIndex,
+		recipAddr,
+		proof32,
 	)
+	if err != nil {
+		rollback()
+		return fmt.Errorf("claim tranche: %w", err)
+	}
+
+	confirm()
 	return nil
 }

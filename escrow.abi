@@ -61,7 +61,7 @@
   },
   {
     "type": "function",
-    "name": "DOMAIN_SEPARATOR",
+    "name": "SPONSOR_ROLE",
     "inputs": [],
     "outputs": [
       {
@@ -74,16 +74,36 @@
   },
   {
     "type": "function",
-    "name": "SPONSOR_ROLE",
-    "inputs": [],
-    "outputs": [
+    "name": "claimTranche",
+    "inputs": [
       {
-        "name": "",
+        "name": "fundId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "studentHash",
         "type": "bytes32",
         "internalType": "bytes32"
+      },
+      {
+        "name": "trancheIndex",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "recipient",
+        "type": "address",
+        "internalType": "address"
+      },
+      {
+        "name": "merkleProof",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
       }
     ],
-    "stateMutability": "view"
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -202,7 +222,7 @@
   },
   {
     "type": "function",
-    "name": "hasReleased",
+    "name": "hasClaimed",
     "inputs": [
       {
         "name": "",
@@ -268,7 +288,7 @@
   },
   {
     "type": "function",
-    "name": "releaseTranche",
+    "name": "publishTrancheRoot",
     "inputs": [
       {
         "name": "fundId",
@@ -276,24 +296,14 @@
         "internalType": "uint256"
       },
       {
-        "name": "studentHash",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
         "name": "trancheIndex",
         "type": "uint256",
         "internalType": "uint256"
       },
       {
-        "name": "recipient",
-        "type": "address",
-        "internalType": "address"
-      },
-      {
-        "name": "signature",
-        "type": "bytes",
-        "internalType": "bytes"
+        "name": "merkleRoot",
+        "type": "bytes32",
+        "internalType": "bytes32"
       }
     ],
     "outputs": [],
@@ -363,6 +373,30 @@
         "name": "",
         "type": "bool",
         "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "trancheRoots",
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
       }
     ],
     "stateMutability": "view"
@@ -445,6 +479,31 @@
   },
   {
     "type": "event",
+    "name": "MerkleRootPublished",
+    "inputs": [
+      {
+        "name": "fundId",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "trancheIndex",
+        "type": "uint256",
+        "indexed": true,
+        "internalType": "uint256"
+      },
+      {
+        "name": "merkleRoot",
+        "type": "bytes32",
+        "indexed": false,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "RoleAdminChanged",
     "inputs": [
       {
@@ -520,7 +579,7 @@
   },
   {
     "type": "event",
-    "name": "TrancheReleased",
+    "name": "TrancheClaimed",
     "inputs": [
       {
         "name": "fundId",

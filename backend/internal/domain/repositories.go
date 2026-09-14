@@ -10,6 +10,7 @@ type StudentRepository interface {
 	GetByID(ctx context.Context, id int64) (*Student, error)
 	GetByStudentID(ctx context.Context, studentID string) (*Student, error)
 	GetByHash(ctx context.Context, hash string) (*Student, error)
+	ListAll(ctx context.Context) ([]*Student, error)
 	List(ctx context.Context, offset, limit int) ([]*Student, int64, error)
 	UpdateCredits(ctx context.Context, id int64, credits int) error
 	UpdateCreditsByHash(ctx context.Context, hash string, credits int) error

@@ -18,6 +18,8 @@ func NewUIHandler(studentSvc *service.StudentService) *UIHandler {
 }
 
 func (h *UIHandler) Index(c *gin.Context) {
+	c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
+
 	// If token exists, redirect to dashboard, else login
 	tokenStr, _ := c.Cookie("token")
 	if tokenStr != "" {
@@ -28,15 +30,18 @@ func (h *UIHandler) Index(c *gin.Context) {
 }
 
 func (h *UIHandler) Login(c *gin.Context) {
+	c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
 	c.HTML(http.StatusOK, "login.html", gin.H{})
 }
 
 func (h *UIHandler) Logout(c *gin.Context) {
+	c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
 	c.SetCookie("token", "", -1, "/", "", false, true)
 	c.Redirect(http.StatusFound, "/login")
 }
 
 func (h *UIHandler) Dashboard(c *gin.Context) {
+	c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
 	claims := auth.GetClaims(c)
 	if claims == nil {
 		c.Redirect(http.StatusFound, "/login")

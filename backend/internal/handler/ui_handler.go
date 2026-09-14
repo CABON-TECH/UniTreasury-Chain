@@ -6,12 +6,15 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/cabon-tech/unitreasury-chain/backend/internal/auth"
+	"github.com/cabon-tech/unitreasury-chain/backend/internal/service"
 )
 
-type UIHandler struct {}
+type UIHandler struct {
+	studentSvc *service.StudentService
+}
 
-func NewUIHandler() *UIHandler {
-	return &UIHandler{}
+func NewUIHandler(studentSvc *service.StudentService) *UIHandler {
+	return &UIHandler{studentSvc: studentSvc}
 }
 
 func (h *UIHandler) Index(c *gin.Context) {
@@ -46,7 +49,11 @@ func (h *UIHandler) Dashboard(c *gin.Context) {
 	case auth.RoleFinance:
 		c.HTML(http.StatusOK, "finance.html", gin.H{"Role": claims.Role, "StudentID": claims.StudentID})
 	case auth.RoleStudent:
-		c.HTML(http.StatusOK, "student.html", gin.H{"Role": claims.Role, "StudentID": claims.StudentID})
+		credits := 0
+		if st, err := h.studentSvc.GetByStudentID(c.Request.Context(), claims.StudentID); err == nil && st != nil {
+			credits = st.Credits
+		}
+		c.HTML(http.StatusOK, "student.html", gin.H{"Role": claims.Role, "StudentID": claims.StudentID, "Credits": credits})
 	default:
 		c.String(http.StatusInternalServerError, "Unknown role")
 	}

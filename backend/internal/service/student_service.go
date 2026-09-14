@@ -94,3 +94,7 @@ func keccak256Hex(input string) string {
 	h.Write([]byte(input))
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
+
+func (s *StudentService) GetByStudentID(ctx context.Context, studentID string) (*domain.Student, error) {
+	return s.repo.GetByStudentID(ctx, studentID)
+}

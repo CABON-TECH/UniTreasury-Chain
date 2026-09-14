@@ -2,9 +2,7 @@
 <div class="max-w-md mx-auto bg-white p-8 border border-gray-200 rounded-lg shadow-sm mt-10">
     <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Login to Dashboard</h2>
     
-    <form hx-post="/api/v1/auth/token" hx-ext="json-enc" onsubmit="event.preventDefault();" class="space-y-4">
-        <!-- We use a tiny script to capture the JSON response and reload to let the cookie take effect -->
-        <script src="https://unpkg.com/htmx.org/dist/ext/json-enc.js"></script>
+    <form action="/api/v1/auth/token" method="POST" class="space-y-4">
         
         <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">Role</label>
@@ -21,11 +19,9 @@
         </div>
         
         <button type="submit" 
-                hx-on:htmx:after-request="if(event.detail.successful) window.location.href='/dashboard'"
                 class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out">
             Login
         </button>
-        <div id="login-error" class="text-red-500 text-sm hidden mt-2"></div>
     </form>
 </div>
 {{ end }}

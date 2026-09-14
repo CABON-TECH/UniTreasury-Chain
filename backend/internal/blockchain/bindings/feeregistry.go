@@ -181,5 +181,6 @@ func (f *FeeRegistryContractFilterer) WatchPaymentRecorded(
 	studentHash [][32]byte,
 	receiptHash [][32]byte,
 ) (event.Subscription, error) {
-	return f.contract.WatchLogs(opts, "PaymentRecorded")
+	_, sub, err := f.contract.WatchLogs(opts, "PaymentRecorded")
+	return sub, err
 }

@@ -12,7 +12,7 @@ import (
 	"syscall"
 	"time"
 
-	"go.uber.org/zap"
+
 
 	"github.com/cabon-tech/unitreasury-chain/backend/pkg/config"
 	"github.com/cabon-tech/unitreasury-chain/backend/pkg/logger"

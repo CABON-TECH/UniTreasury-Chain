@@ -1,4 +1,42 @@
-{{ define "content" }}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniTreasury Chain</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: inline-block; }
+        .htmx-request.htmx-indicator { display: inline-block; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
+
+    <nav class="bg-blue-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <span class="font-bold text-xl tracking-tight">UniTreasury Chain</span>
+                </div>
+                <div>
+                    {{ if .Role }}
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm bg-blue-700 px-3 py-1 rounded-full">{{ .Role }}</span>
+                        <a href="/logout" class="text-sm font-medium hover:text-blue-200">Logout</a>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
 <div class="space-y-8">
     <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
         <h2 class="text-xl font-bold text-gray-800 mb-4">Treasury Multi-sig Proposals</h2>
@@ -42,5 +80,15 @@ document.body.addEventListener('htmx:afterSwap', function(evt) {
     }
 });
 </script>
-{{ end }}
-{{ template "layout" . }}
+
+
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-4 text-center text-sm text-gray-500 mt-auto">
+        &copy; 2024 UniTreasury Chain Research Project
+    </footer>
+
+</body>
+</html>
+

@@ -9,6 +9,9 @@ import {IFeeRegistry} from "../src/interfaces/IFeeRegistry.sol";
 ///         Covers: payment recording, deduplication, fee structures, bitmask validation,
 ///         student semester tracking, checkpoint, reconciliation totals.
 contract FeeRegistryContractTest is Test {
+    // Redeclare interface events — required by Solidity/Forge to use `emit` in expectEmit
+    event ReconciliationCheckpoint(uint256 totalRecords, uint256 totalVolume, uint256 blockNumber);
+
     FeeRegistryContract public registry;
 
     address admin = makeAddr("admin");
@@ -172,7 +175,7 @@ contract FeeRegistryContractTest is Test {
         registry.recordPayment(STUDENT_HASH, RECEIPT_1, TUITION, SEMESTER_1, 1);
 
         vm.expectEmit(false, false, false, true);
-        emit FeeRegistryContract.ReconciliationCheckpoint(1, TUITION, block.number);
+        emit ReconciliationCheckpoint(1, TUITION, block.number);
 
         vm.prank(recorder);
         registry.checkpoint();

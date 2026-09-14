@@ -114,6 +114,8 @@ func (s *ScholarshipService) EvaluateAndPublishRoot(ctx context.Context, fundID 
 	}
 
 	confirm()
+	fmt.Printf("\n\n🚀 SUCCESS: Generated Merkle Tree for %d students! Published Root: 0x%x\n\n", len(eligibleLeaves), root32)
+
 
 	// Save all to database (as pending claims)
 	for _, student := range eligibleStudents {

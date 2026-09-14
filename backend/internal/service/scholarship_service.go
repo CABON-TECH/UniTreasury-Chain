@@ -151,6 +151,8 @@ func (s *ScholarshipService) EvaluateAndRelease(ctx context.Context, fundID int6
 	)
 	if err != nil {
 		rollback()
+		// Delete the pending release so the orchestrator tries again next time
+		_ = s.repo.DeleteTrancheRelease(ctx, fund.ID, student.Hash, trancheIndex)
 		return fmt.Errorf("releaseTranche tx: %w", err)
 	}
 	confirm()

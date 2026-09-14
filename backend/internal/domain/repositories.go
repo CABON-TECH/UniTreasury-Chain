@@ -52,6 +52,7 @@ type ScholarshipRepository interface {
 	UpdateFundReleasedAmount(ctx context.Context, fundID int64, releasedAmount uint64) error
 
 	CreateTrancheRelease(ctx context.Context, t *TrancheRelease) error
+	DeleteTrancheRelease(ctx context.Context, fundID int64, studentHash string, trancheIndex int) error
 	HasReleased(ctx context.Context, fundID int64, studentHash string, trancheIndex int) (bool, error)
 }
 

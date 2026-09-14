@@ -147,7 +147,7 @@ func runOrchestrator(
 						if err.Error() != "fund is paused" && 
 						   err.Error() != "student not found" && 
 						   len(err.Error()) > 30 && err.Error()[:30] != "student does not meet credit" {
-							log.Debug("orchestrator: evaluate failed", zap.Error(err))
+							log.Error("orchestrator: evaluate failed (this is expected if contracts aren't deployed!)", zap.Error(err))
 						}
 					}
 				}

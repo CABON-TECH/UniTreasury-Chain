@@ -117,3 +117,8 @@ func (r *ScholarshipRepo) scanFund(row pgx.Row) (*domain.ScholarshipFund, error)
 	}
 	return f, nil
 }
+
+func (r *ScholarshipRepo) DeleteTrancheRelease(ctx context.Context, fundID int64, studentHash string, trancheIndex int) error {
+	_, err := r.pool.Exec(ctx, "DELETE FROM tranche_releases WHERE fund_id = $1 AND student_hash = $2 AND tranche_index = $3", fundID, studentHash, trancheIndex)
+	return err
+}

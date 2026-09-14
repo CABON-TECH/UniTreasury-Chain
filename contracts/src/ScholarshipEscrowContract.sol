@@ -6,13 +6,15 @@ import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProof.sol";
 import {IScholarshipEscrow} from "./interfaces/IScholarshipEscrow.sol";
+import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
+import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
 
-contract ScholarshipEscrowContract is IScholarshipEscrow, AccessControl, ReentrancyGuard {
+contract ScholarshipEscrowContract is Initializable, IScholarshipEscrow, AccessControl, ReentrancyGuard, UUPSUpgradeable {
     bytes32 public constant ADMIN_ROLE = DEFAULT_ADMIN_ROLE;
     bytes32 public constant ATTESTOR_ROLE = keccak256("ATTESTOR_ROLE");
     bytes32 public constant SPONSOR_ROLE = keccak256("SPONSOR_ROLE");
 
-    IERC20 public immutable usdcToken;
+    IERC20 public usdcToken;
 
     uint256 private _nextFundId = 1;
     mapping(uint256 => ScholarshipFund) public funds;
@@ -25,7 +27,12 @@ contract ScholarshipEscrowContract is IScholarshipEscrow, AccessControl, Reentra
 
     address public trustedAttestor; // The entity allowed to publish roots
 
-    constructor(address admin, address attestor, address _usdcToken) {
+    /// @custom:oz-upgrades-unsafe-allow constructor
+    constructor() {
+        _disableInitializers();
+    }
+
+    function initialize(address admin, address attestor, address _usdcToken) initializer public {
         _grantRole(ADMIN_ROLE, admin);
         _grantRole(ATTESTOR_ROLE, attestor);
         trustedAttestor = attestor;
@@ -137,4 +144,6 @@ contract ScholarshipEscrowContract is IScholarshipEscrow, AccessControl, Reentra
         _grantRole(ATTESTOR_ROLE, newAttestor);
         trustedAttestor = newAttestor;
     }
+
+    function _authorizeUpgrade(address newImplementation) internal override onlyRole(ADMIN_ROLE) {}
 }

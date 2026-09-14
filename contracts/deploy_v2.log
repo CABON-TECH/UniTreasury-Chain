@@ -1,0 +1,31 @@
+No files changed, compilation skipped
+Script ran successfully.
+
+== Logs ==
+  LOGIC_V2=0x0165878A594ca255338adfa4d48449f69242Eb8F
+
+## Setting up 1 EVM.
+
+==========================
+
+Chain 31337
+
+Estimated max fee per gas: 1.760119135 gwei
+Estimated base fee per gas: 0.880059567 gwei
+Estimated max priority fee per gas: 0.000000001 gwei
+
+Estimated total gas used for script: 2476219
+
+Estimated amount required: 0.004358440444350565 ETH
+
+==========================
+
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+
+Transactions saved to: /home/cabon-tech/UniTreasury-Chain/contracts/broadcast/DeployV2.s.sol/31337/run-latest.json
+
+Sensitive values saved to: /home/cabon-tech/UniTreasury-Chain/contracts/cache/DeployV2.s.sol/31337/run-latest.json
+

@@ -5,6 +5,7 @@ import {Script, console} from "forge-std/Script.sol";
 import {TreasuryContract} from "../src/TreasuryContract.sol";
 import {FeeRegistryContract} from "../src/FeeRegistryContract.sol";
 import {ScholarshipEscrowContract} from "../src/ScholarshipEscrowContract.sol";
+import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {MockUSDC} from "../src/MockUSDC.sol";
 
 contract DeployAllScript is Script {
@@ -33,7 +34,10 @@ contract DeployAllScript is Script {
         FeeRegistryContract feeRegistry = new FeeRegistryContract(deployer, deployer, address(usdc));
         console.log("FEE_REGISTRY_CONTRACT_ADDRESS=", address(feeRegistry));
 
-        ScholarshipEscrowContract escrow = new ScholarshipEscrowContract(deployer, deployer, address(usdc));
+        ScholarshipEscrowContract logic = new ScholarshipEscrowContract();
+        bytes memory data = abi.encodeWithSelector(ScholarshipEscrowContract.initialize.selector, deployer, deployer, address(usdc));
+        ERC1967Proxy proxy = new ERC1967Proxy(address(logic), data);
+        ScholarshipEscrowContract escrow = ScholarshipEscrowContract(address(proxy));
         console.log("SCHOLARSHIP_ESCROW_CONTRACT_ADDRESS=", address(escrow));
 
         vm.stopBroadcast();

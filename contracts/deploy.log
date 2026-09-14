@@ -5,7 +5,7 @@ Script ran successfully.
   MOCK_USDC_ADDRESS= 0x5FbDB2315678afecb367f032d93F642f64180aa3
   TREASURY_CONTRACT_ADDRESS= 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
   FEE_REGISTRY_CONTRACT_ADDRESS= 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
-  SCHOLARSHIP_ESCROW_CONTRACT_ADDRESS= 0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9
+  SCHOLARSHIP_ESCROW_CONTRACT_ADDRESS= 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
 
 ## Setting up 1 EVM.
 
@@ -17,9 +17,9 @@ Estimated max fee per gas: 2.000000001 gwei
 Estimated base fee per gas: 1 gwei
 Estimated max priority fee per gas: 0.000000001 gwei
 
-Estimated total gas used for script: 5221272
+Estimated total gas used for script: 6161877
 
-Estimated amount required: 0.010442544005221272 ETH
+Estimated amount required: 0.012323754006161877 ETH
 
 ==========================
 

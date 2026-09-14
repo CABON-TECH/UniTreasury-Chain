@@ -105,6 +105,22 @@ contract ScholarshipEscrowContract is IScholarshipEscrow, AccessControl, Reentra
         emit TrancheClaimed(fundId, studentHash, trancheIndex, fund.trancheAmount, recipient);
     }
 
+    
+    function clawbackFund(uint256 fundId, address recipient) external onlyRole(ADMIN_ROLE) nonReentrant {
+        ScholarshipFund storage fund = funds[fundId];
+        require(fund.totalAmount > 0, "Fund does not exist");
+        
+        uint256 remaining = fund.totalAmount - fund.releasedAmount;
+        require(remaining > 0, "No funds remaining to clawback");
+        
+        fund.totalAmount = fund.releasedAmount;
+        fund.paused = true;
+
+        require(usdcToken.transfer(recipient, remaining), "USDC transfer failed");
+
+        emit FundClawedBack(fundId, remaining, recipient);
+    }
+
     function pauseFund(uint256 fundId) external onlyRole(ADMIN_ROLE) {
         require(funds[fundId].totalAmount > 0, "Fund does not exist");
         funds[fundId].paused = true;

@@ -1,6 +1,4 @@
 // Command api is the HTTP API server for UniTreasury Chain.
-// It exposes REST endpoints for students, payments, treasury proposals, and audit logs.
-// Authentication is JWT-based with role-based access control (admin / finance / student).
 package main
 
 import (
@@ -17,8 +15,14 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/cabon-tech/unitreasury-chain/backend/internal/auth"
+	"github.com/cabon-tech/unitreasury-chain/backend/internal/blockchain"
+	"github.com/cabon-tech/unitreasury-chain/backend/internal/blockchain/bindings"
+	"github.com/cabon-tech/unitreasury-chain/backend/internal/handler"
+	"github.com/cabon-tech/unitreasury-chain/backend/internal/repository/postgres"
+	"github.com/cabon-tech/unitreasury-chain/backend/internal/service"
 	"github.com/cabon-tech/unitreasury-chain/backend/pkg/config"
 	"github.com/cabon-tech/unitreasury-chain/backend/pkg/logger"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 func main() {
@@ -35,57 +39,127 @@ func main() {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
-	// ── Wire dependencies ────────────────────────────────────────────────────────
+	ctx := context.Background()
+
+	// ── Database ──────────────────────────────────────────────────────────────────
+	pool, err := postgres.NewPool(ctx, cfg.DatabaseURL)
+	if err != nil {
+		log.Fatal("database connection failed", zap.Error(err))
+	}
+	defer pool.Close()
+	log.Info("database connected")
+
+	// ── Repositories ──────────────────────────────────────────────────────────────
+	studentRepo := postgres.NewStudentRepo(pool)
+	paymentRepo := postgres.NewPaymentRepo(pool)
+	_ = postgres.NewAuditRepo(pool) // used by event indexer in worker binary
+
+	// ── Blockchain client ─────────────────────────────────────────────────────────
+	ethClient, err := blockchain.NewClient(ctx, cfg.RPCURL, cfg.ChainID, log)
+	if err != nil {
+		log.Warn("blockchain client unavailable (running without on-chain features)", zap.Error(err))
+		ethClient = nil
+	}
+
+	// ── Contract bindings ──────────────────────────────────────────────────────────
+	var feeRegistry *bindings.FeeRegistryContract
+	var txMgr *blockchain.TxManager
+
+	if ethClient != nil {
+		feeRegistryAddr := common.HexToAddress(cfg.FeeRegistryAddress)
+		feeRegistry, err = bindings.NewFeeRegistryContract(feeRegistryAddr, ethClient.Inner())
+		if err != nil {
+			log.Fatal("fee registry binding failed", zap.Error(err))
+		}
+
+		attestorKey, err := blockchain.ParsePrivateKey(cfg.AttestorPrivateKey)
+		if err != nil {
+			log.Fatal("parse attestor key", zap.Error(err))
+		}
+		txMgr, err = blockchain.NewTxManager(ctx, ethClient, attestorKey, log)
+		if err != nil {
+			log.Fatal("tx manager init", zap.Error(err))
+		}
+	}
+
+	// ── Services ──────────────────────────────────────────────────────────────────
 	jwtMgr := auth.NewJWTManager(cfg.JWTSecret, cfg.JWTExpiryHours)
+	studentSvc := service.NewStudentService(studentRepo, log)
 
-	// TODO Sprint 2: initialise DB pool, repositories, services, handlers here
-	_ = jwtMgr
+	var feeSvc *service.FeeService
+	if ethClient != nil && feeRegistry != nil && txMgr != nil {
+		feeSvc = service.NewFeeService(paymentRepo, studentRepo, txMgr, feeRegistry, ethClient, log)
+	}
 
-	// ── Router setup ─────────────────────────────────────────────────────────────
+	// ── Handlers ──────────────────────────────────────────────────────────────────
+	studentH := handler.NewStudentHandler(studentSvc, log)
+	var paymentH *handler.PaymentHandler
+	if feeSvc != nil {
+		paymentH = handler.NewPaymentHandler(feeSvc, log)
+	}
+
+	// ── Router ────────────────────────────────────────────────────────────────────
 	r := gin.New()
 	r.Use(gin.Recovery())
 	r.Use(requestLogger(log))
 
 	r.GET("/health", func(c *gin.Context) {
+		dbStatus := "ok"
+		if err := pool.Ping(c.Request.Context()); err != nil {
+			dbStatus = "degraded: " + err.Error()
+		}
+		chainStatus := "disconnected"
+		if ethClient != nil {
+			chainStatus = "connected"
+		}
 		c.JSON(http.StatusOK, gin.H{
-			"status":  "ok",
-			"version": "0.1.0",
-			"chain":   cfg.ChainID,
+			"status":       "ok",
+			"version":      "0.2.0",
+			"chain_id":     cfg.ChainID,
+			"db":           dbStatus,
+			"blockchain":   chainStatus,
 		})
 	})
 
-	// API v1 group
 	v1 := r.Group("/api/v1")
 	v1.Use(auth.Authenticate(jwtMgr))
 
-	// Student routes (admin + finance can read; student can read own)
+	// Students
 	students := v1.Group("/students")
-	students.Use(auth.RequireRole(auth.RoleAdmin, auth.RoleFinance, auth.RoleStudent))
-	students.GET("", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), placeholder("list students"))
-	students.POST("", auth.RequireRole(auth.RoleAdmin), placeholder("create student"))
-	students.GET("/:id", placeholder("get student"))
+	students.POST("", auth.RequireRole(auth.RoleAdmin), studentH.Create)
+	students.GET("", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), studentH.List)
+	students.GET("/:id", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance, auth.RoleStudent), studentH.Get)
 
-	// Payment routes
+	// Payments
 	payments := v1.Group("/payments")
 	payments.Use(auth.RequireRole(auth.RoleAdmin, auth.RoleFinance))
-	payments.GET("", placeholder("list payments"))
-	payments.POST("/csv", placeholder("upload payment CSV"))
-	payments.GET("/:id", placeholder("get payment"))
+	if paymentH != nil {
+		payments.POST("/csv", paymentH.UploadCSV)
+		payments.GET("", paymentH.List)
+		payments.GET("/:id", paymentH.Get)
+	} else {
+		payments.POST("/csv", unavailable("blockchain not connected"))
+		payments.GET("", unavailable("blockchain not connected"))
+		payments.GET("/:id", unavailable("blockchain not connected"))
+	}
 
-	// Treasury routes (admin only for write, finance can read)
+	// Treasury (Sprint 3)
 	treasury := v1.Group("/treasury")
-	treasury.GET("/proposals", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), placeholder("list proposals"))
-	treasury.POST("/proposals", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), placeholder("propose withdrawal"))
-	treasury.POST("/proposals/:id/approve", auth.RequireRole(auth.RoleAdmin), placeholder("approve withdrawal"))
-	treasury.POST("/proposals/:id/execute", auth.RequireRole(auth.RoleAdmin), placeholder("execute withdrawal"))
-	treasury.POST("/proposals/:id/cancel", auth.RequireRole(auth.RoleAdmin), placeholder("cancel withdrawal"))
+	treasury.GET("/proposals", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), placeholder("list proposals — Sprint 3"))
+	treasury.POST("/proposals", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), placeholder("propose withdrawal — Sprint 3"))
+	treasury.POST("/proposals/:id/approve", auth.RequireRole(auth.RoleAdmin), placeholder("approve withdrawal — Sprint 3"))
+	treasury.POST("/proposals/:id/execute", auth.RequireRole(auth.RoleAdmin), placeholder("execute withdrawal — Sprint 3"))
+	treasury.POST("/proposals/:id/cancel", auth.RequireRole(auth.RoleAdmin), placeholder("cancel withdrawal — Sprint 3"))
 
-	// Audit log routes
+	// Audit
 	audit := v1.Group("/audit")
 	audit.Use(auth.RequireRole(auth.RoleAdmin))
-	audit.GET("/events", placeholder("list audit events"))
+	audit.GET("/events", placeholder("list audit events — Sprint 3"))
 
-	// ── HTTP server with graceful shutdown ────────────────────────────────────────
+	// Auth (no middleware — public)
+	r.POST("/api/v1/auth/token", devTokenHandler(jwtMgr))
+
+	// ── HTTP server ───────────────────────────────────────────────────────────────
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,
 		Handler:      r,
@@ -95,7 +169,7 @@ func main() {
 	}
 
 	go func() {
-		log.Info("API server starting", zap.String("addr", srv.Addr))
+		log.Info("API server starting", zap.String("addr", srv.Addr), zap.String("version", "0.2.0"))
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatal("server error", zap.Error(err))
 		}
@@ -105,29 +179,53 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 
-	log.Info("shutting down API server...")
-	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	log.Info("shutting down...")
+	shutCtx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
-
-	if err := srv.Shutdown(ctx); err != nil {
+	if err := srv.Shutdown(shutCtx); err != nil {
 		log.Error("forced shutdown", zap.Error(err))
 	}
-	log.Info("API server stopped")
+	log.Info("server stopped")
 }
 
-// placeholder returns a handler that responds with 501 and a "not yet implemented" message.
-// These are replaced with real handlers in Sprint 2+.
-func placeholder(name string) gin.HandlerFunc {
+// devTokenHandler issues JWT tokens for development — NOT for production use.
+// POST /api/v1/auth/token  body: {"role":"admin"|"finance"|"student","student_id":"..."}
+func devTokenHandler(jwtMgr *auth.JWTManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(http.StatusNotImplemented, gin.H{
-			"error":   "not_implemented",
-			"handler": name,
-			"note":    "This endpoint will be implemented in Sprint 2",
-		})
+		var req struct {
+			Role      string `json:"role"`
+			StudentID string `json:"student_id"`
+		}
+		if err := c.ShouldBindJSON(&req); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			return
+		}
+		role := auth.Role(req.Role)
+		if role != auth.RoleAdmin && role != auth.RoleFinance && role != auth.RoleStudent {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "role must be admin, finance, or student"})
+			return
+		}
+		token, err := jwtMgr.Generate(1, role, req.StudentID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "token generation failed"})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"token": token, "role": role})
 	}
 }
 
-// requestLogger is a structured Gin middleware using zap.
+func placeholder(name string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.JSON(http.StatusNotImplemented, gin.H{"note": name})
+	}
+}
+
+func unavailable(reason string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": reason})
+	}
+}
+
 func requestLogger(log *zap.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		start := time.Now()

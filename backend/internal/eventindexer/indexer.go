@@ -104,6 +104,11 @@ func (idx *Indexer) indexContract(ctx context.Context, c IndexedContract, head u
 	if err != nil {
 		return fmt.Errorf("indexer: get last indexed block for %s: %w", c.Name, err)
 	}
+	
+	// If starting fresh on a deployed chain, do not start at 0 to avoid pruned nodes.
+	if lastIndexed == 0 && head > 1000 {
+		lastIndexed = head - 1000
+	}
 
 	from := lastIndexed + 1
 	if from > head {

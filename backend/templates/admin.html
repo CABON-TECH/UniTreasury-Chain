@@ -1,0 +1,46 @@
+{{ define "content" }}
+<div class="space-y-8">
+    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Treasury Multi-sig Proposals</h2>
+        
+        <div hx-get="/api/v1/treasury/proposals" hx-trigger="load, every 5s" id="proposals-list">
+            <p class="text-gray-500">Loading proposals...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    if (evt.detail.elt.id === 'proposals-list') {
+        try {
+            const data = JSON.parse(evt.detail.xhr.response);
+            const proposals = data.data || [];
+            let html = '<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recipient</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount (wei)</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approvals</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">';
+            
+            if (proposals.length === 0) {
+                html += '<tr><td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No proposals found</td></tr>';
+            } else {
+                proposals.forEach(p => {
+                    let btn = '';
+                    if (p.status === 'pending') {
+                        btn = `<button hx-post="/api/v1/treasury/proposals/${p.id}/approve" hx-swap="none" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-green-700 transition">Approve</button>`;
+                    }
+                    html += `<tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#${p.id}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">${p.recipient.substring(0, 10)}...</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">${p.amount}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-${p.status==='executed'?'green':p.status==='cancelled'?'red':'yellow'}-100 text-${p.status==='executed'?'green':p.status==='cancelled'?'red':'yellow'}-800">${p.status}</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${p.approval_count} / 2</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${btn}</td>
+                    </tr>`;
+                });
+            }
+            html += '</tbody></table></div>';
+            evt.detail.elt.innerHTML = html;
+            htmx.process(evt.detail.elt); // re-init htmx on new buttons
+        } catch(e) { console.error(e); }
+    }
+});
+</script>
+{{ end }}
+{{ template "layout" . }}

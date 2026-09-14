@@ -1,0 +1,15 @@
+{{ define "content" }}
+<div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Student Profile: <span class="text-blue-600">{{ .StudentID }}</span></h2>
+    <p class="text-gray-600 mb-8">View your current standing and credit thresholds for automated scholarship tranches.</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="border border-gray-200 rounded-lg p-6 bg-gray-50">
+            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Total Credits</h3>
+            <div class="text-4xl font-extrabold text-gray-900" id="student-credits">--</div>
+            <p class="text-sm text-gray-500 mt-2">15 credits required for next Tranche Release.</p>
+        </div>
+    </div>
+</div>
+{{ end }}
+{{ template "layout" . }}

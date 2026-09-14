@@ -13,15 +13,28 @@ const claimsKey = "claims"
 // Authorization header and injects the Claims into the context.
 func Authenticate(jwtMgr *JWTManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		var tokenStr string
 		header := c.GetHeader("Authorization")
-		if header == "" || !strings.HasPrefix(header, "Bearer ") {
+		if header != "" && strings.HasPrefix(header, "Bearer ") {
+			tokenStr = strings.TrimPrefix(header, "Bearer ")
+		} else {
+			tokenStr, _ = c.Cookie("token")
+		}
+
+		if tokenStr == "" {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "missing or malformed authorization header"})
 			return
 		}
 
-		tokenStr := strings.TrimPrefix(header, "Bearer ")
 		claims, err := jwtMgr.Validate(tokenStr)
 		if err != nil {
+			// For HTMX/Browser we could redirect to login instead of JSON error
+			// Let's do it if it's a GET request and not /api
+			if c.Request.Method == http.MethodGet && !strings.HasPrefix(c.Request.URL.Path, "/api") {
+				c.Redirect(http.StatusFound, "/login")
+				c.Abort()
+				return
+			}
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid or expired token"})
 			return
 		}
@@ -53,6 +66,12 @@ func RequireRole(roles ...Role) gin.HandlerFunc {
 		}
 
 		if _, ok := allowed[claims.Role]; !ok {
+			// If HTMX/UI, maybe render unauthorized
+			if !strings.HasPrefix(c.Request.URL.Path, "/api") {
+				c.String(http.StatusForbidden, "Forbidden: Insufficient Permissions")
+				c.Abort()
+				return
+			}
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "insufficient permissions"})
 			return
 		}

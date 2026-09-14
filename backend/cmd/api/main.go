@@ -109,6 +109,16 @@ func main() {
 	r.Use(gin.Recovery())
 	r.Use(requestLogger(log))
 
+	// Load HTML templates
+	r.LoadHTMLGlob("templates/*")
+
+	// UI Routes
+	ui := handler.NewUIHandler()
+	r.GET("/", ui.Index)
+	r.GET("/login", ui.Login)
+	r.GET("/logout", ui.Logout)
+	r.GET("/dashboard", auth.Authenticate(jwtMgr), ui.Dashboard)
+
 	r.GET("/health", func(c *gin.Context) {
 		dbStatus := "ok"
 		if err := pool.Ping(c.Request.Context()); err != nil {
@@ -229,6 +239,7 @@ func devTokenHandler(jwtMgr *auth.JWTManager) gin.HandlerFunc {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "token generation failed"})
 			return
 		}
+		c.SetCookie("token", token, 3600*24, "/", "", false, true)
 		c.JSON(http.StatusOK, gin.H{"token": token, "role": role})
 	}
 }

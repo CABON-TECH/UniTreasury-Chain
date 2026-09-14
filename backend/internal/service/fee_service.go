@@ -11,6 +11,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"go.uber.org/zap"
 
 	"github.com/cabon-tech/unitreasury-chain/backend/internal/blockchain"
@@ -58,10 +59,10 @@ type CSVRow struct {
 
 // IngestResult summarises a CSV upload.
 type IngestResult struct {
-	Total     int            `json:"total"`
-	Submitted int            `json:"submitted"`
-	Skipped   int            `json:"skipped"`   // duplicate receipt hashes
-	Errors    []RowError     `json:"errors,omitempty"`
+	Total     int               `json:"total"`
+	Submitted int               `json:"submitted"`
+	Skipped   int               `json:"skipped"`
+	Errors    []RowError        `json:"errors,omitempty"`
 	Payments  []*domain.Payment `json:"payments"`
 }
 
@@ -72,12 +73,11 @@ type RowError struct {
 }
 
 // IngestCSV parses a payment CSV, validates each row, and submits each payment
-// on-chain via FeeRegistryContract.recordPayment. Submission is synchronous per
-// row — for large batches a queue would be preferable, but this keeps Sprint 2
-// simple and traceable.
+// on-chain via FeeRegistryContract.recordPayment.
 //
 // CSV format (header required):
-//   student_id,receipt_hash,amount_wei,semester,fee_type
+//
+//	student_id,receipt_hash,amount_wei,semester,fee_type
 func (s *FeeService) IngestCSV(ctx context.Context, r io.Reader) (*IngestResult, error) {
 	rows, err := parseCSV(r)
 	if err != nil {
@@ -89,12 +89,12 @@ func (s *FeeService) IngestCSV(ctx context.Context, r io.Reader) (*IngestResult,
 	for i, row := range rows {
 		rowNum := i + 2 // 1-indexed + header
 
-		payment, err := s.processRow(ctx, row, rowNum)
+		payment, skipped, err := s.processRow(ctx, row, rowNum)
 		if err != nil {
 			result.Errors = append(result.Errors, RowError{Row: rowNum, Message: err.Error()})
 			continue
 		}
-		if payment == nil {
+		if skipped {
 			result.Skipped++
 			continue
 		}
@@ -106,28 +106,28 @@ func (s *FeeService) IngestCSV(ctx context.Context, r io.Reader) (*IngestResult,
 	return result, nil
 }
 
-func (s *FeeService) processRow(ctx context.Context, row CSVRow, rowNum int) (*domain.Payment, error) {
+func (s *FeeService) processRow(ctx context.Context, row CSVRow, rowNum int) (payment *domain.Payment, skipped bool, err error) {
 	// Resolve student
 	student, err := s.studentRepo.GetByStudentID(ctx, row.StudentID)
 	if err != nil {
-		return nil, fmt.Errorf("row %d: resolve student %q: %w", rowNum, row.StudentID, err)
+		return nil, false, fmt.Errorf("resolve student %q: %w", row.StudentID, err)
 	}
 	if student == nil {
-		return nil, fmt.Errorf("row %d: student %q not found — register student first", rowNum, row.StudentID)
+		return nil, false, fmt.Errorf("student %q not found — register student first", row.StudentID)
 	}
 
 	// Idempotency: skip if receipt already exists
 	existing, err := s.paymentRepo.GetByReceiptHash(ctx, row.ReceiptHash)
 	if err != nil {
-		return nil, fmt.Errorf("row %d: check receipt: %w", rowNum, err)
+		return nil, false, fmt.Errorf("check receipt: %w", err)
 	}
 	if existing != nil {
 		s.log.Info("skipping duplicate receipt", zap.String("receipt", row.ReceiptHash))
-		return nil, nil // nil, nil = skipped
+		return nil, true, nil
 	}
 
 	// Persist as pending before touching the chain
-	payment := &domain.Payment{
+	p := &domain.Payment{
 		StudentID:   student.ID,
 		StudentHash: student.Hash,
 		ReceiptHash: row.ReceiptHash,
@@ -135,81 +135,72 @@ func (s *FeeService) processRow(ctx context.Context, row CSVRow, rowNum int) (*d
 		Semester:    row.Semester,
 		FeeType:     row.FeeType,
 	}
-	if err := s.paymentRepo.Create(ctx, payment); err != nil {
-		return nil, fmt.Errorf("row %d: persist payment: %w", rowNum, err)
+	if err := s.paymentRepo.Create(ctx, p); err != nil {
+		return nil, false, fmt.Errorf("persist payment: %w", err)
 	}
 
-	// Build on-chain args
+	// Build on-chain args — student hash is stored as hex, convert to [32]byte
 	var studentHash [32]byte
 	copy(studentHash[:], common.FromHex(student.Hash))
 
+	// Receipt hash: keccak256 of the receipt ID string → [32]byte
+	receiptHex := keccak256Hex(row.ReceiptHash)
 	var receiptHash [32]byte
-	receiptBytes := keccak256Hex(row.ReceiptHash) // hash the receipt ID for on-chain dedup
-	copy(receiptHash[:], common.FromHex(receiptBytes))
+	copy(receiptHash[:], common.FromHex(receiptHex))
 
 	amount := new(big.Int).SetUint64(row.AmountWei)
 	semester := new(big.Int).SetInt64(int64(row.Semester))
 	feeType := new(big.Int).SetUint64(row.FeeType)
 
 	// Submit transaction (nonce-sequenced via TxManager)
-	opts, confirm, rollback, err := s.txMgr.TransactOpts(ctx)
-	if err != nil {
-		_ = s.paymentRepo.UpdateStatus(ctx, payment.ID, domain.PaymentStatusFailed, "")
-		return nil, fmt.Errorf("row %d: transact opts: %w", rowNum, err)
+	opts, confirm, rollback, txErr := s.txMgr.TransactOpts(ctx)
+	if txErr != nil {
+		_ = s.paymentRepo.UpdateStatus(ctx, p.ID, domain.PaymentStatusFailed, "")
+		return nil, false, fmt.Errorf("transact opts: %w", txErr)
 	}
 
-	tx, err := s.registry.FeeRegistryContractTransactor.RecordPayment(
+	tx, txErr := s.registry.FeeRegistryContractTransactor.RecordPayment(
 		opts, studentHash, receiptHash, amount, semester, feeType,
 	)
-	if err != nil {
+	if txErr != nil {
 		rollback()
-		_ = s.paymentRepo.UpdateStatus(ctx, payment.ID, domain.PaymentStatusFailed, "")
-		return nil, fmt.Errorf("row %d: recordPayment tx: %w", rowNum, err)
+		_ = s.paymentRepo.UpdateStatus(ctx, p.ID, domain.PaymentStatusFailed, "")
+		return nil, false, fmt.Errorf("recordPayment tx: %w", txErr)
 	}
 	confirm()
 
 	// Mark submitted
-	if err := s.paymentRepo.UpdateStatus(ctx, payment.ID, domain.PaymentStatusSubmitted, tx.Hash().Hex()); err != nil {
-		s.log.Error("failed to update payment status", zap.Error(err))
+	if err := s.paymentRepo.UpdateStatus(ctx, p.ID, domain.PaymentStatusSubmitted, tx.Hash().Hex()); err != nil {
+		s.log.Error("failed to update payment status to submitted", zap.Error(err))
 	}
-	payment.TxHash = tx.Hash().Hex()
-	payment.Status = domain.PaymentStatusSubmitted
+	p.TxHash = tx.Hash().Hex()
+	p.Status = domain.PaymentStatusSubmitted
 
-	s.log.Info("payment submitted",
-		zap.Int64("payment_id", payment.ID),
-		zap.String("tx_hash", payment.TxHash),
+	s.log.Info("payment submitted on-chain",
+		zap.Int64("payment_id", p.ID),
+		zap.String("tx_hash", p.TxHash),
 		zap.String("receipt", row.ReceiptHash),
 	)
 
-	// Async: wait for confirmation and update block_number
-	go s.awaitConfirmation(payment.ID, tx)
+	// Async: wait for block confirmation then update DB
+	go s.awaitConfirmation(p.ID, tx)
 
-	return payment, nil
+	return p, false, nil
 }
 
-// awaitConfirmation waits for a tx receipt and updates the DB record.
-// Runs in a goroutine — failures are logged, not fatal.
-func (s *FeeService) awaitConfirmation(paymentID int64, tx interface{ Hash() common.Hash }) {
+// awaitConfirmation waits for a tx receipt and marks the payment confirmed.
+// Runs in a goroutine — errors are logged, never fatal to the caller.
+func (s *FeeService) awaitConfirmation(paymentID int64, tx *types.Transaction) {
 	ctx := context.Background()
 
-	type mined interface {
-		Hash() common.Hash
-	}
-	typedTx, ok := tx.(interface {
-		Hash() common.Hash
-	})
-	if !ok {
-		return
-	}
-
-	// Use ethclient directly for WaitMined
-	receipt, err := bind.WaitMined(ctx, s.ethClient.Inner(), typedTx.(interface {
-		Hash() common.Hash
-		// ethclient expects *types.Transaction — FeeService uses TxManager which returns *types.Transaction
-		// This cast is safe because RecordPayment returns *types.Transaction
-	}))
+	receipt, err := bind.WaitMined(ctx, s.ethClient.Inner(), tx)
 	if err != nil {
-		s.log.Error("await confirmation failed", zap.Int64("payment_id", paymentID), zap.Error(err))
+		s.log.Error("await confirmation failed",
+			zap.Int64("payment_id", paymentID),
+			zap.String("tx_hash", tx.Hash().Hex()),
+			zap.Error(err),
+		)
+		_ = s.paymentRepo.UpdateStatus(ctx, paymentID, domain.PaymentStatusFailed, tx.Hash().Hex())
 		return
 	}
 
@@ -221,13 +212,12 @@ func (s *FeeService) awaitConfirmation(paymentID int64, tx interface{ Hash() com
 	s.log.Info("payment confirmed",
 		zap.Int64("payment_id", paymentID),
 		zap.Uint64("block", receipt.BlockNumber.Uint64()),
+		zap.String("tx_hash", tx.Hash().Hex()),
 	)
 }
 
 // ── CSV parsing ───────────────────────────────────────────────────────────────
 
-// parseCSV reads and validates all rows from a payment CSV.
-// Expected header: student_id,receipt_hash,amount_wei,semester,fee_type
 func parseCSV(r io.Reader) ([]CSVRow, error) {
 	cr := csv.NewReader(r)
 	cr.TrimLeadingSpace = true
@@ -237,10 +227,10 @@ func parseCSV(r io.Reader) ([]CSVRow, error) {
 		return nil, fmt.Errorf("read header: %w", err)
 	}
 
-	expectedCols := []string{"student_id", "receipt_hash", "amount_wei", "semester", "fee_type"}
-	for i, col := range expectedCols {
+	expected := []string{"student_id", "receipt_hash", "amount_wei", "semester", "fee_type"}
+	for i, col := range expected {
 		if i >= len(header) || strings.TrimSpace(strings.ToLower(header[i])) != col {
-			return nil, fmt.Errorf("invalid header: expected %v, got %v", expectedCols, header)
+			return nil, fmt.Errorf("invalid header: expected %v, got %v", expected, header)
 		}
 	}
 
@@ -272,7 +262,7 @@ func parseCSV(r io.Reader) ([]CSVRow, error) {
 
 		feeType, err := strconv.ParseUint(strings.TrimSpace(record[4]), 10, 64)
 		if err != nil || feeType == 0 || feeType > 7 {
-			return nil, fmt.Errorf("line %d: invalid fee_type %q (must be 1-7 bitmask)", lineNum, record[4])
+			return nil, fmt.Errorf("line %d: invalid fee_type %q (must be 1–7 bitmask)", lineNum, record[4])
 		}
 
 		rows = append(rows, CSVRow{

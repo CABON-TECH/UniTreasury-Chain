@@ -1,14 +1,12 @@
 // Package service contains the application business logic layer.
-// Services orchestrate domain operations, call repositories and blockchain client.
 package service
 
 import (
 	"context"
-	"crypto/sha256"
 	"fmt"
 
-	"go.uber.org/zap"
 	"golang.org/x/crypto/sha3"
+	"go.uber.org/zap"
 
 	"github.com/cabon-tech/unitreasury-chain/backend/internal/domain"
 )
@@ -34,7 +32,6 @@ type CreateStudentInput struct {
 
 // Create registers a new student, computing the keccak256 hash for on-chain use.
 func (s *StudentService) Create(ctx context.Context, in CreateStudentInput) (*domain.Student, error) {
-	// Check for duplicate
 	existing, err := s.repo.GetByStudentID(ctx, in.StudentID)
 	if err != nil {
 		return nil, fmt.Errorf("student_service: check duplicate: %w", err)
@@ -81,19 +78,19 @@ func (s *StudentService) List(ctx context.Context, page, pageSize int) ([]*domai
 	if pageSize <= 0 || pageSize > 100 {
 		pageSize = 20
 	}
+	if page < 1 {
+		page = 1
+	}
 	offset := (page - 1) * pageSize
 	return s.repo.List(ctx, offset, pageSize)
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-// keccak256Hex computes keccak256(input) and returns the hex string (without 0x prefix).
-// This mirrors the on-chain: keccak256(abi.encodePacked(studentID)) used in Solidity.
+// keccak256Hex computes keccak256(input) and returns the 64-char hex string.
+// Mirrors: keccak256(abi.encodePacked(studentID)) used in Solidity.
 func keccak256Hex(input string) string {
 	h := sha3.NewLegacyKeccak256()
 	h.Write([]byte(input))
 	return fmt.Sprintf("%x", h.Sum(nil))
 }
-
-// ensure sha256 is referenced to avoid import cycle (sha3 is the real one)
-var _ = sha256.New

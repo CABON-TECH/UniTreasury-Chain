@@ -144,13 +144,12 @@ func (s *FeeService) processRow(ctx context.Context, row CSVRow, rowNum int) (pa
 	copy(studentHash[:], common.FromHex(student.Hash))
 
 	// Receipt hash: keccak256 of the receipt ID string → [32]byte
-	receiptHex := keccak256Hex(row.ReceiptHash)
-	var receiptHash [32]byte
-	copy(receiptHash[:], common.FromHex(receiptHex))
+	_ = keccak256Hex(row.ReceiptHash)
+	
 
 	amount := new(big.Int).SetUint64(row.AmountWei)
 	semester := new(big.Int).SetInt64(int64(row.Semester))
-	feeType := new(big.Int).SetUint64(row.FeeType)
+	
 
 	// Submit transaction (nonce-sequenced via TxManager)
 	opts, confirm, rollback, txErr := s.txMgr.TransactOpts(ctx)
@@ -159,8 +158,8 @@ func (s *FeeService) processRow(ctx context.Context, row CSVRow, rowNum int) (pa
 		return nil, false, fmt.Errorf("transact opts: %w", txErr)
 	}
 
-	tx, txErr := s.registry.FeeRegistryContractTransactor.RecordPayment(
-		opts, studentHash, receiptHash, amount, semester, feeType,
+	tx, txErr := s.registry.FeeRegistryContractTransactor.RecordFee(
+		opts, studentHash, semester, amount,
 	)
 	if txErr != nil {
 		rollback()

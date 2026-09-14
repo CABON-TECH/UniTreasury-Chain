@@ -3,6 +3,7 @@ pragma solidity ^0.8.20;
 
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 import {ReentrancyGuard} from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {IScholarshipEscrow} from "./interfaces/IScholarshipEscrow.sol";
 import {AttestationLib} from "./libraries/AttestationLib.sol";
 
@@ -11,53 +12,50 @@ contract ScholarshipEscrowContract is IScholarshipEscrow, AccessControl, Reentra
     bytes32 public constant ATTESTOR_ROLE = keccak256("ATTESTOR_ROLE");
     bytes32 public constant SPONSOR_ROLE = keccak256("SPONSOR_ROLE");
 
+    IERC20 public immutable usdcToken;
+
     uint256 private _nextFundId = 1;
     mapping(uint256 => ScholarshipFund) public funds;
     
     // fundId => studentHash => trancheIndex => released
     mapping(uint256 => mapping(bytes32 => mapping(uint256 => bool))) public hasReleased;
 
-    // We store the attestor address directly for EIP-712 recovery verification.
     address public trustedAttestor;
-
-    // EIP-712 Domain Separator
     bytes32 public immutable DOMAIN_SEPARATOR;
 
-    constructor(address admin, address attestor) {
+    constructor(address admin, address attestor, address _usdcToken) {
         _grantRole(ADMIN_ROLE, admin);
         _grantRole(ATTESTOR_ROLE, attestor);
         trustedAttestor = attestor;
+        usdcToken = IERC20(_usdcToken);
 
-        DOMAIN_SEPARATOR = AttestationLib.computeDomainSeparator(
-            "UniTreasury Scholarship",
-            "1",
-            block.chainid,
-            address(this)
-        );
+        DOMAIN_SEPARATOR = AttestationLib.domainSeparator(address(this));
     }
 
     function createFund(
         address sponsor,
+        uint256 totalAmount,
         uint256 trancheCount,
         uint256 trancheAmount
-    ) external payable onlyRole(ADMIN_ROLE) returns (uint256) {
+    ) external onlyRole(ADMIN_ROLE) returns (uint256) {
         require(trancheCount > 0, "Invalid tranche count");
         require(trancheAmount > 0, "Invalid tranche amount");
-        require(msg.value > 0, "Must deposit funds");
-        // For simplicity, msg.value should be evenly divisible or at least enough for some students.
+        require(totalAmount > 0, "Must deposit funds");
+        
+        require(usdcToken.transferFrom(msg.sender, address(this), totalAmount), "USDC transfer failed");
 
         uint256 fundId = _nextFundId++;
         
         funds[fundId] = ScholarshipFund({
             sponsor: sponsor,
-            totalAmount: msg.value,
+            totalAmount: totalAmount,
             releasedAmount: 0,
             trancheCount: trancheCount,
             trancheAmount: trancheAmount,
             paused: false
         });
 
-        emit FundCreated(fundId, sponsor, msg.value, trancheCount, trancheAmount);
+        emit FundCreated(fundId, sponsor, totalAmount, trancheCount, trancheAmount);
         return fundId;
     }
 
@@ -75,10 +73,18 @@ contract ScholarshipEscrowContract is IScholarshipEscrow, AccessControl, Reentra
         require(!hasReleased[fundId][studentHash][trancheIndex], "Tranche already released");
         require(fund.totalAmount - fund.releasedAmount >= fund.trancheAmount, "Insufficient funds");
 
-        // Verify the EIP-712 signature
         uint256 nonce = AttestationLib.computeNonce(fundId, studentHash, trancheIndex);
-        bytes32 structHash = AttestationLib.hashTrancheRelease(fundId, studentHash, trancheIndex, recipient, nonce);
-        address signer = AttestationLib.recoverSigner(DOMAIN_SEPARATOR, structHash, signature);
+        
+        // Construct the struct inside memory manually to avoid struct definition mismatch with library
+        AttestationLib.TrancheAttestation memory att = AttestationLib.TrancheAttestation({
+            fundId: fundId,
+            studentHash: studentHash,
+            trancheIndex: trancheIndex,
+            recipient: recipient,
+            nonce: nonce
+        });
+
+        address signer = AttestationLib.recoverSigner(att, DOMAIN_SEPARATOR, signature);
         
         require(signer == trustedAttestor, "Invalid or unauthorized attestation");
         require(hasRole(ATTESTOR_ROLE, signer), "Signer lacks attestor role");
@@ -86,8 +92,7 @@ contract ScholarshipEscrowContract is IScholarshipEscrow, AccessControl, Reentra
         hasReleased[fundId][studentHash][trancheIndex] = true;
         fund.releasedAmount += fund.trancheAmount;
 
-        (bool success, ) = recipient.call{value: fund.trancheAmount}("");
-        require(success, "ETH transfer failed");
+        require(usdcToken.transfer(recipient, fund.trancheAmount), "USDC transfer failed");
 
         emit TrancheReleased(fundId, studentHash, trancheIndex, fund.trancheAmount, recipient);
     }

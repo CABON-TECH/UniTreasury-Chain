@@ -1,26 +1,13 @@
---- cmd/api/main.go
-+++ cmd/api/main.go
-@@ -65,7 +65,6 @@
- 	// ── Contract bindings ──────────────────────────────────────────────────────────
- 	var feeRegistry *bindings.FeeRegistryContract
- 	var treasuryContract *bindings.TreasuryContract
--	var escrowContract *bindings.ScholarshipEscrowContract
- 	var txMgr *blockchain.TxManager
- 
- 	if ethClient != nil {
-@@ -71,9 +70,6 @@
- 		treasuryContract, _ = bindings.NewTreasuryContract(common.HexToAddress(cfg.TreasuryAddress), ethClient.Inner())
--		if cfg.EscrowAddress != "" {
--			escrowContract, _ = bindings.NewScholarshipEscrowContract(common.HexToAddress(cfg.EscrowAddress), ethClient.Inner())
--		}
- 		
- 		attestorKey, err := blockchain.ParsePrivateKey(cfg.AttestorPrivateKey)
-@@ -140,7 +136,8 @@
- 	students.POST("/:id/credits", auth.RequireRole(auth.RoleAdmin), func(c *gin.Context) {
- 		var req struct { Credits int `json:"credits"` }
- 		c.ShouldBindJSON(&req)
--		_ = studentRepo.UpdateCredits(c.Request.Context(), c.Param("id"), req.Credits)
-+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
-+		_ = studentRepo.UpdateCredits(c.Request.Context(), id, req.Credits)
- 		c.JSON(http.StatusOK, gin.H{"status": "credits updated"})
- 	})
+--- internal/auth/middleware.go
++++ internal/auth/middleware.go
+@@ -19,10 +19,13 @@
+ func Authenticate(jwtMgr *JWTManager) gin.HandlerFunc {
+ 	return func(c *gin.Context) {
+ 		tokenStr := extractToken(c.GetHeader("Authorization"))
++		if tokenStr == "" {
++			tokenStr, _ = c.Cookie("token")
++		}
+ 		if tokenStr == "" {
+ 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "missing token"})
+ 			return
+ 		}

@@ -1,0 +1,41 @@
+--- cmd/api/main.go
++++ cmd/api/main.go
+@@ -232,23 +232,30 @@
+ func devTokenHandler(jwtMgr *auth.JWTManager) gin.HandlerFunc {
+ 	return func(c *gin.Context) {
+ 		var req struct {
+-			Role      string `json:"role"`
+-			StudentID string `json:"student_id"`
++			Role      string `json:"role" form:"role"`
++			StudentID string `json:"student_id" form:"student_id"`
+ 		}
+-		if err := c.ShouldBindJSON(&req); err != nil {
+-			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
++		if err := c.ShouldBind(&req); err != nil {
++			c.String(http.StatusBadRequest, "Invalid input: "+err.Error())
+ 			return
+ 		}
+ 		role := auth.Role(req.Role)
+ 		if role != auth.RoleAdmin && role != auth.RoleFinance && role != auth.RoleStudent {
+-			c.JSON(http.StatusBadRequest, gin.H{"error": "role must be admin, finance, or student"})
++			c.String(http.StatusBadRequest, "role must be admin, finance, or student")
+ 			return
+ 		}
+ 		token, err := jwtMgr.Generate(1, role, req.StudentID)
+ 		if err != nil {
+-			c.JSON(http.StatusInternalServerError, gin.H{"error": "token generation failed"})
++			c.String(http.StatusInternalServerError, "token generation failed")
+ 			return
+ 		}
+ 		c.SetCookie("token", token, 3600*24, "/", "", false, true)
+-		c.JSON(http.StatusOK, gin.H{"token": token, "role": role})
++		
++		// If requested from a browser form, redirect to dashboard
++		if c.ContentType() == "application/x-www-form-urlencoded" {
++			c.Redirect(http.StatusFound, "/dashboard")
++			return
++		}
++		
++		c.JSON(http.StatusOK, gin.H{"token": token, "role": role})
+ 	}
+ }

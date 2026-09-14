@@ -31,15 +31,9 @@ deploy-sepolia:
 generate-bindings: contracts-build
 	@echo "Generating Go bindings from Foundry ABIs..."
 	@mkdir -p backend/internal/blockchain/bindings
-	abigen --abi contracts/out/TreasuryContract.sol/TreasuryContract.json \
-		--pkg bindings --type TreasuryContract \
-		--out backend/internal/blockchain/bindings/treasury.go
-	abigen --abi contracts/out/FeeRegistryContract.sol/FeeRegistryContract.json \
-		--pkg bindings --type FeeRegistryContract \
-		--out backend/internal/blockchain/bindings/feeregistry.go
-	abigen --abi contracts/out/ScholarshipEscrowContract.sol/ScholarshipEscrowContract.json \
-		--pkg bindings --type ScholarshipEscrowContract \
-		--out backend/internal/blockchain/bindings/escrow.go
+	jq '.abi' contracts/out/TreasuryContract.sol/TreasuryContract.json > treasury.abi && abigen --abi treasury.abi --pkg bindings --type TreasuryContract --out backend/internal/blockchain/bindings/treasury.go
+	jq '.abi' contracts/out/FeeRegistryContract.sol/FeeRegistryContract.json > feeregistry.abi && abigen --abi feeregistry.abi --pkg bindings --type FeeRegistryContract --out backend/internal/blockchain/bindings/feeregistry.go
+	jq '.abi' contracts/out/ScholarshipEscrowContract.sol/ScholarshipEscrowContract.json > escrow.abi && abigen --abi escrow.abi --pkg bindings --type ScholarshipEscrowContract --out backend/internal/blockchain/bindings/escrow.go
 
 # Backend
 backend-tidy:

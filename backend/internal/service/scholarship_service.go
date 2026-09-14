@@ -35,7 +35,7 @@ func NewScholarshipService(
 	log *zap.Logger,
 ) (*ScholarshipService, error) {
 	// Fetch DOMAIN_SEPARATOR from contract
-	domainSep, err := escrow.ScholarshipEscrowContractCaller.DomainSeparator(&bind.CallOpts{})
+	domainSep, err := escrow.ScholarshipEscrowContractCaller.DOMAINSEPARATOR(&bind.CallOpts{})
 	if err != nil {
 		return nil, fmt.Errorf("fetch domain separator: %w", err)
 	}

@@ -14,7 +14,7 @@ interface IScholarshipEscrow {
         bool paused;
     }
 
-    function createFund(address sponsor, uint256 trancheCount, uint256 trancheAmount) external payable returns (uint256);
+    function createFund(address sponsor, uint256 totalAmount, uint256 trancheCount, uint256 trancheAmount) external returns (uint256);
     function releaseTranche(uint256 fundId, bytes32 studentHash, uint256 trancheIndex, address recipient, bytes calldata attestation) external;
     function pauseFund(uint256 fundId) external;
     function unpauseFund(uint256 fundId) external;

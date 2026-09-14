@@ -1,0 +1,33 @@
+--- internal/handler/ui_handler.go
++++ internal/handler/ui_handler.go
+@@ -6,11 +6,14 @@
+ 	"github.com/gin-gonic/gin"
+ 
+ 	"github.com/cabon-tech/unitreasury-chain/backend/internal/auth"
++	"github.com/cabon-tech/unitreasury-chain/backend/internal/service"
+ )
+ 
+-type UIHandler struct {}
++type UIHandler struct {
++	studentSvc *service.StudentService
++}
+ 
+-func NewUIHandler() *UIHandler {
+-	return &UIHandler{}
++func NewUIHandler(studentSvc *service.StudentService) *UIHandler {
++	return &UIHandler{studentSvc: studentSvc}
+ }
+ 
+@@ -36,8 +39,12 @@
+ 		c.HTML(http.StatusOK, "finance.html", gin.H{"Role": claims.Role, "StudentID": claims.StudentID})
+ 	case auth.RoleStudent:
++		credits := 0
++		if st, err := h.studentSvc.GetByStudentID(c.Request.Context(), claims.StudentID); err == nil && st != nil {
++			credits = st.Credits
++		}
+-		c.HTML(http.StatusOK, "student.html", gin.H{"Role": claims.Role, "StudentID": claims.StudentID})
++		c.HTML(http.StatusOK, "student.html", gin.H{"Role": claims.Role, "StudentID": claims.StudentID, "Credits": credits})
+ 	default:
+ 		c.String(http.StatusInternalServerError, "Unknown role")
+ 	}
+ }

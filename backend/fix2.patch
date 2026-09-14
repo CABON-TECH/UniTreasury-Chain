@@ -1,0 +1,18 @@
+--- cmd/api/main.go
++++ cmd/api/main.go
+@@ -109,6 +109,16 @@
+ 	r.Use(gin.Recovery())
+ 	r.Use(requestLogger(log))
+ 
++	// Load HTML templates
++	r.LoadHTMLGlob("templates/*")
++
++	// UI Routes
++	ui := handler.NewUIHandler()
++	r.GET("/", ui.Index)
++	r.GET("/login", ui.Login)
++	r.GET("/logout", ui.Logout)
++	r.GET("/dashboard", auth.Authenticate(jwtMgr), ui.Dashboard)
++
+ 	r.GET("/health", func(c *gin.Context) {
+ 		dbStatus := "ok"

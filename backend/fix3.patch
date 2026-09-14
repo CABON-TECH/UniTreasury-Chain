@@ -1,0 +1,14 @@
+--- internal/auth/middleware.go
++++ internal/auth/middleware.go
+@@ -23,6 +23,11 @@
+ 		}
+ 
+ 		if tokenStr == "" {
++			if c.Request.Method == http.MethodGet && !strings.HasPrefix(c.Request.URL.Path, "/api") {
++				c.Redirect(http.StatusFound, "/login")
++				c.Abort()
++				return
++			}
+ 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "missing or malformed authorization header"})
+ 			return
+ 		}

@@ -54,6 +54,10 @@ func (h *UIHandler) Dashboard(c *gin.Context) {
 	case auth.RoleFinance:
 		c.HTML(http.StatusOK, "finance.html", gin.H{"Role": claims.Role, "StudentID": claims.StudentID})
 	case auth.RoleStudent:
+		if claims.StudentID == "" {
+			c.Redirect(http.StatusFound, "/logout")
+			return
+		}
 		credits := 0
 		if st, err := h.studentSvc.GetByStudentID(c.Request.Context(), claims.StudentID); err == nil && st != nil {
 			credits = st.Credits

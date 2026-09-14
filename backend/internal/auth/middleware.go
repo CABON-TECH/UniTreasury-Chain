@@ -22,6 +22,11 @@ func Authenticate(jwtMgr *JWTManager) gin.HandlerFunc {
 		}
 
 		if tokenStr == "" {
+			if c.Request.Method == http.MethodGet && !strings.HasPrefix(c.Request.URL.Path, "/api") {
+				c.Redirect(http.StatusFound, "/sign-in")
+				c.Abort()
+				return
+			}
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "missing or malformed authorization header"})
 			return
 		}
@@ -31,7 +36,7 @@ func Authenticate(jwtMgr *JWTManager) gin.HandlerFunc {
 			// For HTMX/Browser we could redirect to login instead of JSON error
 			// Let's do it if it's a GET request and not /api
 			if c.Request.Method == http.MethodGet && !strings.HasPrefix(c.Request.URL.Path, "/api") {
-				c.Redirect(http.StatusFound, "/login")
+				c.Redirect(http.StatusFound, "/sign-in")
 				c.Abort()
 				return
 			}

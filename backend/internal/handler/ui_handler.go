@@ -26,7 +26,7 @@ func (h *UIHandler) Index(c *gin.Context) {
 		c.Redirect(http.StatusFound, "/dashboard")
 		return
 	}
-	c.Redirect(http.StatusFound, "/login")
+	c.Redirect(http.StatusFound, "/sign-in")
 }
 
 func (h *UIHandler) Login(c *gin.Context) {
@@ -37,14 +37,14 @@ func (h *UIHandler) Login(c *gin.Context) {
 func (h *UIHandler) Logout(c *gin.Context) {
 	c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
 	c.SetCookie("token", "", -1, "/", "", false, true)
-	c.Redirect(http.StatusFound, "/login")
+	c.Redirect(http.StatusFound, "/sign-in")
 }
 
 func (h *UIHandler) Dashboard(c *gin.Context) {
 	c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
 	claims := auth.GetClaims(c)
 	if claims == nil {
-		c.Redirect(http.StatusFound, "/login")
+		c.Redirect(http.StatusFound, "/sign-in")
 		return
 	}
 

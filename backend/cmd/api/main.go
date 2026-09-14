@@ -115,7 +115,7 @@ func main() {
 	// UI Routes
 	ui := handler.NewUIHandler(studentSvc)
 	r.GET("/", ui.Index)
-	r.GET("/login", ui.Login)
+	r.GET("/sign-in", ui.Login)
 	r.GET("/logout", ui.Logout)
 	r.GET("/dashboard", auth.Authenticate(jwtMgr), ui.Dashboard)
 
@@ -232,6 +232,10 @@ func devTokenHandler(jwtMgr *auth.JWTManager) gin.HandlerFunc {
 		role := auth.Role(req.Role)
 		if role != auth.RoleAdmin && role != auth.RoleFinance && role != auth.RoleStudent {
 			c.String(http.StatusBadRequest, "role must be admin, finance, or student")
+			return
+		}
+		if role == auth.RoleStudent && req.StudentID == "" {
+			c.String(http.StatusBadRequest, "Student ID is required for student login")
 			return
 		}
 		token, err := jwtMgr.Generate(1, role, req.StudentID)

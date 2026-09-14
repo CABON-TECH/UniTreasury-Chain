@@ -86,7 +86,7 @@ func main() {
 	// ── Services ──────────────────────────────────────────────────────────────────
 	jwtMgr := auth.NewJWTManager(cfg.JWTSecret, cfg.JWTExpiryHours)
 	authSvc := service.NewAuthService(userRepo, jwtMgr, log)
-	_ = authSvc.BootstrapAdmin(ctx, "admin")
+	_ = authSvc.BootstrapDefaultUsers(ctx)
 	studentSvc := service.NewStudentService(studentRepo, log)
 
 	var feeSvc *service.FeeService

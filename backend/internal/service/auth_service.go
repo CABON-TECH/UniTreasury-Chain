@@ -25,31 +25,30 @@ func NewAuthService(repo domain.UserRepository, jwtMgr *auth.JWTManager, log *za
 	}
 }
 
-// BootstrapAdmin ensures an admin user exists.
-func (s *AuthService) BootstrapAdmin(ctx context.Context, defaultPass string) error {
-	existing, err := s.repo.GetByUsername(ctx, "admin")
-	if err != nil {
-		return err
-	}
-	if existing != nil {
-		return nil // already exists
+// BootstrapDefaultUsers ensures admin, finance, and a test student user exist.
+func (s *AuthService) BootstrapDefaultUsers(ctx context.Context) error {
+	users := []domain.User{
+		{Username: "admin", Role: string(auth.RoleAdmin)},
+		{Username: "finance", Role: string(auth.RoleFinance)},
+		{Username: "student1", Role: string(auth.RoleStudent), StudentID: "CS/001/2021"},
 	}
 
-	hash, err := bcrypt.GenerateFromPassword([]byte(defaultPass), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
+	hash, _ := bcrypt.GenerateFromPassword([]byte("password"), bcrypt.DefaultCost)
+	passStr := string(hash)
 
-	admin := &domain.User{
-		Username:     "admin",
-		PasswordHash: string(hash),
-		Role:         string(auth.RoleAdmin),
+	for _, u := range users {
+		existing, err := s.repo.GetByUsername(ctx, u.Username)
+		if err != nil {
+			return err
+		}
+		if existing == nil {
+			u.PasswordHash = passStr
+			if err := s.repo.Create(ctx, &u); err != nil {
+				return err
+			}
+			s.log.Info("bootstrapped user", zap.String("username", u.Username))
+		}
 	}
-
-	if err := s.repo.Create(ctx, admin); err != nil {
-		return err
-	}
-	s.log.Info("bootstrapped default admin user")
 	return nil
 }
 

@@ -3,9 +3,11 @@ package postgres
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/cabon-tech/unitreasury-chain/backend/internal/domain"
@@ -52,6 +54,9 @@ func (r *AuditRepo) GetLastIndexedBlock(ctx context.Context, contract string) (u
 	var block uint64
 	err := r.pool.QueryRow(ctx, q, contract).Scan(&block)
 	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return 0, nil
+		}
 		return 0, fmt.Errorf("audit_repo: get checkpoint for %s: %w", contract, err)
 	}
 	return block, nil

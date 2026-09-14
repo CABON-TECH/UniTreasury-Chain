@@ -54,6 +54,7 @@ func main() {
 	studentRepo := postgres.NewStudentRepo(pool)
 	paymentRepo := postgres.NewPaymentRepo(pool)
 	proposalRepo := postgres.NewProposalRepo(pool)
+	userRepo := postgres.NewUserRepo(pool)
 	_ = postgres.NewAuditRepo(pool) // used by event indexer
 
 	// ── Blockchain client ─────────────────────────────────────────────────────────
@@ -84,6 +85,8 @@ func main() {
 
 	// ── Services ──────────────────────────────────────────────────────────────────
 	jwtMgr := auth.NewJWTManager(cfg.JWTSecret, cfg.JWTExpiryHours)
+	authSvc := service.NewAuthService(userRepo, jwtMgr, log)
+	_ = authSvc.BootstrapAdmin(ctx, "admin")
 	studentSvc := service.NewStudentService(studentRepo, log)
 
 	var feeSvc *service.FeeService
@@ -189,7 +192,7 @@ func main() {
 	audit.GET("/events", placeholder("list audit events — available directly in DB for now"))
 
 	// Auth
-	r.POST("/api/v1/auth/token", devTokenHandler(jwtMgr))
+	r.POST("/api/v1/auth/login", loginHandler(authSvc))
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,
@@ -219,39 +222,30 @@ func main() {
 	log.Info("server stopped")
 }
 
-func devTokenHandler(jwtMgr *auth.JWTManager) gin.HandlerFunc {
+func loginHandler(authSvc *service.AuthService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req struct {
-			Role      string `json:"role" form:"role"`
-			StudentID string `json:"student_id" form:"student_id"`
+			Username string `json:"username" form:"username"`
+			Password string `json:"password" form:"password"`
 		}
 		if err := c.ShouldBind(&req); err != nil {
 			c.String(http.StatusBadRequest, "Invalid input: "+err.Error())
 			return
 		}
-		role := auth.Role(req.Role)
-		if role != auth.RoleAdmin && role != auth.RoleFinance && role != auth.RoleStudent {
-			c.String(http.StatusBadRequest, "role must be admin, finance, or student")
-			return
-		}
-		if role == auth.RoleStudent && req.StudentID == "" {
-			c.String(http.StatusBadRequest, "Student ID is required for student login")
-			return
-		}
-		token, err := jwtMgr.Generate(1, role, req.StudentID)
+		
+		token, err := authSvc.Login(c.Request.Context(), req.Username, req.Password)
 		if err != nil {
-			c.String(http.StatusInternalServerError, "token generation failed")
+			c.String(http.StatusUnauthorized, "invalid credentials")
 			return
 		}
 		c.SetCookie("token", token, 3600*24, "/", "", false, true)
 		
-		// If requested from a browser form, redirect to dashboard
 		if c.ContentType() == "application/x-www-form-urlencoded" {
 			c.Redirect(http.StatusFound, "/dashboard")
 			return
 		}
 		
-		c.JSON(http.StatusOK, gin.H{"token": token, "role": role})
+		c.JSON(http.StatusOK, gin.H{"token": token})
 	}
 }
 

@@ -172,7 +172,7 @@ contract FeeRegistryContractTest is Test {
         registry.recordPayment(STUDENT_HASH, RECEIPT_1, TUITION, SEMESTER_1, 1);
 
         vm.expectEmit(false, false, false, true);
-        emit IFeeRegistry.ReconciliationCheckpoint(1, TUITION, block.number);
+        emit FeeRegistryContract.ReconciliationCheckpoint(1, TUITION, block.number);
 
         vm.prank(recorder);
         registry.checkpoint();

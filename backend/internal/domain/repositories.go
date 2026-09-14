@@ -5,7 +5,6 @@ import "context"
 // ── Student Repository ────────────────────────────────────────────────────────
 
 // StudentRepository is the port for student persistence.
-// The Postgres adapter implements this in internal/repository/postgres.
 type StudentRepository interface {
 	Create(ctx context.Context, s *Student) error
 	GetByID(ctx context.Context, id int64) (*Student, error)
@@ -13,6 +12,7 @@ type StudentRepository interface {
 	GetByHash(ctx context.Context, hash string) (*Student, error)
 	List(ctx context.Context, offset, limit int) ([]*Student, int64, error)
 	UpdateCredits(ctx context.Context, id int64, credits int) error
+	UpdateCreditsByHash(ctx context.Context, hash string, credits int) error
 }
 
 // ── Payment Repository ────────────────────────────────────────────────────────
@@ -36,9 +36,9 @@ type ProposalRepository interface {
 	Create(ctx context.Context, p *WithdrawalProposal) error
 	GetByID(ctx context.Context, id int64) (*WithdrawalProposal, error)
 	GetByOnChainID(ctx context.Context, onChainID uint64) (*WithdrawalProposal, error)
-	List(ctx context.Context, status *ProposalStatus, offset, limit int) ([]*WithdrawalProposal, int64, error)
-	UpdateStatus(ctx context.Context, id int64, status ProposalStatus) error
-	UpdateApprovalCount(ctx context.Context, id int64, count int) error
+	List(ctx context.Context, offset, limit int) ([]*WithdrawalProposal, int64, error)
+	UpdateStatus(ctx context.Context, id int64, status ProposalStatus, txHash string) error
+	UpdateApprovalCount(ctx context.Context, onChainID uint64, count int) error
 }
 
 // ── Scholarship Repository ─────────────────────────────────────────────────────
@@ -46,13 +46,13 @@ type ProposalRepository interface {
 // ScholarshipRepository is the port for scholarship fund and tranche persistence.
 type ScholarshipRepository interface {
 	CreateFund(ctx context.Context, f *ScholarshipFund) error
-	GetFund(ctx context.Context, id int64) (*ScholarshipFund, error)
+	GetFundByID(ctx context.Context, id int64) (*ScholarshipFund, error)
 	GetFundByOnChainID(ctx context.Context, onChainID uint64) (*ScholarshipFund, error)
-	ListFunds(ctx context.Context, offset, limit int) ([]*ScholarshipFund, int64, error)
-	UpdateFundReleased(ctx context.Context, id int64, releasedAmount uint64) error
+	ListActiveFunds(ctx context.Context) ([]*ScholarshipFund, error)
+	UpdateFundReleasedAmount(ctx context.Context, fundID int64, releasedAmount uint64) error
 
 	CreateTrancheRelease(ctx context.Context, t *TrancheRelease) error
-	ListTrancheReleases(ctx context.Context, fundID int64) ([]*TrancheRelease, error)
+	HasReleased(ctx context.Context, fundID int64, studentHash string, trancheIndex int) (bool, error)
 }
 
 // ── Audit Repository ──────────────────────────────────────────────────────────

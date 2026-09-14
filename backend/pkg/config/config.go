@@ -24,9 +24,9 @@ type Config struct {
 	ChainID int64
 
 	// Contracts
-	TreasuryAddress  string
-	FeeRegistryAddress string
-	EscrowAddress    string
+	TreasuryAddress          string
+	FeeRegistryAddress       string
+	EscrowAddress            string
 
 	// Attestor
 	AttestorPrivateKey string

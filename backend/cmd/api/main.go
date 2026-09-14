@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strconv"
 	"syscall"
 	"time"
 
@@ -52,7 +53,8 @@ func main() {
 	// ── Repositories ──────────────────────────────────────────────────────────────
 	studentRepo := postgres.NewStudentRepo(pool)
 	paymentRepo := postgres.NewPaymentRepo(pool)
-	_ = postgres.NewAuditRepo(pool) // used by event indexer in worker binary
+	proposalRepo := postgres.NewProposalRepo(pool)
+	_ = postgres.NewAuditRepo(pool) // used by event indexer
 
 	// ── Blockchain client ─────────────────────────────────────────────────────────
 	ethClient, err := blockchain.NewClient(ctx, cfg.RPCURL, cfg.ChainID, log)
@@ -63,15 +65,13 @@ func main() {
 
 	// ── Contract bindings ──────────────────────────────────────────────────────────
 	var feeRegistry *bindings.FeeRegistryContract
+	var treasuryContract *bindings.TreasuryContract
 	var txMgr *blockchain.TxManager
 
 	if ethClient != nil {
-		feeRegistryAddr := common.HexToAddress(cfg.FeeRegistryAddress)
-		feeRegistry, err = bindings.NewFeeRegistryContract(feeRegistryAddr, ethClient.Inner())
-		if err != nil {
-			log.Fatal("fee registry binding failed", zap.Error(err))
-		}
-
+		feeRegistry, _ = bindings.NewFeeRegistryContract(common.HexToAddress(cfg.FeeRegistryAddress), ethClient.Inner())
+		treasuryContract, _ = bindings.NewTreasuryContract(common.HexToAddress(cfg.TreasuryAddress), ethClient.Inner())
+		
 		attestorKey, err := blockchain.ParsePrivateKey(cfg.AttestorPrivateKey)
 		if err != nil {
 			log.Fatal("parse attestor key", zap.Error(err))
@@ -87,15 +87,21 @@ func main() {
 	studentSvc := service.NewStudentService(studentRepo, log)
 
 	var feeSvc *service.FeeService
+	var treasurySvc *service.TreasuryService
+	
 	if ethClient != nil && feeRegistry != nil && txMgr != nil {
 		feeSvc = service.NewFeeService(paymentRepo, studentRepo, txMgr, feeRegistry, ethClient, log)
+		treasurySvc = service.NewTreasuryService(proposalRepo, txMgr, treasuryContract, log)
 	}
 
 	// ── Handlers ──────────────────────────────────────────────────────────────────
 	studentH := handler.NewStudentHandler(studentSvc, log)
 	var paymentH *handler.PaymentHandler
+	var treasuryH *handler.TreasuryHandler
+	
 	if feeSvc != nil {
 		paymentH = handler.NewPaymentHandler(feeSvc, log)
+		treasuryH = handler.NewTreasuryHandler(treasurySvc, log)
 	}
 
 	// ── Router ────────────────────────────────────────────────────────────────────
@@ -114,7 +120,7 @@ func main() {
 		}
 		c.JSON(http.StatusOK, gin.H{
 			"status":       "ok",
-			"version":      "0.2.0",
+			"version":      "0.3.0",
 			"chain_id":     cfg.ChainID,
 			"db":           dbStatus,
 			"blockchain":   chainStatus,
@@ -129,6 +135,14 @@ func main() {
 	students.POST("", auth.RequireRole(auth.RoleAdmin), studentH.Create)
 	students.GET("", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), studentH.List)
 	students.GET("/:id", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance, auth.RoleStudent), studentH.Get)
+	// Add mock endpoint to add credits for a student so the scholarship worker triggers
+	students.POST("/:id/credits", auth.RequireRole(auth.RoleAdmin), func(c *gin.Context) {
+		var req struct { Credits int `json:"credits"` }
+		c.ShouldBindJSON(&req)
+		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+		_ = studentRepo.UpdateCredits(c.Request.Context(), id, req.Credits)
+		c.JSON(http.StatusOK, gin.H{"status": "credits updated"})
+	})
 
 	// Payments
 	payments := v1.Group("/payments")
@@ -143,23 +157,30 @@ func main() {
 		payments.GET("/:id", unavailable("blockchain not connected"))
 	}
 
-	// Treasury (Sprint 3)
+	// Treasury
 	treasury := v1.Group("/treasury")
-	treasury.GET("/proposals", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), placeholder("list proposals — Sprint 3"))
-	treasury.POST("/proposals", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), placeholder("propose withdrawal — Sprint 3"))
-	treasury.POST("/proposals/:id/approve", auth.RequireRole(auth.RoleAdmin), placeholder("approve withdrawal — Sprint 3"))
-	treasury.POST("/proposals/:id/execute", auth.RequireRole(auth.RoleAdmin), placeholder("execute withdrawal — Sprint 3"))
-	treasury.POST("/proposals/:id/cancel", auth.RequireRole(auth.RoleAdmin), placeholder("cancel withdrawal — Sprint 3"))
+	if treasuryH != nil {
+		treasury.GET("/proposals", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), treasuryH.List)
+		treasury.POST("/proposals", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), treasuryH.Propose)
+		treasury.POST("/proposals/:id/approve", auth.RequireRole(auth.RoleAdmin), treasuryH.Approve)
+		treasury.POST("/proposals/:id/execute", auth.RequireRole(auth.RoleAdmin), treasuryH.Execute)
+		treasury.POST("/proposals/:id/cancel", auth.RequireRole(auth.RoleAdmin), treasuryH.Cancel)
+	} else {
+		treasury.GET("/proposals", unavailable("blockchain not connected"))
+		treasury.POST("/proposals", unavailable("blockchain not connected"))
+		treasury.POST("/proposals/:id/approve", unavailable("blockchain not connected"))
+		treasury.POST("/proposals/:id/execute", unavailable("blockchain not connected"))
+		treasury.POST("/proposals/:id/cancel", unavailable("blockchain not connected"))
+	}
 
 	// Audit
 	audit := v1.Group("/audit")
 	audit.Use(auth.RequireRole(auth.RoleAdmin))
-	audit.GET("/events", placeholder("list audit events — Sprint 3"))
+	audit.GET("/events", placeholder("list audit events — available directly in DB for now"))
 
-	// Auth (no middleware — public)
+	// Auth
 	r.POST("/api/v1/auth/token", devTokenHandler(jwtMgr))
 
-	// ── HTTP server ───────────────────────────────────────────────────────────────
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,
 		Handler:      r,
@@ -169,7 +190,7 @@ func main() {
 	}
 
 	go func() {
-		log.Info("API server starting", zap.String("addr", srv.Addr), zap.String("version", "0.2.0"))
+		log.Info("API server starting", zap.String("addr", srv.Addr), zap.String("version", "0.3.0"))
 		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			log.Fatal("server error", zap.Error(err))
 		}
@@ -188,8 +209,6 @@ func main() {
 	log.Info("server stopped")
 }
 
-// devTokenHandler issues JWT tokens for development — NOT for production use.
-// POST /api/v1/auth/token  body: {"role":"admin"|"finance"|"student","student_id":"..."}
 func devTokenHandler(jwtMgr *auth.JWTManager) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req struct {

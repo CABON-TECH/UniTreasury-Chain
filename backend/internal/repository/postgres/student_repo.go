@@ -108,3 +108,9 @@ func (r *StudentRepo) scanStudent(row pgx.Row) (*domain.Student, error) {
 	}
 	return s, nil
 }
+
+func (r *StudentRepo) UpdateCreditsByHash(ctx context.Context, hash string, credits int) error {
+	const q = `UPDATE students SET credits = $1, updated_at = NOW() WHERE hash = $2`
+	_, err := r.pool.Exec(ctx, q, credits, hash)
+	return err
+}

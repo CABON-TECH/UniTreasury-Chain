@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS indexer_checkpoints;
+DROP TABLE IF EXISTS audit_events;
+DROP TABLE IF EXISTS tranche_releases;
+DROP TABLE IF EXISTS scholarship_funds;
+DROP TABLE IF EXISTS withdrawal_proposals;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS fee_structures;
+DROP TABLE IF EXISTS students;
+DROP TYPE IF EXISTS proposal_status;
+DROP TYPE IF EXISTS payment_status;

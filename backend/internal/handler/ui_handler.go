@@ -2,6 +2,8 @@ package handler
 
 import (
 	"net/http"
+	"os"
+	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
 
@@ -66,4 +68,16 @@ func (h *UIHandler) Dashboard(c *gin.Context) {
 	default:
 		c.String(http.StatusInternalServerError, "Unknown role")
 	}
+}
+
+func (h *UIHandler) Treasury(c *gin.Context) {
+	c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
+	// Read ABI from disk
+	treasuryAbi, _ := ioutil.ReadFile("../contracts/out/TreasuryContract.sol/TreasuryContract.json")
+	
+	c.HTML(http.StatusOK, "treasury.html", gin.H{
+		"Role": "admin", // hardcoded for demo
+		"TreasuryAddress": os.Getenv("TREASURY_CONTRACT_ADDRESS"),
+		"TreasuryABI": string(treasuryAbi),
+	})
 }

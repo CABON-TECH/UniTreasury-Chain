@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Sig Treasury | UniTreasury Chain</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
+    <!-- Navbar -->
+    <nav class="bg-blue-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <span class="font-bold text-xl tracking-tight">UniTreasury Chain - Multi-Sig</span>
+                </div>
+                <div>
+                    <button id="connectWalletBtn" class="bg-white text-blue-600 font-bold py-2 px-4 rounded shadow">Connect MetaMask</button>
+                    <span id="walletAddress" class="hidden font-mono bg-blue-700 px-3 py-1 rounded-full text-sm"></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 gap-6">
+            <!-- Propose Form -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Propose Large Withdrawal</h2>
+                <div class="flex space-x-4 items-end">
+                    <div class="flex-grow">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Recipient Address</label>
+                        <input type="text" id="recipientAddr" class="block w-full border border-gray-300 rounded-md p-2" placeholder="0x...">
+                    </div>
+                    <div class="flex-grow">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Amount (USDC)</label>
+                        <input type="number" id="usdcAmount" class="block w-full border border-gray-300 rounded-md p-2" placeholder="1000">
+                    </div>
+                    <button id="proposeBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-md h-[42px]">
+                        Propose
+                    </button>
+                </div>
+                <p id="proposeStatus" class="mt-2 text-sm text-gray-600"></p>
+            </div>
+
+            <!-- Proposals Table -->
+            <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Pending Proposals</h2>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recipient</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Approvals</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="proposalsTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Hidden Data -->
+    <div id="contractData" style="display:none;" data-address="{{.TreasuryAddress}}" data-abi="{{.TreasuryABI}}"></div>
+
+    <script>
+        const connectWalletBtn = document.getElementById('connectWalletBtn');
+        const walletAddressSpan = document.getElementById('walletAddress');
+        const proposeBtn = document.getElementById('proposeBtn');
+        const proposalsTableBody = document.getElementById('proposalsTableBody');
+        const proposeStatus = document.getElementById('proposeStatus');
+
+        let provider;
+        let signer;
+        let contract;
+
+        const contractData = document.getElementById('contractData');
+        const address = contractData.getAttribute('data-address');
+        const rawAbiObj = JSON.parse(contractData.getAttribute('data-abi'));
+        const abi = rawAbiObj.abi;
+
+        async function init() {
+            if (window.ethereum) {
+                provider = new ethers.BrowserProvider(window.ethereum);
+                
+                // Check if already connected
+                const accounts = await provider.listAccounts();
+                if (accounts.length > 0) {
+                    await connectWallet();
+                }
+            } else {
+                alert("Please install MetaMask extension in your browser!");
+            }
+        }
+
+        async function connectWallet() {
+            try {
+                const accounts = await provider.send("eth_requestAccounts", []);
+                signer = await provider.getSigner();
+                const addressStr = await signer.getAddress();
+                
+                walletAddressSpan.innerText = addressStr.substring(0, 6) + "..." + addressStr.substring(38);
+                walletAddressSpan.classList.remove('hidden');
+                connectWalletBtn.classList.add('hidden');
+
+                contract = new ethers.Contract(address, abi, signer);
+                
+                loadProposals();
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function loadProposals() {
+            if (!contract) return;
+            proposalsTableBody.innerHTML = '';
+            
+            try {
+                for (let i = 0; i < 10; i++) {
+                    try {
+                        const proposal = await contract.getProposal(i);
+                        if (proposal.amount > 0) {
+                            const tr = document.createElement('tr');
+                            
+                            const approvals = proposal.approvals;
+                            const required = await contract.requiredApprovals();
+                            const executed = proposal.executed;
+                            
+                            let actionHtml = '';
+                            if (executed) {
+                                actionHtml = `<span class="text-green-600 font-bold">Executed</span>`;
+                            } else {
+                                actionHtml = `<button onclick="approveProposal(${i})" class="bg-blue-100 text-blue-700 px-3 py-1 rounded mr-2 hover:bg-blue-200 transition">Approve</button>`;
+                                if (approvals >= required) {
+                                    actionHtml += `<button onclick="executeProposal(${i})" class="bg-green-100 text-green-700 px-3 py-1 rounded hover:bg-green-200 transition">Execute</button>`;
+                                }
+                            }
+
+                            tr.innerHTML = `
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${i}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-mono">${proposal.recipient}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${ethers.formatUnits(proposal.amount, 18)} USDC</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${approvals} / ${required}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${actionHtml}</td>
+                            `;
+                            proposalsTableBody.appendChild(tr);
+                        }
+                    } catch (e) {
+                        break; // Stop at first non-existent proposal to save RPC calls
+                    }
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        async function approveProposal(id) {
+            try {
+                const tx = await contract.approveWithdrawal(id);
+                await tx.wait();
+                loadProposals();
+                alert("Approved successfully!");
+            } catch (err) {
+                console.error(err);
+                alert("Approval failed: " + err.message);
+            }
+        }
+
+        async function executeProposal(id) {
+            try {
+                const tx = await contract.executeWithdrawal(id);
+                await tx.wait();
+                loadProposals();
+                alert("Executed successfully!");
+            } catch (err) {
+                console.error(err);
+                alert("Execution failed: " + (err.reason || err.message));
+            }
+        }
+
+        window.approveProposal = approveProposal;
+        window.executeProposal = executeProposal;
+
+        proposeBtn.addEventListener('click', async () => {
+            if (!contract) return;
+            const recip = document.getElementById('recipientAddr').value;
+            const amtStr = document.getElementById('usdcAmount').value;
+            
+            if (!recip || !amtStr) return;
+            
+            try {
+                proposeStatus.innerText = "Confirming transaction in MetaMask...";
+                const amt = ethers.parseUnits(amtStr, 18);
+                const tx = await contract.proposeWithdrawal(recip, amt, "Dashboard Proposal");
+                proposeStatus.innerText = "Waiting for confirmation...";
+                await tx.wait();
+                proposeStatus.innerText = "Proposal created!";
+                document.getElementById('recipientAddr').value = '';
+                document.getElementById('usdcAmount').value = '';
+                loadProposals();
+            } catch (err) {
+                console.error(err);
+                proposeStatus.innerText = "Error: " + (err.reason || err.message);
+            }
+        });
+
+        connectWalletBtn.addEventListener('click', connectWallet);
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>

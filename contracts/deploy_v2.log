@@ -10,13 +10,13 @@ Script ran successfully.
 
 Chain 31337
 
-Estimated max fee per gas: 1.760119135 gwei
-Estimated base fee per gas: 0.880059567 gwei
+Estimated max fee per gas: 2.000000001 gwei
+Estimated base fee per gas: 1 gwei
 Estimated max priority fee per gas: 0.000000001 gwei
 
 Estimated total gas used for script: 2476219
 
-Estimated amount required: 0.004358440444350565 ETH
+Estimated amount required: 0.004952438002476219 ETH
 
 ==========================
 

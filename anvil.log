@@ -62,7 +62,7 @@ Gas Limit
 Genesis Timestamp
 ==================
 
-1789422299
+1789422376
 
 Genesis Number
 ==================
@@ -104,12 +104,12 @@ anvil_metadata
 eth_getBlockByHash
 anvil_nodeInfo
 anvil_metadata
-eth_getTransactionCount
 eth_getCode
+eth_getBalance
 eth_getAccountInfo
 eth_getAccount
 eth_getCode
-eth_getBalance
+eth_getTransactionCount
 eth_getAccountInfo
 eth_getAccount
 eth_getCode
@@ -151,20 +151,23 @@ anvil_metadata
 eth_feeHistory
 eth_feeHistory
 eth_sendRawTransaction
+eth_sendRawTransaction
+eth_sendRawTransaction
+eth_sendRawTransaction
+eth_sendRawTransaction
+eth_sendRawTransaction
+eth_getTransactionReceipt
+eth_getTransactionReceipt
+eth_getTransactionReceipt
+eth_getTransactionReceipt
+eth_getTransactionReceipt
+eth_getTransactionReceipt
+eth_blockNumber
+eth_getTransactionReceipt
 
     Transaction: 0x1c43e3af6b0a8a3c05f241983d147bdff7cdc1e98b4e2d16ff80a6cf6bc5e622
     Contract created: 0x5FbDB2315678afecb367f032d93F642f64180aa3
     Gas used: 607148
-
-    Block Number: 1
-    Block Hash: 0xe7147cee12b70b6552cad7f248cf4910d78a622a3092e4380f39f057f095fffc
-    Block Time: "Mon, 14 Sep 2026 21:45:03 +0000"
-
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
 
     Transaction: 0x48b79f290f30836c299ebffd7cd810e514b61c84255bdbdba428e6849b5bbba3
     Gas used: 70703
@@ -172,6 +175,7 @@ eth_sendRawTransaction
     Transaction: 0xd3c9c1c4ea9ed5ea16784e7709019b1699af2c6c543af8217b3dbea87e22ebe1
     Contract created: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
     Gas used: 1549287
+eth_getBlockByNumber
 
     Transaction: 0x54ec490243ef0e9df7618331785e051a0ae4aabe7da71e5bb5999408fac4c142
     Contract created: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
@@ -184,19 +188,12 @@ eth_sendRawTransaction
     Transaction: 0xaad0dc5cb94472326d387b2cf009f3d557b4a51a573cd386a60341b95abc65d0
     Contract created: 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707
     Gas used: 248622
+eth_getTransactionReceipt
 
-    Block Number: 2
-    Block Hash: 0x1cf10a8eef78e6948d4d49b6c3ef022da4d61f628c6acabbad44a9fcbaca8af0
-    Block Time: "Mon, 14 Sep 2026 21:45:03 +0000"
+    Block Number: 1
+    Block Hash: 0xd07a880c91a85f5273432fc30812b79876d2484f0666189fe72a4abb3d34c58b
+    Block Time: "Mon, 14 Sep 2026 21:46:21 +0000"
 
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
 eth_getTransactionReceipt
 eth_getTransactionReceipt
 eth_getTransactionReceipt
@@ -235,30 +232,30 @@ anvil_metadata
 eth_getBlockByHash
 anvil_nodeInfo
 anvil_metadata
-eth_getBalance
-eth_getTransactionCount
-eth_getCode
 eth_getAccountInfo
 eth_getAccount
 eth_getCode
 eth_getCode
-eth_getTransactionCount
 eth_getBalance
 eth_getTransactionCount
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getBalance
-eth_getTransactionCount
-eth_getBalance
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getBalance
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getTransactionCount
-eth_getBalance
-eth_getTransactionCount
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getBalance
-eth_getTransactionCount
+eth_getAccountInfo
+eth_getAccount
+eth_getCode
 anvil_nodeInfo
 anvil_metadata
 eth_getBlockByHash
@@ -271,19 +268,21 @@ eth_feeHistory
 eth_feeHistory
 eth_sendRawTransaction
 eth_getTransactionReceipt
+eth_getTransactionReceipt
 eth_blockNumber
 
-    Transaction: 0xaa2eef2ed0f07a4ed6aa64fad9795d70ab3abac3813206b5af9c679cb477b75c
+    Transaction: 0xac4ce675d3226c466e7f6320a455b4a34a7290593132bce23b9be08612c83c1f
     Contract created: 0x0165878A594ca255338adfa4d48449f69242Eb8F
     Gas used: 1904784
 
-    Block Number: 3
-    Block Hash: 0x060671e2b1ea34b40128da7f894d8e8c3c13e2d12c5a86608a49b6e02c1f523f
-    Block Time: "Mon, 14 Sep 2026 21:45:06 +0000"
+    Block Number: 2
+    Block Hash: 0x656ae50f0aeef94c3ce7d13568849d0c7c7b9a75090ea7c13eae939d5cc8d1ca
+    Block Time: "Mon, 14 Sep 2026 21:46:23 +0000"
 
+eth_getBlockByNumber
+eth_getBlockByNumber
 eth_getTransactionReceipt
-eth_getBlockByNumber
-eth_getBlockByNumber
+eth_blockNumber
 eth_chainId
 eth_getTransactionCount
 eth_feeHistory
@@ -292,17 +291,20 @@ eth_sendRawTransaction
 eth_getTransactionReceipt
 eth_getTransactionReceipt
 eth_blockNumber
-eth_blockNumber
-
+eth_getTransactionReceipt
 eth_getBlockByNumber
-    Transaction: 0xf15faeb1854b43a50f7e3e1c6e50a99071c0842a6fde60104a129e91984962b4
+eth_getBlockByNumber
+
+    Transaction: 0x6c5a470913efbb75c75e62c85caa7af9b926d6bac8d1e62ff22c18546913a751
     Gas used: 37801
 
-    Block Number: 4
-    Block Hash: 0x62dc14b28a827b13e6ec3019ff71d3b49a627934f842378ffe526de6059a660e
-    Block Time: "Mon, 14 Sep 2026 21:45:06 +0000"
+    Block Number: 3
+    Block Hash: 0x870e1771dd173ae3b28f959b5751f426107875b1c3961768e0a111cf3f0f3e1a
+    Block Time: "Mon, 14 Sep 2026 21:46:23 +0000"
 
+eth_blockNumber
 eth_getTransactionReceipt
+eth_getBlockByNumber
 eth_chainId
 eth_call
 eth_getTransactionCount
@@ -312,19 +314,18 @@ eth_sendRawTransaction
 eth_getTransactionReceipt
 eth_getTransactionReceipt
 eth_blockNumber
-eth_getBlockByNumber
 eth_getTransactionReceipt
 eth_getBlockByNumber
+eth_getBlockByNumber
 
-    Transaction: 0x924384544b509e6e3c8663f56243efa66874ee593ce7ba9aea5f097f01c52fef
+    Transaction: 0x25246c1b89efe236d88cbb22650cb6c1851b0a99c946dbe2b79ff1e8becdcdb8
     Gas used: 52226
 
-    Block Number: 5
-    Block Hash: 0xc29077086dd3c5b8afdeb4d564217b432f31430aaafb8a33b0f82e8622b33eab
-    Block Time: "Mon, 14 Sep 2026 21:45:06 +0000"
+    Block Number: 4
+    Block Hash: 0x51e7d8e010e62342b56f7e129bf7933805497c008daed634f2c783f91244356c
+    Block Time: "Mon, 14 Sep 2026 21:46:24 +0000"
 
 eth_getTransactionReceipt
-eth_blockNumber
 eth_chainId
 anvil_nodeInfo
 anvil_metadata

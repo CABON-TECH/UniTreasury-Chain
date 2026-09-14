@@ -121,6 +121,7 @@ func main() {
 	r.GET("/sign-in", ui.Login)
 	r.GET("/logout", ui.Logout)
 	r.GET("/dashboard", auth.Authenticate(jwtMgr), ui.Dashboard)
+	r.GET("/treasury", ui.Treasury)
 
 	r.GET("/health", func(c *gin.Context) {
 		dbStatus := "ok"

@@ -22,8 +22,10 @@ type Student struct {
 	Program   string    `json:"program"`
 	Year      int       `json:"year"`
 	Credits   int       `json:"credits"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	GPA         float64   `json:"gpa"`
+	KYCVerified bool      `json:"kyc_verified"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
 }
 
 // ── Fee Structures ────────────────────────────────────────────────────────────
@@ -142,4 +144,14 @@ type AuditEvent struct {
 	LogIndex    uint      `json:"log_index"`
 	Payload     []byte    `json:"payload"`      // JSON-encoded event args (JSONB in PG)
 	IndexedAt   time.Time `json:"indexed_at"`
+}
+
+// TrancheReportRow is used for PDF reporting.
+type TrancheReportRow struct {
+	StudentName  string
+	StudentGPA   float64
+	TrancheIndex int
+	Amount       uint64
+	TxHash       string
+	ReleasedAt   time.Time
 }

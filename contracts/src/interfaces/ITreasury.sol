@@ -12,6 +12,11 @@ interface ITreasury {
     event DailyLimitUpdated(uint256 oldLimit, uint256 newLimit);
     event RequiredApprovalsUpdated(uint256 oldRequired, uint256 newRequired);
 
+    event SignerChangeProposed(uint256 indexed proposalId, address indexed proposer, address target, address replacement, uint8 changeType);
+    event SignerChangeApproved(uint256 indexed proposalId, address indexed approver, uint256 approvalCount);
+    event SignerChangeExecuted(uint256 indexed proposalId, address target, address replacement, uint8 changeType);
+
+
     error Treasury__Frozen();
     error Treasury__InsufficientBalance(uint256 requested, uint256 available);
     error Treasury__DailyLimitExceeded(uint256 requested, uint256 remainingToday);
@@ -24,6 +29,19 @@ interface ITreasury {
     error Treasury__NotAuthorized();
 
     enum ProposalStatus { Pending, Executed, Cancelled }
+
+    enum ChangeType { Add, Remove, Replace }
+
+    struct SignerChangeProposal {
+        uint256 id;
+        address proposer;
+        address targetSigner;
+        address newSigner;
+        ChangeType changeType;
+        ProposalStatus status;
+        uint256 approvalCount;
+        uint256 createdAt;
+    }
 
     struct WithdrawalProposal {
         uint256 id;
@@ -50,4 +68,12 @@ interface ITreasury {
     function getBalance() external view returns (uint256);
     function isFrozen() external view returns (bool);
     function getDailyWithdrawnAmount() external view returns (uint256);
+
+    function proposeSignerChange(address target, address replacement, uint8 changeType) external returns (uint256 proposalId);
+    function approveSignerChange(uint256 proposalId) external;
+    function executeSignerChange(uint256 proposalId) external;
+    function cancelSignerChange(uint256 proposalId) external;
+    function getSignerProposal(uint256 proposalId) external view returns (SignerChangeProposal memory);
+    function hasApprovedSignerChange(uint256 proposalId, address approver) external view returns (bool);
+
 }

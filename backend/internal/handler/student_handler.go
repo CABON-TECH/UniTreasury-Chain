@@ -94,3 +94,18 @@ func (h *StudentHandler) Get(c *gin.Context) {
 
 	c.JSON(http.StatusOK, student)
 }
+
+func (h *StudentHandler) VerifyKYC(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid id format"})
+		return
+	}
+
+	if err := h.svc.VerifyKYC(c.Request.Context(), id); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"status": "kyc verified"})
+}

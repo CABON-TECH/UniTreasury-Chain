@@ -23,6 +23,9 @@ import (
 	"github.com/cabon-tech/unitreasury-chain/backend/internal/service"
 	"github.com/cabon-tech/unitreasury-chain/backend/pkg/config"
 	"github.com/cabon-tech/unitreasury-chain/backend/pkg/logger"
+	"github.com/cabon-tech/unitreasury-chain/backend/internal/ws"
+	"encoding/json"
+
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -53,6 +56,8 @@ func main() {
 	// ── Repositories ──────────────────────────────────────────────────────────────
 	studentRepo := postgres.NewStudentRepo(pool)
 	paymentRepo := postgres.NewPaymentRepo(pool)
+	scholarshipRepo := postgres.NewScholarshipRepo(pool)
+
 	proposalRepo := postgres.NewProposalRepo(pool)
 	userRepo := postgres.NewUserRepo(pool)
 	_ = postgres.NewAuditRepo(pool) // used by event indexer
@@ -70,8 +75,8 @@ func main() {
 	var txMgr *blockchain.TxManager
 
 	if ethClient != nil {
-		feeRegistry, _ = bindings.NewFeeRegistryContract(common.HexToAddress(cfg.FeeRegistryAddress), ethClient.Inner())
-		treasuryContract, _ = bindings.NewTreasuryContract(common.HexToAddress(cfg.TreasuryAddress), ethClient.Inner())
+		feeRegistry, _ = bindings.NewFeeRegistryContract(common.HexToAddress(cfg.FeeRegistryAddress), ethClient)
+		treasuryContract, _ = bindings.NewTreasuryContract(common.HexToAddress(cfg.TreasuryAddress), ethClient)
 		
 		attestorKey, err := blockchain.ParsePrivateKey(cfg.AttestorPrivateKey)
 		if err != nil {
@@ -91,20 +96,60 @@ func main() {
 
 	var feeSvc *service.FeeService
 	var treasurySvc *service.TreasuryService
+	var reportSvc *service.ReportService
+
 	
 	if ethClient != nil && feeRegistry != nil && txMgr != nil {
 		feeSvc = service.NewFeeService(paymentRepo, studentRepo, txMgr, feeRegistry, ethClient, log)
 		treasurySvc = service.NewTreasuryService(proposalRepo, txMgr, treasuryContract, log)
+		reportSvc = service.NewReportService(scholarshipRepo, log)
+
 	}
+
+	// ── WebSockets (Feature 11) ───────────────────────────────────────────────────
+	wsHub := ws.NewHub(log)
+	
+	// Start PG listener
+	go func() {
+		conn, err := pool.Acquire(context.Background())
+		if err != nil {
+			log.Error("failed to acquire PG conn for LISTEN", zap.Error(err))
+			return
+		}
+		defer conn.Release()
+
+		_, err = conn.Exec(context.Background(), "LISTEN ws_events")
+		if err != nil {
+			log.Error("failed to LISTEN ws_events", zap.Error(err))
+			return
+		}
+
+		for {
+			notification, err := conn.Conn().WaitForNotification(context.Background())
+			if err != nil {
+				log.Error("error waiting for notification", zap.Error(err))
+				continue
+			}
+			
+			var payload interface{}
+			if err := json.Unmarshal([]byte(notification.Payload), &payload); err == nil {
+				wsHub.Broadcast(payload)
+			}
+		}
+	}()
 
 	// ── Handlers ──────────────────────────────────────────────────────────────────
 	studentH := handler.NewStudentHandler(studentSvc, log)
 	var paymentH *handler.PaymentHandler
 	var treasuryH *handler.TreasuryHandler
+	var reportH *handler.ReportHandler
+
 	
 	if feeSvc != nil {
 		paymentH = handler.NewPaymentHandler(feeSvc, log)
 		treasuryH = handler.NewTreasuryHandler(treasurySvc, log)
+		reportH = handler.NewReportHandler(reportSvc, log)
+
 	}
 
 	// ── Router ────────────────────────────────────────────────────────────────────
@@ -112,16 +157,22 @@ func main() {
 	r.Use(gin.Recovery())
 	r.Use(requestLogger(log))
 
+	r.GET("/ws", func(c *gin.Context) {
+		wsHub.ServeWs(c.Writer, c.Request)
+	})
+
 	// Load HTML templates
 	r.LoadHTMLGlob("templates/*")
 
 	// UI Routes
-	ui := handler.NewUIHandler(studentSvc)
+	ui := handler.NewUIHandler(studentSvc, pool)
 	r.GET("/", ui.Index)
 	r.GET("/sign-in", ui.Login)
 	r.GET("/logout", ui.Logout)
 	r.GET("/dashboard", auth.Authenticate(jwtMgr), ui.Dashboard)
 	r.GET("/treasury", ui.Treasury)
+	r.GET("/portal", ui.PublicPortal)
+	r.POST("/api/v1/demo/fund", ui.DemoFundAndRole)
 
 	r.GET("/health", func(c *gin.Context) {
 		dbStatus := "ok"
@@ -149,8 +200,9 @@ func main() {
 	students.POST("", auth.RequireRole(auth.RoleAdmin), studentH.Create)
 	students.GET("", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), studentH.List)
 	students.GET("/:id", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance, auth.RoleStudent), studentH.Get)
+	students.POST("/:id/kyc", auth.RequireRole(auth.RoleAdmin, auth.RoleStudent), studentH.VerifyKYC)
 	// Add mock endpoint to add credits for a student so the scholarship worker triggers
-	students.POST("/:id/credits", auth.RequireRole(auth.RoleAdmin), func(c *gin.Context) {
+	students.POST("/:id/credits", auth.RequireRole(auth.RoleAdmin, auth.RoleProfessor), func(c *gin.Context) {
 		var req struct { Credits int `json:"credits"` }
 		c.ShouldBindJSON(&req)
 		id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
@@ -172,6 +224,11 @@ func main() {
 	}
 
 	// Treasury
+	reports := v1.Group("/reports")
+	if reportH != nil {
+		reports.GET("/fund/:id/download", reportH.DownloadFundReport)
+	}
+
 	treasury := v1.Group("/treasury")
 	if treasuryH != nil {
 		treasury.GET("/proposals", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), treasuryH.List)

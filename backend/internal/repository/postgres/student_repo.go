@@ -24,8 +24,8 @@ func NewStudentRepo(pool *pgxpool.Pool) *StudentRepo {
 
 func (r *StudentRepo) Create(ctx context.Context, s *domain.Student) error {
 	const q = `
-		INSERT INTO students (student_id, hash, name, program, year, credits, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+		INSERT INTO students (student_id, hash, name, program, year, credits, gpa, kyc_verified, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, false, $8, $9)
 		RETURNING id`
 
 	now := time.Now()
@@ -33,24 +33,24 @@ func (r *StudentRepo) Create(ctx context.Context, s *domain.Student) error {
 	s.UpdatedAt = now
 
 	return r.pool.QueryRow(ctx, q,
-		s.StudentID, s.Hash, s.Name, s.Program, s.Year, s.Credits, s.CreatedAt, s.UpdatedAt,
+		s.StudentID, s.Hash, s.Name, s.Program, s.Year, s.Credits, s.GPA, s.CreatedAt, s.UpdatedAt,
 	).Scan(&s.ID)
 }
 
 func (r *StudentRepo) GetByID(ctx context.Context, id int64) (*domain.Student, error) {
-	const q = `SELECT id, student_id, hash, name, program, year, credits, created_at, updated_at
+	const q = `SELECT id, student_id, hash, name, program, year, credits, gpa, kyc_verified, created_at, updated_at
 	           FROM students WHERE id = $1`
 	return r.scanStudent(r.pool.QueryRow(ctx, q, id))
 }
 
 func (r *StudentRepo) GetByStudentID(ctx context.Context, studentID string) (*domain.Student, error) {
-	const q = `SELECT id, student_id, hash, name, program, year, credits, created_at, updated_at
+	const q = `SELECT id, student_id, hash, name, program, year, credits, gpa, kyc_verified, created_at, updated_at
 	           FROM students WHERE student_id = $1`
 	return r.scanStudent(r.pool.QueryRow(ctx, q, studentID))
 }
 
 func (r *StudentRepo) GetByHash(ctx context.Context, hash string) (*domain.Student, error) {
-	const q = `SELECT id, student_id, hash, name, program, year, credits, created_at, updated_at
+	const q = `SELECT id, student_id, hash, name, program, year, credits, gpa, kyc_verified, created_at, updated_at
 	           FROM students WHERE hash = $1`
 	return r.scanStudent(r.pool.QueryRow(ctx, q, hash))
 }
@@ -62,7 +62,7 @@ func (r *StudentRepo) List(ctx context.Context, offset, limit int) ([]*domain.St
 		return nil, 0, fmt.Errorf("student_repo: count: %w", err)
 	}
 
-	const q = `SELECT id, student_id, hash, name, program, year, credits, created_at, updated_at
+	const q = `SELECT id, student_id, hash, name, program, year, credits, gpa, kyc_verified, created_at, updated_at
 	           FROM students ORDER BY id LIMIT $1 OFFSET $2`
 	rows, err := r.pool.Query(ctx, q, limit, offset)
 	if err != nil {
@@ -74,7 +74,7 @@ func (r *StudentRepo) List(ctx context.Context, offset, limit int) ([]*domain.St
 	for rows.Next() {
 		s := &domain.Student{}
 		if err := rows.Scan(&s.ID, &s.StudentID, &s.Hash, &s.Name, &s.Program,
-			&s.Year, &s.Credits, &s.CreatedAt, &s.UpdatedAt); err != nil {
+			&s.Year, &s.Credits, &s.GPA, &s.CreatedAt, &s.UpdatedAt); err != nil {
 			return nil, 0, fmt.Errorf("student_repo: scan: %w", err)
 		}
 		students = append(students, s)
@@ -99,7 +99,7 @@ func (r *StudentRepo) UpdateCredits(ctx context.Context, id int64, credits int) 
 func (r *StudentRepo) scanStudent(row pgx.Row) (*domain.Student, error) {
 	s := &domain.Student{}
 	err := row.Scan(&s.ID, &s.StudentID, &s.Hash, &s.Name, &s.Program,
-		&s.Year, &s.Credits, &s.CreatedAt, &s.UpdatedAt)
+		&s.Year, &s.Credits, &s.GPA, &s.KYCVerified, &s.CreatedAt, &s.UpdatedAt)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, nil // caller checks for nil
@@ -116,7 +116,7 @@ func (r *StudentRepo) UpdateCreditsByHash(ctx context.Context, hash string, cred
 }
 
 func (r *StudentRepo) ListAll(ctx context.Context) ([]*domain.Student, error) {
-	rows, err := r.pool.Query(ctx, "SELECT id, student_id, hash, name, program, year, credits, created_at, updated_at FROM students")
+	rows, err := r.pool.Query(ctx, "SELECT id, student_id, hash, name, program, year, credits, gpa, kyc_verified, created_at, updated_at FROM students")
 	if err != nil {
 		return nil, err
 	}
@@ -127,11 +127,23 @@ func (r *StudentRepo) ListAll(ctx context.Context) ([]*domain.Student, error) {
 		var s domain.Student
 		if err := rows.Scan(
 			&s.ID, &s.StudentID, &s.Hash, &s.Name, &s.Program,
-			&s.Year, &s.Credits, &s.CreatedAt, &s.UpdatedAt,
+			&s.Year, &s.Credits, &s.GPA, &s.CreatedAt, &s.UpdatedAt,s.Year, &s.Credits, &s.GPA, &s.CreatedAt, &s.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
 		students = append(students, &s)
 	}
 	return students, nil
+}
+
+func (r *StudentRepo) VerifyKYC(ctx context.Context, id int64) error {
+	const q = "UPDATE students SET kyc_verified = true, updated_at = $2 WHERE id = $1"
+	tag, err := r.pool.Exec(ctx, q, id, time.Now())
+	if err != nil {
+		return fmt.Errorf("verify kyc: %w", err)
+	}
+	if tag.RowsAffected() == 0 {
+		return errors.New("not found")
+	}
+	return nil
 }

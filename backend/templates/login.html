@@ -56,6 +56,32 @@
             Login
         </button>
     </form>
+
+    <div class="mt-8 pt-6 border-t border-gray-200">
+        <h3 class="text-sm font-medium text-gray-500 mb-4 text-center">Demo Fast Login</h3>
+        <div class="space-y-2">
+            <form action="/api/v1/auth/login" method="POST">
+                <input type="hidden" name="username" value="admin">
+                <input type="hidden" name="password" value="password">
+                <button type="submit" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium rounded border border-gray-300">Login as System Admin (God Mode)</button>
+            </form>
+            <form action="/api/v1/auth/login" method="POST">
+                <input type="hidden" name="username" value="finance">
+                <input type="hidden" name="password" value="password">
+                <button type="submit" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium rounded border border-gray-300">Login as Finance Dept (Treasury Only)</button>
+            </form>
+            <form action="/api/v1/auth/login" method="POST">
+                <input type="hidden" name="username" value="professor">
+                <input type="hidden" name="password" value="password">
+                <button type="submit" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium rounded border border-gray-300">Login as Dept Head (Professor - Academics Only)</button>
+            </form>
+            <form action="/api/v1/auth/login" method="POST">
+                <input type="hidden" name="username" value="student1">
+                <input type="hidden" name="password" value="password">
+                <button type="submit" class="w-full py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-sm font-medium rounded border border-gray-300">Login as Student (View Only)</button>
+            </form>
+        </div>
+    </div>
 </div>
 
     </main>

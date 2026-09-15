@@ -69,9 +69,10 @@ func (s *ScholarshipService) EvaluateAndPublishRoot(ctx context.Context, fundID 
 	onChainFundId := new(big.Int).SetUint64(fund.OnChainID)
 	tIndex := big.NewInt(int64(trancheIndex))
 	recipAddr := common.HexToAddress(recipient)
-	amount := new(big.Int).SetUint64(fund.TrancheAmount)
-
 	requiredCredits := (trancheIndex + 1) * 15
+
+	// We will track each student's dynamic amount to save to the DB later
+	studentAmounts := make(map[string]*big.Int)
 
 	for _, student := range students {
 		if student.Credits < requiredCredits {
@@ -80,11 +81,21 @@ func (s *ScholarshipService) EvaluateAndPublishRoot(ctx context.Context, fundID 
 		
 		released, err := s.repo.HasReleased(ctx, fund.ID, student.Hash, trancheIndex)
 		if err == nil && !released {
+			// Calculate dynamic amount based on GPA
+			amount := new(big.Int).SetUint64(fund.TrancheAmount)
+			if student.GPA >= 3.5 {
+				// 20% bonus
+				bonus := new(big.Int).Mul(amount, big.NewInt(20))
+				bonus.Div(bonus, big.NewInt(100))
+				amount.Add(amount, bonus)
+			}
+
 			var sHash [32]byte
 			copy(sHash[:], common.FromHex(student.Hash))
 			leaf := blockchain.GenerateLeaf(onChainFundId, sHash, tIndex, recipAddr, amount)
 			eligibleLeaves = append(eligibleLeaves, leaf)
 			eligibleStudents = append(eligibleStudents, student)
+			studentAmounts[student.Hash] = amount
 		}
 	}
 
@@ -124,7 +135,7 @@ func (s *ScholarshipService) EvaluateAndPublishRoot(ctx context.Context, fundID 
 			OnChainFundID: fund.OnChainID,
 			StudentHash:   student.Hash,
 			TrancheIndex:  trancheIndex,
-			Amount:        fund.TrancheAmount,
+			Amount:        studentAmounts[student.Hash].Uint64(),
 			Recipient:     recipient,
 			TxHash:        tx.Hash().Hex(),
 			ReleasedAt:    time.Now(),
@@ -156,15 +167,23 @@ func (s *ScholarshipService) SimulateStudentClaim(ctx context.Context, fundID in
 	onChainFundId := new(big.Int).SetUint64(fund.OnChainID)
 	tIndex := big.NewInt(int64(trancheIndex))
 	recipAddr := common.HexToAddress(recipient)
-	amount := new(big.Int).SetUint64(fund.TrancheAmount)
-
 	requiredCredits := (trancheIndex + 1) * 15
 
 	var studentLeaf []byte
+	var claimAmount *big.Int
+
 	for _, st := range students {
 		if st.Credits < requiredCredits {
 			continue
 		}
+		
+		amount := new(big.Int).SetUint64(fund.TrancheAmount)
+		if st.GPA >= 3.5 {
+			bonus := new(big.Int).Mul(amount, big.NewInt(20))
+			bonus.Div(bonus, big.NewInt(100))
+			amount.Add(amount, bonus)
+		}
+
 		var sHash [32]byte
 		copy(sHash[:], common.FromHex(st.Hash))
 		
@@ -173,6 +192,7 @@ func (s *ScholarshipService) SimulateStudentClaim(ctx context.Context, fundID in
 		
 		if st.StudentID == studentID {
 			studentLeaf = leaf
+			claimAmount = amount
 		}
 	}
 
@@ -205,6 +225,7 @@ func (s *ScholarshipService) SimulateStudentClaim(ctx context.Context, fundID in
 		sHash,
 		tIndex,
 		recipAddr,
+		claimAmount,
 		proof32,
 	)
 	if err != nil {

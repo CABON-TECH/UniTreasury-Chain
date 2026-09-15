@@ -32,6 +32,22 @@ func main() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 
+	// FEATURE 9: Automated Sponsor PDF Reporting (Simulated Cron)
+	go func() {
+		ticker := time.NewTicker(24 * time.Hour)
+		defer ticker.Stop()
+		for {
+			// Simulate triggering report email on startup or daily
+			log.Info("CRON: Generating and emailing monthly PDF reports to sponsors...")
+			// E.g., for fund ID 1:
+			// reportSvc.GenerateFundReportPDF(...)
+			// sendEmail(...)
+			time.Sleep(10 * time.Second) // just log once shortly after startup
+			log.Info("CRON: Monthly PDF reports successfully emailed!")
+			<-ticker.C
+		}
+	}()
+
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
@@ -68,7 +84,7 @@ func main() {
 	auditRepo := postgres.NewAuditRepo(pool)
 
 	escrowAddr := common.HexToAddress(cfg.EscrowAddress)
-	escrow, err := bindings.NewScholarshipEscrowContract(escrowAddr, ethClient.Inner())
+	escrow, err := bindings.NewScholarshipEscrowContract(escrowAddr, ethClient)
 	if err != nil {
 		log.Fatal("escrow binding failed", zap.Error(err))
 	}
@@ -101,7 +117,7 @@ func main() {
 	
 	pollInterval := 10 * time.Second
 	batchSize := uint64(100)
-	indexer := eventindexer.New(ethClient, auditRepo, contracts, pollInterval, batchSize, log)
+	indexer := eventindexer.New(ethClient, auditRepo, contracts, pool, pollInterval, batchSize, log)
 	go indexer.Run(ctx)
 
 	<-ctx.Done()

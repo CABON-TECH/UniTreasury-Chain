@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Transparency Portal | UniTreasury</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+
+    <nav class="bg-indigo-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <span class="font-bold text-xl tracking-tight">UniTreasury Chain</span>
+                </div>
+                <div class="flex gap-4">
+                    <a href="/portal" class="hover:text-indigo-200">Public Portal</a>
+                    <a href="/sign-in" class="hover:text-indigo-200">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-8 w-full">
+        <div class="mb-8 text-center">
+            <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Public Transparency Portal</h1>
+            <p class="text-lg text-gray-600">Real-time cryptographic proof of all university scholarship distributions.</p>
+        </div>
+
+        <!-- Metrics Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center">
+                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Total Funds Authorized</h3>
+                <span class="text-4xl font-bold text-gray-900">${{ .TotalFunds }} <span class="text-xl text-gray-500">USDC</span></span>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center">
+                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Total Funds Released</h3>
+                <span class="text-4xl font-bold text-green-600">${{ .TotalReleased }} <span class="text-xl text-green-500">USDC</span></span>
+            </div>
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 flex flex-col items-center justify-center text-center">
+                <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wider mb-1">Students Sponsored</h3>
+                <span class="text-4xl font-bold text-blue-600">{{ .StudentCount }}</span>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white shadow overflow-hidden sm:rounded-md border border-gray-200">
+            <div class="px-4 py-5 border-b border-gray-200 sm:px-6">
+                <h3 class="text-lg leading-6 font-medium text-gray-900">Live Blockchain Activity (Latest 5 Events)</h3>
+                <p class="mt-1 text-sm text-gray-500">Every record is permanently etched into the ledger.</p>
+            </div>
+            <ul class="divide-y divide-gray-200">
+                {{ range .RecentEvents }}
+                <li>
+                    <div class="px-4 py-4 sm:px-6 flex items-center justify-between">
+                        <div class="flex items-center">
+                            <div class="flex-shrink-0">
+                                <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100">
+                                    <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                </span>
+                            </div>
+                            <div class="ml-4">
+                                <p class="text-sm font-medium text-gray-900">{{ .EventName }}</p>
+                                <p class="text-xs text-gray-500 font-mono mt-1">Tx: {{ .TxHash }}</p>
+                            </div>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            {{ .Date }}
+                        </div>
+                    </div>
+                </li>
+                {{ else }}
+                <li class="px-4 py-8 text-center text-gray-500">No blockchain events recorded yet.</li>
+                {{ end }}
+            </ul>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-4 text-center text-sm text-gray-500 mt-auto">
+        &copy; 2024 UniTreasury Chain Research Project &middot; Data is verifiable on-chain.
+    </footer>
+
+</body>
+</html>

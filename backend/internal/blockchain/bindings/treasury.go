@@ -33,6 +33,18 @@ var (
 	_ = context.Background
 )
 
+// ITreasurySignerChangeProposal is an auto generated low-level Go binding around an user-defined struct.
+type ITreasurySignerChangeProposal struct {
+	Id            *big.Int
+	Proposer      common.Address
+	TargetSigner  common.Address
+	NewSigner     common.Address
+	ChangeType    uint8
+	Status        uint8
+	ApprovalCount *big.Int
+	CreatedAt     *big.Int
+}
+
 // ITreasuryWithdrawalProposal is an auto generated low-level Go binding around an user-defined struct.
 type ITreasuryWithdrawalProposal struct {
 	Id            *big.Int
@@ -47,7 +59,7 @@ type ITreasuryWithdrawalProposal struct {
 
 // TreasuryContractMetaData contains all meta data concerning the TreasuryContract contract.
 var TreasuryContractMetaData = &bind.MetaData{
-	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"admin\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"initialApprovers\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"_requiredApprovals\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_dailyLimit\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_usdcToken\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"APPROVER_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"DEFAULT_ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"EXECUTOR_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"PROPOSER_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"approveWithdrawal\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"cancelWithdrawal\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"dailyLimit\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"deposit\",\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"executeWithdrawal\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"freeze\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"getBalance\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getDailyWithdrawnAmount\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getProposal\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"tuple\",\"internalType\":\"structITreasury.WithdrawalProposal\",\"components\":[{\"name\":\"id\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"proposer\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"recipient\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"purpose\",\"type\":\"string\",\"internalType\":\"string\"},{\"name\":\"status\",\"type\":\"uint8\",\"internalType\":\"enumITreasury.ProposalStatus\"},{\"name\":\"approvalCount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"createdAt\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getRoleAdmin\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"grantRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"hasApproved\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"approver\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"hasRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"isFrozen\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"proposeWithdrawal\",\"inputs\":[{\"name\":\"recipient\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"purpose\",\"type\":\"string\",\"internalType\":\"string\"}],\"outputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"renounceRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"callerConfirmation\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"requiredApprovals\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"revokeRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setDailyLimit\",\"inputs\":[{\"name\":\"newLimit\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setRequiredApprovals\",\"inputs\":[{\"name\":\"newRequired\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"supportsInterface\",\"inputs\":[{\"name\":\"interfaceId\",\"type\":\"bytes4\",\"internalType\":\"bytes4\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"unfreeze\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"usdcToken\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIERC20\"}],\"stateMutability\":\"view\"},{\"type\":\"event\",\"name\":\"DailyLimitUpdated\",\"inputs\":[{\"name\":\"oldLimit\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"newLimit\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Deposited\",\"inputs\":[{\"name\":\"depositor\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"newBalance\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RequiredApprovalsUpdated\",\"inputs\":[{\"name\":\"oldRequired\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"newRequired\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleAdminChanged\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"previousAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"newAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleGranted\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleRevoked\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"TreasuryFrozen\",\"inputs\":[{\"name\":\"by\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"TreasuryUnfrozen\",\"inputs\":[{\"name\":\"by\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"WithdrawalApproved\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"approver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"approvalCount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"WithdrawalCancelled\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"canceller\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"WithdrawalExecuted\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"WithdrawalProposed\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"proposer\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"recipient\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"purpose\",\"type\":\"string\",\"indexed\":false,\"internalType\":\"string\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"AccessControlBadConfirmation\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"AccessControlUnauthorizedAccount\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"neededRole\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"ReentrancyGuardReentrantCall\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"Treasury__AlreadyApproved\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"approver\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"Treasury__DailyLimitExceeded\",\"inputs\":[{\"name\":\"requested\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"remainingToday\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"Treasury__Frozen\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"Treasury__InsufficientApprovals\",\"inputs\":[{\"name\":\"have\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"need\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"Treasury__InsufficientBalance\",\"inputs\":[{\"name\":\"requested\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"available\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"Treasury__NotAuthorized\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"Treasury__ProposalNotFound\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"Treasury__ProposalNotPending\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"Treasury__ZeroAddress\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"Treasury__ZeroAmount\",\"inputs\":[]}]",
+	ABI: "[{\"type\":\"constructor\",\"inputs\":[{\"name\":\"admin\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"initialApprovers\",\"type\":\"address[]\",\"internalType\":\"address[]\"},{\"name\":\"_requiredApprovals\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_dailyLimit\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"_usdcToken\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"APPROVER_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"DEFAULT_ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"EXECUTOR_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"PROPOSER_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"approveSignerChange\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"approveWithdrawal\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"cancelSignerChange\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"cancelWithdrawal\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"dailyLimit\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"deposit\",\"inputs\":[{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"executeSignerChange\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"executeWithdrawal\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"freeze\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"getBalance\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getDailyWithdrawnAmount\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getProposal\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"tuple\",\"internalType\":\"structITreasury.WithdrawalProposal\",\"components\":[{\"name\":\"id\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"proposer\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"recipient\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"purpose\",\"type\":\"string\",\"internalType\":\"string\"},{\"name\":\"status\",\"type\":\"uint8\",\"internalType\":\"enumITreasury.ProposalStatus\"},{\"name\":\"approvalCount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"createdAt\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getRoleAdmin\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getSignerProposal\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"tuple\",\"internalType\":\"structITreasury.SignerChangeProposal\",\"components\":[{\"name\":\"id\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"proposer\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"targetSigner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"newSigner\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"changeType\",\"type\":\"uint8\",\"internalType\":\"enumITreasury.ChangeType\"},{\"name\":\"status\",\"type\":\"uint8\",\"internalType\":\"enumITreasury.ProposalStatus\"},{\"name\":\"approvalCount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"createdAt\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"grantRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"hasApproved\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"approver\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"hasApprovedSignerChange\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"approver\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"hasRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"isFrozen\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"proposeSignerChange\",\"inputs\":[{\"name\":\"target\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"replacement\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"changeType\",\"type\":\"uint8\",\"internalType\":\"uint8\"}],\"outputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"proposeWithdrawal\",\"inputs\":[{\"name\":\"recipient\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"purpose\",\"type\":\"string\",\"internalType\":\"string\"}],\"outputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"renounceRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"callerConfirmation\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"requiredApprovals\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"revokeRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setDailyLimit\",\"inputs\":[{\"name\":\"newLimit\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setRequiredApprovals\",\"inputs\":[{\"name\":\"newRequired\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"supportsInterface\",\"inputs\":[{\"name\":\"interfaceId\",\"type\":\"bytes4\",\"internalType\":\"bytes4\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"unfreeze\",\"inputs\":[],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"usdcToken\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIERC20\"}],\"stateMutability\":\"view\"},{\"type\":\"event\",\"name\":\"DailyLimitUpdated\",\"inputs\":[{\"name\":\"oldLimit\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"newLimit\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Deposited\",\"inputs\":[{\"name\":\"depositor\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"newBalance\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RequiredApprovalsUpdated\",\"inputs\":[{\"name\":\"oldRequired\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"newRequired\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleAdminChanged\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"previousAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"newAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleGranted\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleRevoked\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"SignerChangeApproved\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"approver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"approvalCount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"SignerChangeExecuted\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"target\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"},{\"name\":\"replacement\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"},{\"name\":\"changeType\",\"type\":\"uint8\",\"indexed\":false,\"internalType\":\"uint8\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"SignerChangeProposed\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"proposer\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"target\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"},{\"name\":\"replacement\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"},{\"name\":\"changeType\",\"type\":\"uint8\",\"indexed\":false,\"internalType\":\"uint8\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"TreasuryFrozen\",\"inputs\":[{\"name\":\"by\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"TreasuryUnfrozen\",\"inputs\":[{\"name\":\"by\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"WithdrawalApproved\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"approver\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"approvalCount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"WithdrawalCancelled\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"canceller\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"WithdrawalExecuted\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"WithdrawalProposed\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"proposer\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"recipient\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"purpose\",\"type\":\"string\",\"indexed\":false,\"internalType\":\"string\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"AccessControlBadConfirmation\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"AccessControlUnauthorizedAccount\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"neededRole\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"ReentrancyGuardReentrantCall\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"Treasury__AlreadyApproved\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"approver\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"Treasury__DailyLimitExceeded\",\"inputs\":[{\"name\":\"requested\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"remainingToday\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"Treasury__Frozen\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"Treasury__InsufficientApprovals\",\"inputs\":[{\"name\":\"have\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"need\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"Treasury__InsufficientBalance\",\"inputs\":[{\"name\":\"requested\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"available\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"Treasury__NotAuthorized\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"Treasury__ProposalNotFound\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"Treasury__ProposalNotPending\",\"inputs\":[{\"name\":\"proposalId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}]},{\"type\":\"error\",\"name\":\"Treasury__ZeroAddress\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"Treasury__ZeroAmount\",\"inputs\":[]}]",
 }
 
 // TreasuryContractABI is the input ABI used to generate the binding from.
@@ -506,6 +518,37 @@ func (_TreasuryContract *TreasuryContractCallerSession) GetRoleAdmin(role [32]by
 	return _TreasuryContract.Contract.GetRoleAdmin(&_TreasuryContract.CallOpts, role)
 }
 
+// GetSignerProposal is a free data retrieval call binding the contract method 0xee9ac367.
+//
+// Solidity: function getSignerProposal(uint256 proposalId) view returns((uint256,address,address,address,uint8,uint8,uint256,uint256))
+func (_TreasuryContract *TreasuryContractCaller) GetSignerProposal(opts *bind.CallOpts, proposalId *big.Int) (ITreasurySignerChangeProposal, error) {
+	var out []interface{}
+	err := _TreasuryContract.contract.Call(opts, &out, "getSignerProposal", proposalId)
+
+	if err != nil {
+		return *new(ITreasurySignerChangeProposal), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(ITreasurySignerChangeProposal)).(*ITreasurySignerChangeProposal)
+
+	return out0, err
+
+}
+
+// GetSignerProposal is a free data retrieval call binding the contract method 0xee9ac367.
+//
+// Solidity: function getSignerProposal(uint256 proposalId) view returns((uint256,address,address,address,uint8,uint8,uint256,uint256))
+func (_TreasuryContract *TreasuryContractSession) GetSignerProposal(proposalId *big.Int) (ITreasurySignerChangeProposal, error) {
+	return _TreasuryContract.Contract.GetSignerProposal(&_TreasuryContract.CallOpts, proposalId)
+}
+
+// GetSignerProposal is a free data retrieval call binding the contract method 0xee9ac367.
+//
+// Solidity: function getSignerProposal(uint256 proposalId) view returns((uint256,address,address,address,uint8,uint8,uint256,uint256))
+func (_TreasuryContract *TreasuryContractCallerSession) GetSignerProposal(proposalId *big.Int) (ITreasurySignerChangeProposal, error) {
+	return _TreasuryContract.Contract.GetSignerProposal(&_TreasuryContract.CallOpts, proposalId)
+}
+
 // HasApproved is a free data retrieval call binding the contract method 0x2358d5a8.
 //
 // Solidity: function hasApproved(uint256 proposalId, address approver) view returns(bool)
@@ -535,6 +578,37 @@ func (_TreasuryContract *TreasuryContractSession) HasApproved(proposalId *big.In
 // Solidity: function hasApproved(uint256 proposalId, address approver) view returns(bool)
 func (_TreasuryContract *TreasuryContractCallerSession) HasApproved(proposalId *big.Int, approver common.Address) (bool, error) {
 	return _TreasuryContract.Contract.HasApproved(&_TreasuryContract.CallOpts, proposalId, approver)
+}
+
+// HasApprovedSignerChange is a free data retrieval call binding the contract method 0xf12ca327.
+//
+// Solidity: function hasApprovedSignerChange(uint256 proposalId, address approver) view returns(bool)
+func (_TreasuryContract *TreasuryContractCaller) HasApprovedSignerChange(opts *bind.CallOpts, proposalId *big.Int, approver common.Address) (bool, error) {
+	var out []interface{}
+	err := _TreasuryContract.contract.Call(opts, &out, "hasApprovedSignerChange", proposalId, approver)
+
+	if err != nil {
+		return *new(bool), err
+	}
+
+	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
+
+	return out0, err
+
+}
+
+// HasApprovedSignerChange is a free data retrieval call binding the contract method 0xf12ca327.
+//
+// Solidity: function hasApprovedSignerChange(uint256 proposalId, address approver) view returns(bool)
+func (_TreasuryContract *TreasuryContractSession) HasApprovedSignerChange(proposalId *big.Int, approver common.Address) (bool, error) {
+	return _TreasuryContract.Contract.HasApprovedSignerChange(&_TreasuryContract.CallOpts, proposalId, approver)
+}
+
+// HasApprovedSignerChange is a free data retrieval call binding the contract method 0xf12ca327.
+//
+// Solidity: function hasApprovedSignerChange(uint256 proposalId, address approver) view returns(bool)
+func (_TreasuryContract *TreasuryContractCallerSession) HasApprovedSignerChange(proposalId *big.Int, approver common.Address) (bool, error) {
+	return _TreasuryContract.Contract.HasApprovedSignerChange(&_TreasuryContract.CallOpts, proposalId, approver)
 }
 
 // HasRole is a free data retrieval call binding the contract method 0x91d14854.
@@ -692,6 +766,27 @@ func (_TreasuryContract *TreasuryContractCallerSession) UsdcToken() (common.Addr
 	return _TreasuryContract.Contract.UsdcToken(&_TreasuryContract.CallOpts)
 }
 
+// ApproveSignerChange is a paid mutator transaction binding the contract method 0xe5531e8a.
+//
+// Solidity: function approveSignerChange(uint256 proposalId) returns()
+func (_TreasuryContract *TreasuryContractTransactor) ApproveSignerChange(opts *bind.TransactOpts, proposalId *big.Int) (*types.Transaction, error) {
+	return _TreasuryContract.contract.Transact(opts, "approveSignerChange", proposalId)
+}
+
+// ApproveSignerChange is a paid mutator transaction binding the contract method 0xe5531e8a.
+//
+// Solidity: function approveSignerChange(uint256 proposalId) returns()
+func (_TreasuryContract *TreasuryContractSession) ApproveSignerChange(proposalId *big.Int) (*types.Transaction, error) {
+	return _TreasuryContract.Contract.ApproveSignerChange(&_TreasuryContract.TransactOpts, proposalId)
+}
+
+// ApproveSignerChange is a paid mutator transaction binding the contract method 0xe5531e8a.
+//
+// Solidity: function approveSignerChange(uint256 proposalId) returns()
+func (_TreasuryContract *TreasuryContractTransactorSession) ApproveSignerChange(proposalId *big.Int) (*types.Transaction, error) {
+	return _TreasuryContract.Contract.ApproveSignerChange(&_TreasuryContract.TransactOpts, proposalId)
+}
+
 // ApproveWithdrawal is a paid mutator transaction binding the contract method 0x9eceddea.
 //
 // Solidity: function approveWithdrawal(uint256 proposalId) returns()
@@ -711,6 +806,27 @@ func (_TreasuryContract *TreasuryContractSession) ApproveWithdrawal(proposalId *
 // Solidity: function approveWithdrawal(uint256 proposalId) returns()
 func (_TreasuryContract *TreasuryContractTransactorSession) ApproveWithdrawal(proposalId *big.Int) (*types.Transaction, error) {
 	return _TreasuryContract.Contract.ApproveWithdrawal(&_TreasuryContract.TransactOpts, proposalId)
+}
+
+// CancelSignerChange is a paid mutator transaction binding the contract method 0xec9b4cd1.
+//
+// Solidity: function cancelSignerChange(uint256 proposalId) returns()
+func (_TreasuryContract *TreasuryContractTransactor) CancelSignerChange(opts *bind.TransactOpts, proposalId *big.Int) (*types.Transaction, error) {
+	return _TreasuryContract.contract.Transact(opts, "cancelSignerChange", proposalId)
+}
+
+// CancelSignerChange is a paid mutator transaction binding the contract method 0xec9b4cd1.
+//
+// Solidity: function cancelSignerChange(uint256 proposalId) returns()
+func (_TreasuryContract *TreasuryContractSession) CancelSignerChange(proposalId *big.Int) (*types.Transaction, error) {
+	return _TreasuryContract.Contract.CancelSignerChange(&_TreasuryContract.TransactOpts, proposalId)
+}
+
+// CancelSignerChange is a paid mutator transaction binding the contract method 0xec9b4cd1.
+//
+// Solidity: function cancelSignerChange(uint256 proposalId) returns()
+func (_TreasuryContract *TreasuryContractTransactorSession) CancelSignerChange(proposalId *big.Int) (*types.Transaction, error) {
+	return _TreasuryContract.Contract.CancelSignerChange(&_TreasuryContract.TransactOpts, proposalId)
 }
 
 // CancelWithdrawal is a paid mutator transaction binding the contract method 0x3efcfda4.
@@ -753,6 +869,27 @@ func (_TreasuryContract *TreasuryContractSession) Deposit(amount *big.Int) (*typ
 // Solidity: function deposit(uint256 amount) returns()
 func (_TreasuryContract *TreasuryContractTransactorSession) Deposit(amount *big.Int) (*types.Transaction, error) {
 	return _TreasuryContract.Contract.Deposit(&_TreasuryContract.TransactOpts, amount)
+}
+
+// ExecuteSignerChange is a paid mutator transaction binding the contract method 0x5efde9a4.
+//
+// Solidity: function executeSignerChange(uint256 proposalId) returns()
+func (_TreasuryContract *TreasuryContractTransactor) ExecuteSignerChange(opts *bind.TransactOpts, proposalId *big.Int) (*types.Transaction, error) {
+	return _TreasuryContract.contract.Transact(opts, "executeSignerChange", proposalId)
+}
+
+// ExecuteSignerChange is a paid mutator transaction binding the contract method 0x5efde9a4.
+//
+// Solidity: function executeSignerChange(uint256 proposalId) returns()
+func (_TreasuryContract *TreasuryContractSession) ExecuteSignerChange(proposalId *big.Int) (*types.Transaction, error) {
+	return _TreasuryContract.Contract.ExecuteSignerChange(&_TreasuryContract.TransactOpts, proposalId)
+}
+
+// ExecuteSignerChange is a paid mutator transaction binding the contract method 0x5efde9a4.
+//
+// Solidity: function executeSignerChange(uint256 proposalId) returns()
+func (_TreasuryContract *TreasuryContractTransactorSession) ExecuteSignerChange(proposalId *big.Int) (*types.Transaction, error) {
+	return _TreasuryContract.Contract.ExecuteSignerChange(&_TreasuryContract.TransactOpts, proposalId)
 }
 
 // ExecuteWithdrawal is a paid mutator transaction binding the contract method 0x24f13a76.
@@ -816,6 +953,27 @@ func (_TreasuryContract *TreasuryContractSession) GrantRole(role [32]byte, accou
 // Solidity: function grantRole(bytes32 role, address account) returns()
 func (_TreasuryContract *TreasuryContractTransactorSession) GrantRole(role [32]byte, account common.Address) (*types.Transaction, error) {
 	return _TreasuryContract.Contract.GrantRole(&_TreasuryContract.TransactOpts, role, account)
+}
+
+// ProposeSignerChange is a paid mutator transaction binding the contract method 0xf3816fad.
+//
+// Solidity: function proposeSignerChange(address target, address replacement, uint8 changeType) returns(uint256 proposalId)
+func (_TreasuryContract *TreasuryContractTransactor) ProposeSignerChange(opts *bind.TransactOpts, target common.Address, replacement common.Address, changeType uint8) (*types.Transaction, error) {
+	return _TreasuryContract.contract.Transact(opts, "proposeSignerChange", target, replacement, changeType)
+}
+
+// ProposeSignerChange is a paid mutator transaction binding the contract method 0xf3816fad.
+//
+// Solidity: function proposeSignerChange(address target, address replacement, uint8 changeType) returns(uint256 proposalId)
+func (_TreasuryContract *TreasuryContractSession) ProposeSignerChange(target common.Address, replacement common.Address, changeType uint8) (*types.Transaction, error) {
+	return _TreasuryContract.Contract.ProposeSignerChange(&_TreasuryContract.TransactOpts, target, replacement, changeType)
+}
+
+// ProposeSignerChange is a paid mutator transaction binding the contract method 0xf3816fad.
+//
+// Solidity: function proposeSignerChange(address target, address replacement, uint8 changeType) returns(uint256 proposalId)
+func (_TreasuryContract *TreasuryContractTransactorSession) ProposeSignerChange(target common.Address, replacement common.Address, changeType uint8) (*types.Transaction, error) {
+	return _TreasuryContract.Contract.ProposeSignerChange(&_TreasuryContract.TransactOpts, target, replacement, changeType)
 }
 
 // ProposeWithdrawal is a paid mutator transaction binding the contract method 0x2cdfb41d.
@@ -1840,6 +1998,463 @@ func (_TreasuryContract *TreasuryContractFilterer) WatchRoleRevoked(opts *bind.W
 func (_TreasuryContract *TreasuryContractFilterer) ParseRoleRevoked(log types.Log) (*TreasuryContractRoleRevoked, error) {
 	event := new(TreasuryContractRoleRevoked)
 	if err := _TreasuryContract.contract.UnpackLog(event, "RoleRevoked", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// TreasuryContractSignerChangeApprovedIterator is returned from FilterSignerChangeApproved and is used to iterate over the raw logs and unpacked data for SignerChangeApproved events raised by the TreasuryContract contract.
+type TreasuryContractSignerChangeApprovedIterator struct {
+	Event *TreasuryContractSignerChangeApproved // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *TreasuryContractSignerChangeApprovedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(TreasuryContractSignerChangeApproved)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(TreasuryContractSignerChangeApproved)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *TreasuryContractSignerChangeApprovedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *TreasuryContractSignerChangeApprovedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// TreasuryContractSignerChangeApproved represents a SignerChangeApproved event raised by the TreasuryContract contract.
+type TreasuryContractSignerChangeApproved struct {
+	ProposalId    *big.Int
+	Approver      common.Address
+	ApprovalCount *big.Int
+	Raw           types.Log // Blockchain specific contextual infos
+}
+
+// FilterSignerChangeApproved is a free log retrieval operation binding the contract event 0x83859c56d4c0c74904a558a929632ad210da2cb88276444dc62a07555c4a6789.
+//
+// Solidity: event SignerChangeApproved(uint256 indexed proposalId, address indexed approver, uint256 approvalCount)
+func (_TreasuryContract *TreasuryContractFilterer) FilterSignerChangeApproved(opts *bind.FilterOpts, proposalId []*big.Int, approver []common.Address) (*TreasuryContractSignerChangeApprovedIterator, error) {
+
+	var proposalIdRule []interface{}
+	for _, proposalIdItem := range proposalId {
+		proposalIdRule = append(proposalIdRule, proposalIdItem)
+	}
+	var approverRule []interface{}
+	for _, approverItem := range approver {
+		approverRule = append(approverRule, approverItem)
+	}
+
+	logs, sub, err := _TreasuryContract.contract.FilterLogs(opts, "SignerChangeApproved", proposalIdRule, approverRule)
+	if err != nil {
+		return nil, err
+	}
+	return &TreasuryContractSignerChangeApprovedIterator{contract: _TreasuryContract.contract, event: "SignerChangeApproved", logs: logs, sub: sub}, nil
+}
+
+// WatchSignerChangeApproved is a free log subscription operation binding the contract event 0x83859c56d4c0c74904a558a929632ad210da2cb88276444dc62a07555c4a6789.
+//
+// Solidity: event SignerChangeApproved(uint256 indexed proposalId, address indexed approver, uint256 approvalCount)
+func (_TreasuryContract *TreasuryContractFilterer) WatchSignerChangeApproved(opts *bind.WatchOpts, sink chan<- *TreasuryContractSignerChangeApproved, proposalId []*big.Int, approver []common.Address) (event.Subscription, error) {
+
+	var proposalIdRule []interface{}
+	for _, proposalIdItem := range proposalId {
+		proposalIdRule = append(proposalIdRule, proposalIdItem)
+	}
+	var approverRule []interface{}
+	for _, approverItem := range approver {
+		approverRule = append(approverRule, approverItem)
+	}
+
+	logs, sub, err := _TreasuryContract.contract.WatchLogs(opts, "SignerChangeApproved", proposalIdRule, approverRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(TreasuryContractSignerChangeApproved)
+				if err := _TreasuryContract.contract.UnpackLog(event, "SignerChangeApproved", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseSignerChangeApproved is a log parse operation binding the contract event 0x83859c56d4c0c74904a558a929632ad210da2cb88276444dc62a07555c4a6789.
+//
+// Solidity: event SignerChangeApproved(uint256 indexed proposalId, address indexed approver, uint256 approvalCount)
+func (_TreasuryContract *TreasuryContractFilterer) ParseSignerChangeApproved(log types.Log) (*TreasuryContractSignerChangeApproved, error) {
+	event := new(TreasuryContractSignerChangeApproved)
+	if err := _TreasuryContract.contract.UnpackLog(event, "SignerChangeApproved", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// TreasuryContractSignerChangeExecutedIterator is returned from FilterSignerChangeExecuted and is used to iterate over the raw logs and unpacked data for SignerChangeExecuted events raised by the TreasuryContract contract.
+type TreasuryContractSignerChangeExecutedIterator struct {
+	Event *TreasuryContractSignerChangeExecuted // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *TreasuryContractSignerChangeExecutedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(TreasuryContractSignerChangeExecuted)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(TreasuryContractSignerChangeExecuted)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *TreasuryContractSignerChangeExecutedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *TreasuryContractSignerChangeExecutedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// TreasuryContractSignerChangeExecuted represents a SignerChangeExecuted event raised by the TreasuryContract contract.
+type TreasuryContractSignerChangeExecuted struct {
+	ProposalId  *big.Int
+	Target      common.Address
+	Replacement common.Address
+	ChangeType  uint8
+	Raw         types.Log // Blockchain specific contextual infos
+}
+
+// FilterSignerChangeExecuted is a free log retrieval operation binding the contract event 0x8640ae84b71f2feb507b6c3ce24a4ade255a2c18616f614e6343d6f6e6236757.
+//
+// Solidity: event SignerChangeExecuted(uint256 indexed proposalId, address target, address replacement, uint8 changeType)
+func (_TreasuryContract *TreasuryContractFilterer) FilterSignerChangeExecuted(opts *bind.FilterOpts, proposalId []*big.Int) (*TreasuryContractSignerChangeExecutedIterator, error) {
+
+	var proposalIdRule []interface{}
+	for _, proposalIdItem := range proposalId {
+		proposalIdRule = append(proposalIdRule, proposalIdItem)
+	}
+
+	logs, sub, err := _TreasuryContract.contract.FilterLogs(opts, "SignerChangeExecuted", proposalIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return &TreasuryContractSignerChangeExecutedIterator{contract: _TreasuryContract.contract, event: "SignerChangeExecuted", logs: logs, sub: sub}, nil
+}
+
+// WatchSignerChangeExecuted is a free log subscription operation binding the contract event 0x8640ae84b71f2feb507b6c3ce24a4ade255a2c18616f614e6343d6f6e6236757.
+//
+// Solidity: event SignerChangeExecuted(uint256 indexed proposalId, address target, address replacement, uint8 changeType)
+func (_TreasuryContract *TreasuryContractFilterer) WatchSignerChangeExecuted(opts *bind.WatchOpts, sink chan<- *TreasuryContractSignerChangeExecuted, proposalId []*big.Int) (event.Subscription, error) {
+
+	var proposalIdRule []interface{}
+	for _, proposalIdItem := range proposalId {
+		proposalIdRule = append(proposalIdRule, proposalIdItem)
+	}
+
+	logs, sub, err := _TreasuryContract.contract.WatchLogs(opts, "SignerChangeExecuted", proposalIdRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(TreasuryContractSignerChangeExecuted)
+				if err := _TreasuryContract.contract.UnpackLog(event, "SignerChangeExecuted", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseSignerChangeExecuted is a log parse operation binding the contract event 0x8640ae84b71f2feb507b6c3ce24a4ade255a2c18616f614e6343d6f6e6236757.
+//
+// Solidity: event SignerChangeExecuted(uint256 indexed proposalId, address target, address replacement, uint8 changeType)
+func (_TreasuryContract *TreasuryContractFilterer) ParseSignerChangeExecuted(log types.Log) (*TreasuryContractSignerChangeExecuted, error) {
+	event := new(TreasuryContractSignerChangeExecuted)
+	if err := _TreasuryContract.contract.UnpackLog(event, "SignerChangeExecuted", log); err != nil {
+		return nil, err
+	}
+	event.Raw = log
+	return event, nil
+}
+
+// TreasuryContractSignerChangeProposedIterator is returned from FilterSignerChangeProposed and is used to iterate over the raw logs and unpacked data for SignerChangeProposed events raised by the TreasuryContract contract.
+type TreasuryContractSignerChangeProposedIterator struct {
+	Event *TreasuryContractSignerChangeProposed // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *TreasuryContractSignerChangeProposedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(TreasuryContractSignerChangeProposed)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(TreasuryContractSignerChangeProposed)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *TreasuryContractSignerChangeProposedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *TreasuryContractSignerChangeProposedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// TreasuryContractSignerChangeProposed represents a SignerChangeProposed event raised by the TreasuryContract contract.
+type TreasuryContractSignerChangeProposed struct {
+	ProposalId  *big.Int
+	Proposer    common.Address
+	Target      common.Address
+	Replacement common.Address
+	ChangeType  uint8
+	Raw         types.Log // Blockchain specific contextual infos
+}
+
+// FilterSignerChangeProposed is a free log retrieval operation binding the contract event 0xcc444a2a8b8581d87b963b87f8d992c3ce64fcce3ae94a580204902b309c490e.
+//
+// Solidity: event SignerChangeProposed(uint256 indexed proposalId, address indexed proposer, address target, address replacement, uint8 changeType)
+func (_TreasuryContract *TreasuryContractFilterer) FilterSignerChangeProposed(opts *bind.FilterOpts, proposalId []*big.Int, proposer []common.Address) (*TreasuryContractSignerChangeProposedIterator, error) {
+
+	var proposalIdRule []interface{}
+	for _, proposalIdItem := range proposalId {
+		proposalIdRule = append(proposalIdRule, proposalIdItem)
+	}
+	var proposerRule []interface{}
+	for _, proposerItem := range proposer {
+		proposerRule = append(proposerRule, proposerItem)
+	}
+
+	logs, sub, err := _TreasuryContract.contract.FilterLogs(opts, "SignerChangeProposed", proposalIdRule, proposerRule)
+	if err != nil {
+		return nil, err
+	}
+	return &TreasuryContractSignerChangeProposedIterator{contract: _TreasuryContract.contract, event: "SignerChangeProposed", logs: logs, sub: sub}, nil
+}
+
+// WatchSignerChangeProposed is a free log subscription operation binding the contract event 0xcc444a2a8b8581d87b963b87f8d992c3ce64fcce3ae94a580204902b309c490e.
+//
+// Solidity: event SignerChangeProposed(uint256 indexed proposalId, address indexed proposer, address target, address replacement, uint8 changeType)
+func (_TreasuryContract *TreasuryContractFilterer) WatchSignerChangeProposed(opts *bind.WatchOpts, sink chan<- *TreasuryContractSignerChangeProposed, proposalId []*big.Int, proposer []common.Address) (event.Subscription, error) {
+
+	var proposalIdRule []interface{}
+	for _, proposalIdItem := range proposalId {
+		proposalIdRule = append(proposalIdRule, proposalIdItem)
+	}
+	var proposerRule []interface{}
+	for _, proposerItem := range proposer {
+		proposerRule = append(proposerRule, proposerItem)
+	}
+
+	logs, sub, err := _TreasuryContract.contract.WatchLogs(opts, "SignerChangeProposed", proposalIdRule, proposerRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(TreasuryContractSignerChangeProposed)
+				if err := _TreasuryContract.contract.UnpackLog(event, "SignerChangeProposed", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// ParseSignerChangeProposed is a log parse operation binding the contract event 0xcc444a2a8b8581d87b963b87f8d992c3ce64fcce3ae94a580204902b309c490e.
+//
+// Solidity: event SignerChangeProposed(uint256 indexed proposalId, address indexed proposer, address target, address replacement, uint8 changeType)
+func (_TreasuryContract *TreasuryContractFilterer) ParseSignerChangeProposed(log types.Log) (*TreasuryContractSignerChangeProposed, error) {
+	event := new(TreasuryContractSignerChangeProposed)
+	if err := _TreasuryContract.contract.UnpackLog(event, "SignerChangeProposed", log); err != nil {
 		return nil, err
 	}
 	event.Raw = log

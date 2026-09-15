@@ -41,13 +41,64 @@
     <h2 class="text-xl font-bold text-gray-800 mb-4">Student Profile: <span class="text-blue-600">{{ .StudentID }}</span></h2>
     <p class="text-gray-600 mb-8">View your current standing and credit thresholds for automated scholarship tranches.</p>
     
+
+    {{ if not .KYCVerified }}
+    <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6 text-center">
+        <h3 class="text-lg font-bold text-red-800 mb-2">Identity Verification Required</h3>
+        <p class="text-sm text-red-600 mb-6">You must complete KYC / Identity Verification before you can link an Ethereum wallet or receive university scholarship funds.</p>
+        
+        <form action="/api/v1/students/{{ .ID }}/kyc" method="POST" id="kyc-form">
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-6 rounded-md transition duration-150 shadow">
+                Start Identity Verification (Persona)
+            </button>
+        </form>
+        <script>
+            document.getElementById('kyc-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                fetch(this.action, {method: 'POST'})
+                .then(r => r.json())
+                .then(() => window.location.reload());
+            });
+        </script>
+    </div>
+    
+    <div class="opacity-50 pointer-events-none filter blur-sm">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Total Credits</h3>
+                <div class="text-4xl font-extrabold text-gray-900">{{ .Credits }}</div>
+                <p class="text-sm text-gray-500 mt-2">15 credits required for next Tranche Release.</p>
+            </div>
+            <div class="border border-gray-200 rounded-lg p-6 bg-gray-50">
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Crypto Wallet</h3>
+                <div class="text-xl font-mono text-gray-900">0x...Locked</div>
+                <p class="text-sm text-gray-500 mt-2">Waiting for KYC Approval.</p>
+            </div>
+        </div>
+    </div>
+    {{ else }}
+    <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-6 flex items-center gap-3">
+        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+        <div>
+            <h3 class="text-sm font-bold text-green-800">Identity Verified</h3>
+            <p class="text-xs text-green-600">Your account is fully compliant and eligible for smart contract distribution.</p>
+        </div>
+    </div>
+    
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div class="border border-gray-200 rounded-lg p-6 bg-gray-50">
             <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Total Credits</h3>
             <div class="text-4xl font-extrabold text-gray-900" id="student-credits">{{ .Credits }}</div>
             <p class="text-sm text-gray-500 mt-2">15 credits required for next Tranche Release.</p>
         </div>
+        <div class="border border-gray-200 rounded-lg p-6 bg-gray-50 flex flex-col justify-between">
+            <div>
+                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Crypto Wallet</h3>
+                <div class="text-sm font-mono text-gray-900 break-all">0xAbC123...456 (Ready)</div>
+            </div>
+        </div>
     </div>
+    {{ end }}
 </div>
 
 
@@ -58,6 +109,48 @@
         &copy; 2024 UniTreasury Chain Research Project
     </footer>
 
+
+	<!-- FEATURE 11: Real-Time WebSockets -->
+	<div id="toast-container" class="fixed bottom-4 right-4 flex flex-col gap-2 z-50"></div>
+	<script>
+		function showToast(message) {
+			const toast = document.createElement('div');
+			toast.className = 'bg-blue-600 text-white px-4 py-3 rounded shadow-lg transform transition-all duration-300 translate-y-full opacity-0';
+			toast.innerHTML = '<div class="flex items-center gap-2"><svg class="w-5 h-5 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><span>' + message + '</span></div>';
+			
+			document.getElementById('toast-container').appendChild(toast);
+			
+			// Animate in
+			setTimeout(() => {
+				toast.classList.remove('translate-y-full', 'opacity-0');
+			}, 10);
+			
+			// Auto remove
+			setTimeout(() => {
+				toast.classList.add('translate-y-full', 'opacity-0');
+				setTimeout(() => toast.remove(), 300);
+			}, 5000);
+		}
+
+		const ws = new WebSocket("ws://" + window.location.host + "/ws");
+		ws.onmessage = function(event) {
+			try {
+				const data = JSON.parse(event.data);
+				if (data.type === "BlockchainEvent") {
+					showToast("🎉 Real-Time Alert: New " + data.contract + " transaction confirmed!");
+					// If it's the escrow, they might have gotten paid!
+					if (data.contract === "Escrow") {
+						setTimeout(() => window.location.reload(), 2000); // reload to show new balance
+					}
+				}
+			} catch (e) {
+				console.error("WS Parse error", e);
+			}
+		};
+		ws.onopen = function() {
+			console.log("WebSocket connected!");
+		};
+	</script>
 </body>
 </html>
 

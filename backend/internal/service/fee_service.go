@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"go.uber.org/zap"
@@ -192,7 +191,7 @@ func (s *FeeService) processRow(ctx context.Context, row CSVRow, rowNum int) (pa
 func (s *FeeService) awaitConfirmation(paymentID int64, tx *types.Transaction) {
 	ctx := context.Background()
 
-	receipt, err := bind.WaitMined(ctx, s.ethClient.Inner(), tx)
+	receipt, err := s.txMgr.WaitMinedWithBump(ctx, tx)
 	if err != nil {
 		s.log.Error("await confirmation failed",
 			zap.Int64("payment_id", paymentID),

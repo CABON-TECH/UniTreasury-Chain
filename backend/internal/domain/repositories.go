@@ -14,6 +14,7 @@ type StudentRepository interface {
 	List(ctx context.Context, offset, limit int) ([]*Student, int64, error)
 	UpdateCredits(ctx context.Context, id int64, credits int) error
 	UpdateCreditsByHash(ctx context.Context, hash string, credits int) error
+	VerifyKYC(ctx context.Context, id int64) error
 }
 
 // ── Payment Repository ────────────────────────────────────────────────────────
@@ -55,6 +56,7 @@ type ScholarshipRepository interface {
 	CreateTrancheRelease(ctx context.Context, t *TrancheRelease) error
 	DeleteTrancheRelease(ctx context.Context, fundID int64, studentHash string, trancheIndex int) error
 	HasReleased(ctx context.Context, fundID int64, studentHash string, trancheIndex int) (bool, error)
+	GetReportRows(ctx context.Context, fundID int64) ([]*TrancheReportRow, error)
 }
 
 // ── Audit Repository ──────────────────────────────────────────────────────────

@@ -24,6 +24,11 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
     mapping(uint256 => mapping(address => bool)) private _approvals;
     mapping(uint256 => uint256) private _dailyWithdrawn;
 
+    uint256 private _signerProposalCounter;
+    mapping(uint256 => SignerChangeProposal) private _signerProposals;
+    mapping(uint256 => mapping(address => bool)) private _signerApprovals;
+
+
     constructor(
         address admin,
         address[] memory initialApprovers,
@@ -168,6 +173,93 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
 
     function _getActivePendingProposal(uint256 proposalId) internal view returns (WithdrawalProposal storage proposal) {
         proposal = _proposals[proposalId];
+        if (proposal.id == 0) revert Treasury__ProposalNotFound(proposalId);
+        if (proposal.status != ProposalStatus.Pending) revert Treasury__ProposalNotPending(proposalId);
+    }
+
+    // --- Signer Change Logic ---
+
+    function proposeSignerChange(
+        address target,
+        address replacement,
+        uint8 changeType
+    ) external override onlyRole(APPROVER_ROLE) returns (uint256 proposalId) {
+        if (_frozen) revert Treasury__Frozen();
+        require(changeType <= 2, "Invalid change type");
+        if (changeType == uint8(ChangeType.Add) || changeType == uint8(ChangeType.Replace)) {
+            require(replacement != address(0), "Invalid replacement address");
+        }
+        if (changeType == uint8(ChangeType.Remove) || changeType == uint8(ChangeType.Replace)) {
+            require(target != address(0), "Invalid target address");
+        }
+
+        proposalId = ++_signerProposalCounter;
+        _signerProposals[proposalId] = SignerChangeProposal({
+            id: proposalId,
+            proposer: msg.sender,
+            targetSigner: target,
+            newSigner: replacement,
+            changeType: ChangeType(changeType),
+            status: ProposalStatus.Pending,
+            approvalCount: 0,
+            createdAt: block.timestamp
+        });
+
+        emit SignerChangeProposed(proposalId, msg.sender, target, replacement, changeType);
+    }
+
+    function approveSignerChange(uint256 proposalId) external override onlyRole(APPROVER_ROLE) {
+        SignerChangeProposal storage proposal = _getActivePendingSignerProposal(proposalId);
+        if (_signerApprovals[proposalId][msg.sender])
+            revert Treasury__AlreadyApproved(proposalId, msg.sender);
+
+        _signerApprovals[proposalId][msg.sender] = true;
+        proposal.approvalCount++;
+
+        emit SignerChangeApproved(proposalId, msg.sender, proposal.approvalCount);
+    }
+
+    function executeSignerChange(uint256 proposalId) external override nonReentrant onlyRole(EXECUTOR_ROLE) {
+        if (_frozen) revert Treasury__Frozen();
+        SignerChangeProposal storage proposal = _getActivePendingSignerProposal(proposalId);
+
+        if (proposal.approvalCount < requiredApprovals)
+            revert Treasury__InsufficientApprovals(proposal.approvalCount, requiredApprovals);
+
+        proposal.status = ProposalStatus.Executed;
+
+        if (proposal.changeType == ChangeType.Add) {
+            _grantRole(APPROVER_ROLE, proposal.newSigner);
+        } else if (proposal.changeType == ChangeType.Remove) {
+            _revokeRole(APPROVER_ROLE, proposal.targetSigner);
+        } else if (proposal.changeType == ChangeType.Replace) {
+            _revokeRole(APPROVER_ROLE, proposal.targetSigner);
+            _grantRole(APPROVER_ROLE, proposal.newSigner);
+        }
+
+        emit SignerChangeExecuted(proposalId, proposal.targetSigner, proposal.newSigner, uint8(proposal.changeType));
+    }
+
+    function cancelSignerChange(uint256 proposalId) external override {
+        SignerChangeProposal storage proposal = _getActivePendingSignerProposal(proposalId);
+        if (msg.sender != proposal.proposer && !hasRole(ADMIN_ROLE, msg.sender))
+            revert Treasury__NotAuthorized();
+
+        proposal.status = ProposalStatus.Cancelled;
+        // Reusing the same Cancelled event but we should maybe have a specific one, or just update state.
+    }
+
+    function getSignerProposal(uint256 proposalId) external view override returns (SignerChangeProposal memory) {
+        if (_signerProposals[proposalId].id == 0) revert Treasury__ProposalNotFound(proposalId);
+        return _signerProposals[proposalId];
+    }
+
+    function hasApprovedSignerChange(uint256 proposalId, address approver) external view override returns (bool) {
+        return _signerApprovals[proposalId][approver];
+    }
+
+    function _getActivePendingSignerProposal(uint256 proposalId) internal view returns (SignerChangeProposal storage proposal) {
+        proposal = _signerProposals[proposalId];
         if (proposal.id == 0) revert Treasury__ProposalNotFound(proposalId);
         if (proposal.status != ProposalStatus.Pending) revert Treasury__ProposalNotPending(proposalId);
     }

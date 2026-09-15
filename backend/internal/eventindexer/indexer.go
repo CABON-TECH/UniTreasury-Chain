@@ -8,6 +8,8 @@ import (
 	"context"
 	"fmt"
 	"math/big"
+	"encoding/json"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"time"
 
 	"github.com/ethereum/go-ethereum"
@@ -24,6 +26,7 @@ type Indexer struct {
 	client       *blockchain.Client
 	auditRepo    domain.AuditRepository
 	contracts    []IndexedContract
+	pool         *pgxpool.Pool
 	pollInterval time.Duration
 	batchSize    uint64
 	log          *zap.Logger
@@ -43,6 +46,7 @@ func New(
 	client *blockchain.Client,
 	auditRepo domain.AuditRepository,
 	contracts []IndexedContract,
+	pool *pgxpool.Pool,
 	pollInterval time.Duration,
 	batchSize uint64,
 	log *zap.Logger,
@@ -51,6 +55,7 @@ func New(
 		client:       client,
 		auditRepo:    auditRepo,
 		contracts:    contracts,
+		pool:         pool,
 		pollInterval: pollInterval,
 		batchSize:    batchSize,
 		log:          log,
@@ -83,7 +88,7 @@ func (idx *Indexer) Run(ctx context.Context) error {
 }
 
 func (idx *Indexer) poll(ctx context.Context) error {
-	head, err := idx.client.CurrentBlock(ctx)
+	head, err := idx.client.BlockNumber(ctx)
 	if err != nil {
 		return fmt.Errorf("indexer: get current block: %w", err)
 	}
@@ -123,7 +128,7 @@ func (idx *Indexer) indexContract(ctx context.Context, c IndexedContract, head u
 		zap.Uint64("to", to),
 	)
 
-	logs, err := idx.client.Inner().FilterLogs(ctx, ethereum.FilterQuery{
+	logs, err := idx.client.FilterLogs(ctx, ethereum.FilterQuery{
 		FromBlock: numberToHex(from),
 		ToBlock:   numberToHex(to),
 		Addresses: []common.Address{c.Address},
@@ -166,7 +171,18 @@ func (idx *Indexer) processLog(ctx context.Context, contractName string, l types
 		IndexedAt:   time.Now(),
 	}
 
-	return idx.auditRepo.Insert(ctx, event)
+	err := idx.auditRepo.Insert(ctx, event)
+	if err == nil && idx.pool != nil {
+		// FEATURE 11: WebSockets for Real-Time UI
+		payloadMap := map[string]interface{}{
+			"type": "BlockchainEvent",
+			"contract": contractName,
+			"tx_hash": l.TxHash.Hex(),
+		}
+		bMsg, _ := json.Marshal(payloadMap)
+		idx.pool.Exec(ctx, "NOTIFY ws_events, '" + string(bMsg) + "'")
+	}
+	return err
 }
 
 // encodeLogPayload produces a simple JSON-compatible byte slice from a log.

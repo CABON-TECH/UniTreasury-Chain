@@ -30,6 +30,7 @@ func (s *AuthService) BootstrapDefaultUsers(ctx context.Context) error {
 	users := []domain.User{
 		{Username: "admin", Role: string(auth.RoleAdmin)},
 		{Username: "finance", Role: string(auth.RoleFinance)},
+		{Username: "professor", Role: string(auth.RoleProfessor)},
 		{Username: "student1", Role: string(auth.RoleStudent), StudentID: "CS/001/2021"},
 	}
 

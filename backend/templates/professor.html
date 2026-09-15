@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniTreasury Chain</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        .htmx-indicator { display: none; }
+        .htmx-request .htmx-indicator { display: inline-block; }
+        .htmx-request.htmx-indicator { display: inline-block; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans min-h-screen flex flex-col">
+
+    <nav class="bg-blue-600 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <span class="font-bold text-xl tracking-tight">UniTreasury Chain</span>
+                </div>
+                <div>
+                    {{ if .Role }}
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm bg-blue-700 px-3 py-1 rounded-full">{{ .Role }}</span>
+                        <a href="/logout" class="text-sm font-medium hover:text-blue-200">Logout</a>
+                    </div>
+                    {{ end }}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+<div class="space-y-8">
+    <div class="bg-white p-6 rounded-lg shadow-sm border border-gray-200">
+        <h2 class="text-xl font-bold text-gray-800 mb-4">Treasury Multi-sig Proposals</h2>
+        
+        <div hx-get="/api/v1/treasury/proposals" hx-trigger="load, every 5s" id="proposals-list">
+            <p class="text-gray-500">Loading proposals...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+document.body.addEventListener('htmx:afterSwap', function(evt) {
+    if (evt.detail.elt.id === 'proposals-list') {
+        try {
+            const data = JSON.parse(evt.detail.xhr.response);
+            const proposals = data.data || [];
+            let html = '<div class="overflow-x-auto"><table class="min-w-full divide-y divide-gray-200"><thead class="bg-gray-50"><tr><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recipient</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount (wei)</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approvals</th><th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th></tr></thead><tbody class="bg-white divide-y divide-gray-200">';
+            
+            if (proposals.length === 0) {
+                html += '<tr><td colspan="6" class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">No proposals found</td></tr>';
+            } else {
+                proposals.forEach(p => {
+                    let btn = '';
+                    if (p.status === 'pending') {
+                        btn = `<button hx-post="/api/v1/treasury/proposals/${p.id}/approve" hx-swap="none" class="bg-green-600 text-white px-3 py-1 rounded text-xs font-medium hover:bg-green-700 transition">Approve</button>`;
+                    }
+                    html += `<tr>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">#${p.id}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">${p.recipient.substring(0, 10)}...</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-bold">${p.amount}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-${p.status==='executed'?'green':p.status==='cancelled'?'red':'yellow'}-100 text-${p.status==='executed'?'green':p.status==='cancelled'?'red':'yellow'}-800">${p.status}</span></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${p.approval_count} / 2</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${btn}</td>
+                    </tr>`;
+                });
+            }
+            html += '</tbody></table></div>';
+            evt.detail.elt.innerHTML = html;
+            htmx.process(evt.detail.elt); // re-init htmx on new buttons
+        } catch(e) { console.error(e); }
+    }
+});
+</script>
+
+
+
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-4 text-center text-sm text-gray-500 mt-auto">
+        &copy; 2024 UniTreasury Chain Research Project
+    </footer>
+
+</body>
+</html>
+

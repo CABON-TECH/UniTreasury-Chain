@@ -122,3 +122,29 @@ func (r *ScholarshipRepo) DeleteTrancheRelease(ctx context.Context, fundID int64
 	_, err := r.pool.Exec(ctx, "DELETE FROM tranche_releases WHERE fund_id = $1 AND student_hash = $2 AND tranche_index = $3", fundID, studentHash, trancheIndex)
 	return err
 }
+
+func (r *ScholarshipRepo) GetReportRows(ctx context.Context, fundID int64) ([]*domain.TrancheReportRow, error) {
+	const q = `
+		SELECT s.name, s.gpa, t.tranche_index, t.amount, t.tx_hash, t.released_at
+		FROM tranche_releases t
+		JOIN students s ON t.student_hash = s.hash
+		WHERE t.fund_id = $1
+		ORDER BY t.released_at ASC
+	`
+	rows, err := r.pool.Query(ctx, q, fundID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var result []*domain.TrancheReportRow
+	for rows.Next() {
+		row := &domain.TrancheReportRow{}
+		err := rows.Scan(&row.StudentName, &row.StudentGPA, &row.TrancheIndex, &row.Amount, &row.TxHash, &row.ReleasedAt)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, row)
+	}
+	return result, nil
+}

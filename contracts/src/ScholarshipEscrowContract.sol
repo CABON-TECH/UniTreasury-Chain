@@ -86,6 +86,7 @@ contract ScholarshipEscrowContract is Initializable, IScholarshipEscrow, AccessC
         bytes32 studentHash,
         uint256 trancheIndex,
         address recipient,
+        uint256 amount,
         bytes32[] calldata merkleProof
     ) external nonReentrant {
         ScholarshipFund storage fund = funds[fundId];
@@ -93,23 +94,23 @@ contract ScholarshipEscrowContract is Initializable, IScholarshipEscrow, AccessC
         require(!fund.paused, "Fund is paused");
         require(trancheIndex < fund.trancheCount, "Invalid tranche index");
         require(!hasClaimed[fundId][studentHash][trancheIndex], "Tranche already claimed");
-        require(fund.totalAmount - fund.releasedAmount >= fund.trancheAmount, "Insufficient funds");
+        require(fund.totalAmount - fund.releasedAmount >= amount, "Insufficient funds");
 
         bytes32 root = trancheRoots[fundId][trancheIndex];
         require(root != bytes32(0), "Tranche root not published yet");
 
         // Verify the merkle proof
         // Leaf = keccak256(abi.encodePacked(fundId, studentHash, trancheIndex, recipient, fund.trancheAmount))
-        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(fundId, studentHash, trancheIndex, recipient, fund.trancheAmount))));
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(fundId, studentHash, trancheIndex, recipient, amount))));
         
         require(MerkleProof.verify(merkleProof, root, leaf), "Invalid Merkle proof");
 
         hasClaimed[fundId][studentHash][trancheIndex] = true;
-        fund.releasedAmount += fund.trancheAmount;
+        fund.releasedAmount += amount;
 
-        require(usdcToken.transfer(recipient, fund.trancheAmount), "USDC transfer failed");
+        require(usdcToken.transfer(recipient, amount), "USDC transfer failed");
 
-        emit TrancheClaimed(fundId, studentHash, trancheIndex, fund.trancheAmount, recipient);
+        emit TrancheClaimed(fundId, studentHash, trancheIndex, amount, recipient);
     }
 
     

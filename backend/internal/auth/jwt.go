@@ -13,9 +13,10 @@ import (
 type Role string
 
 const (
-	RoleAdmin   Role = "admin"
-	RoleFinance Role = "finance"
-	RoleStudent Role = "student"
+	RoleAdmin     Role = "admin"
+	RoleFinance   Role = "finance"
+	RoleProfessor Role = "professor"
+	RoleStudent   Role = "student"
 )
 
 // Claims is the JWT payload.

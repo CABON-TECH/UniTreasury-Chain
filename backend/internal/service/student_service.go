@@ -98,3 +98,8 @@ func keccak256Hex(input string) string {
 func (s *StudentService) GetByStudentID(ctx context.Context, studentID string) (*domain.Student, error) {
 	return s.repo.GetByStudentID(ctx, studentID)
 }
+
+func (s *StudentService) VerifyKYC(ctx context.Context, id int64) error {
+	s.log.Info("verifying student kyc", zap.Int64("id", id))
+	return s.repo.VerifyKYC(ctx, id)
+}

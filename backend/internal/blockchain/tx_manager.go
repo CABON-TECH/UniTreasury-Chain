@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/big"
 	"sync"
+	"time"
 
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -29,7 +30,7 @@ type TxManager struct {
 // NewTxManager creates a TxManager, fetching the current nonce from the chain.
 func NewTxManager(ctx context.Context, client *Client, privateKey *ecdsa.PrivateKey, log *zap.Logger) (*TxManager, error) {
 	addr := AddressFromKey(privateKey)
-	nonce, err := client.inner.PendingNonceAt(ctx, addr)
+	nonce, err := client.PendingNonceAt(ctx, addr)
 	if err != nil {
 		return nil, fmt.Errorf("tx_manager: fetch nonce for %s: %w", addr.Hex(), err)
 	}
@@ -86,7 +87,7 @@ func (m *TxManager) SyncNonce(ctx context.Context) error {
 	m.mu.Lock()
 	defer m.mu.Unlock()
 
-	nonce, err := m.client.inner.PendingNonceAt(ctx, m.address)
+	nonce, err := m.client.PendingNonceAt(ctx, m.address)
 	if err != nil {
 		return fmt.Errorf("tx_manager: sync nonce: %w", err)
 	}
@@ -101,10 +102,151 @@ func (m *TxManager) SyncNonce(ctx context.Context) error {
 // WaitMined polls until a transaction is included in a block.
 // Returns the receipt or an error if the context is cancelled.
 func (m *TxManager) WaitMined(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
-	return bind.WaitMined(ctx, m.client.inner, tx)
+	return bind.WaitMined(ctx, m.client, tx)
 }
 
 // Address returns the signer address managed by this TxManager.
 func (m *TxManager) Address() common.Address {
 	return m.address
+}
+
+// WaitMinedWithBump polls until a transaction is included in a block.
+// If it takes more than 15 seconds, it fetches new gas prices and resubmits
+// a bumped transaction to replace the stuck one.
+func (m *TxManager) WaitMinedWithBump(ctx context.Context, tx *types.Transaction) (*types.Receipt, error) {
+	currentTx := tx
+
+	bumpTicker := time.NewTicker(15 * time.Second)
+	defer bumpTicker.Stop()
+
+	pollTicker := time.NewTicker(2 * time.Second)
+	defer pollTicker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			return nil, ctx.Err()
+
+		case <-pollTicker.C:
+			receipt, err := m.client.TransactionReceipt(ctx, currentTx.Hash())
+			if err == nil && receipt != nil {
+				m.log.Info("transaction mined", zap.String("hash", currentTx.Hash().Hex()))
+				return receipt, nil
+			}
+
+		case <-bumpTicker.C:
+			m.log.Info("transaction pending too long, attempting gas bump", zap.String("hash", currentTx.Hash().Hex()))
+
+			signer := types.LatestSignerForChainID(m.client.chainID)
+
+			if currentTx.Type() == types.LegacyTxType {
+				gasPrice, err := m.client.SuggestGasPrice(ctx)
+				if err != nil {
+					m.log.Warn("failed to suggest gas price", zap.Error(err))
+					continue
+				}
+
+				oldGasPrice := currentTx.GasPrice()
+				minRequiredGasPrice := new(big.Int).Mul(oldGasPrice, big.NewInt(120))
+				minRequiredGasPrice.Div(minRequiredGasPrice, big.NewInt(100))
+
+				if gasPrice.Cmp(minRequiredGasPrice) < 0 {
+					gasPrice = minRequiredGasPrice
+				}
+
+				newTx := types.NewTx(&types.LegacyTx{
+					Nonce:    currentTx.Nonce(),
+					To:       currentTx.To(),
+					Value:    currentTx.Value(),
+					Gas:      currentTx.Gas(),
+					GasPrice: gasPrice,
+					Data:     currentTx.Data(),
+				})
+
+				signedTx, err := types.SignTx(newTx, signer, m.privateKey)
+				if err != nil {
+					m.log.Error("failed to sign bumped tx", zap.Error(err))
+					continue
+				}
+
+				err = m.client.SendTransaction(ctx, signedTx)
+				if err != nil {
+					m.log.Error("failed to send bumped tx", zap.Error(err))
+					continue
+				}
+
+				m.log.Info("successfully bumped legacy transaction",
+					zap.String("old_hash", currentTx.Hash().Hex()),
+					zap.String("new_hash", signedTx.Hash().Hex()),
+				)
+				currentTx = signedTx
+
+			} else if currentTx.Type() == types.DynamicFeeTxType {
+				tip, err := m.client.SuggestGasTipCap(ctx)
+				if err != nil {
+					m.log.Warn("failed to suggest gas tip cap", zap.Error(err))
+					continue
+				}
+
+				head, err := m.client.HeaderByNumber(ctx, nil)
+				if err != nil {
+					m.log.Warn("failed to get header", zap.Error(err))
+					continue
+				}
+
+				baseFee := head.BaseFee
+				if baseFee == nil {
+					baseFee = big.NewInt(0)
+				}
+				fee := new(big.Int).Add(tip, new(big.Int).Mul(baseFee, big.NewInt(2)))
+
+				oldTip := currentTx.GasTipCap()
+				oldFee := currentTx.GasFeeCap()
+
+				minRequiredTip := new(big.Int).Mul(oldTip, big.NewInt(120))
+				minRequiredTip.Div(minRequiredTip, big.NewInt(100))
+
+				minRequiredFee := new(big.Int).Mul(oldFee, big.NewInt(120))
+				minRequiredFee.Div(minRequiredFee, big.NewInt(100))
+
+				if tip.Cmp(minRequiredTip) < 0 {
+					tip = minRequiredTip
+				}
+				if fee.Cmp(minRequiredFee) < 0 {
+					fee = minRequiredFee
+				}
+
+				newTx := types.NewTx(&types.DynamicFeeTx{
+					ChainID:   m.client.chainID,
+					Nonce:     currentTx.Nonce(),
+					To:        currentTx.To(),
+					Value:     currentTx.Value(),
+					Gas:       currentTx.Gas(),
+					GasTipCap: tip,
+					GasFeeCap: fee,
+					Data:      currentTx.Data(),
+				})
+
+				signedTx, err := types.SignTx(newTx, signer, m.privateKey)
+				if err != nil {
+					m.log.Error("failed to sign bumped tx", zap.Error(err))
+					continue
+				}
+
+				err = m.client.SendTransaction(ctx, signedTx)
+				if err != nil {
+					m.log.Error("failed to send bumped tx", zap.Error(err))
+					continue
+				}
+
+				m.log.Info("successfully bumped dynamic transaction",
+					zap.String("old_hash", currentTx.Hash().Hex()),
+					zap.String("new_hash", signedTx.Hash().Hex()),
+				)
+				currentTx = signedTx
+			} else {
+				m.log.Warn("unsupported tx type for bumping", zap.Uint8("type", currentTx.Type()))
+			}
+		}
+	}
 }

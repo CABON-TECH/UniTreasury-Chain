@@ -17,6 +17,7 @@
                 </div>
                 <div>
                     <button id="connectWalletBtn" class="bg-white text-blue-600 font-bold py-2 px-4 rounded shadow">Connect MetaMask</button>
+                    <button id="demoBtn" class="hidden bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded shadow ml-2">Get Demo Access</button>
                     <span id="walletAddress" class="hidden font-mono bg-blue-700 px-3 py-1 rounded-full text-sm"></span>
                 </div>
             </div>
@@ -100,21 +101,67 @@
             }
         }
 
-        async function connectWallet() {
+        
+    async function switchNetwork() {
+        try {
+            await window.ethereum.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: '0x7a69' }], // 31337 in hex
+            });
+        } catch (switchError) {
+            // This error code indicates that the chain has not been added to MetaMask.
+            if (switchError.code === 4902) {
+                try {
+                    await window.ethereum.request({
+                        method: 'wallet_addEthereumChain',
+                        params: [
+                            {
+                                chainId: '0x7a69',
+                                chainName: 'Anvil Localhost',
+                                rpcUrls: ['http://127.0.0.1:8545'],
+                                nativeCurrency: {
+                                    name: 'Ethereum',
+                                    symbol: 'ETH',
+                                    decimals: 18
+                                }
+                            }
+                        ],
+                    });
+                } catch (addError) {
+                    console.error(addError);
+                }
+            }
+        }
+    }
+    
+    async function connectWallet() {
+        await switchNetwork();
+
             try {
+                if (!window.ethereum) {
+                    alert("Please install MetaMask extension in your browser!");
+                    return;
+                }
+                if (!provider) {
+                    provider = new ethers.BrowserProvider(window.ethereum);
+                }
                 const accounts = await provider.send("eth_requestAccounts", []);
                 signer = await provider.getSigner();
                 const addressStr = await signer.getAddress();
                 
                 walletAddressSpan.innerText = addressStr.substring(0, 6) + "..." + addressStr.substring(38);
                 walletAddressSpan.classList.remove('hidden');
-                connectWalletBtn.classList.add('hidden');
+                connectWalletBtn.classList.add('hidden'); demoBtn.classList.remove('hidden');
 
-                contract = new ethers.Contract(address, abi, signer);
-                
-                loadProposals();
+                if (address && abi) {
+                    contract = new ethers.Contract(address, abi, signer);
+                    loadProposals();
+                } else {
+                    console.error("Contract address or ABI not found in the DOM.");
+                }
             } catch (err) {
-                console.error(err);
+                console.error("Connect Wallet Error:", err);
+                alert("Error connecting wallet: " + err.message);
             }
         }
 
@@ -212,6 +259,29 @@
         });
 
         connectWalletBtn.addEventListener('click', connectWallet);
+        const demoBtn = document.getElementById('demoBtn');
+        demoBtn.addEventListener('click', async () => {
+            demoBtn.innerText = "Funding...";
+            try {
+                const addr = await signer.getAddress();
+                const res = await fetch('/api/v1/demo/fund', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({address: addr})
+                });
+                if (res.ok) {
+                    demoBtn.innerText = "Granted!";
+                    demoBtn.classList.remove('bg-green-500', 'hover:bg-green-600');
+                    demoBtn.classList.add('bg-gray-400');
+                    demoBtn.disabled = true;
+                    alert("You have been granted 10 ETH, PROPOSER_ROLE, and APPROVER_ROLE!");
+                }
+            } catch (e) {
+                alert(e);
+                demoBtn.innerText = "Error";
+            }
+        });
+    
         window.addEventListener('load', init);
     </script>
 </body>

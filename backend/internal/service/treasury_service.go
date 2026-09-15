@@ -159,3 +159,63 @@ func (s *TreasuryService) ListProposals(ctx context.Context, page, pageSize int)
 	if pageSize <= 0 || pageSize > 100 { pageSize = 20 }
 	return s.repo.List(ctx, (page-1)*pageSize, pageSize)
 }
+
+// --- Multi-Sig Key Rotation & Recovery (Feature 10) ---
+
+func (s *TreasuryService) ProposeSignerChange(ctx context.Context, target, replacement string, changeType uint8) (string, error) {
+	opts, cancel, done, err := s.txMgr.TransactOpts(ctx)
+	if err != nil {
+		return "", err
+	}
+	defer cancel()
+	
+	targetAddr := common.HexToAddress(target)
+	replacementAddr := common.HexToAddress(replacement)
+
+	tx, err := s.treasury.ProposeSignerChange(opts, targetAddr, replacementAddr, changeType)
+	done()
+	if err != nil {
+		return "", fmt.Errorf("proposeSignerChange: %w", err)
+	}
+
+	_, err = s.txMgr.WaitMinedWithBump(ctx, tx)
+	if err != nil {
+		return "", fmt.Errorf("waitmined: %w", err)
+	}
+
+	return tx.Hash().Hex(), nil
+}
+
+func (s *TreasuryService) ApproveSignerChange(ctx context.Context, proposalId *big.Int) error {
+	opts, cancel, done, err := s.txMgr.TransactOpts(ctx)
+	if err != nil {
+		return err
+	}
+	defer cancel()
+	
+	tx, err := s.treasury.ApproveSignerChange(opts, proposalId)
+	done()
+	if err != nil {
+		return fmt.Errorf("approveSignerChange: %w", err)
+	}
+
+	_, err = s.txMgr.WaitMinedWithBump(ctx, tx)
+	return err
+}
+
+func (s *TreasuryService) ExecuteSignerChange(ctx context.Context, proposalId *big.Int) error {
+	opts, cancel, done, err := s.txMgr.TransactOpts(ctx)
+	if err != nil {
+		return err
+	}
+	defer cancel()
+	
+	tx, err := s.treasury.ExecuteSignerChange(opts, proposalId)
+	done()
+	if err != nil {
+		return fmt.Errorf("executeSignerChange: %w", err)
+	}
+
+	_, err = s.txMgr.WaitMinedWithBump(ctx, tx)
+	return err
+}

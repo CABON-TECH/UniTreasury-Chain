@@ -30,6 +30,7 @@ contract DeployAllScript is Script {
             address(usdc)
         );
         console.log("TREASURY_CONTRACT_ADDRESS=", address(treasury));
+        usdc.transfer(address(treasury), 500_000 * 10**18);
 
         FeeRegistryContract feeRegistry = new FeeRegistryContract(deployer, deployer, address(usdc));
         console.log("FEE_REGISTRY_CONTRACT_ADDRESS=", address(feeRegistry));

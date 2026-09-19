@@ -96,7 +96,34 @@
                 <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Crypto Wallet</h3>
                 <div class="text-sm font-mono text-gray-900 break-all">0xAbC123...456 (Ready)</div>
             </div>
+			<div class="mt-4">
+				<button onclick="claimCrossChain()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-2 px-4 rounded transition">
+					Bridge USDC to Arbitrum (L2)
+				</button>
+			</div>
         </div>
+		<script>
+		function claimCrossChain() {
+			if(confirm('Are you sure you want to claim your scholarship on Arbitrum L2?')) {
+				fetch('/api/v1/students/{{.ID}}/claim-l2', {
+					method: 'POST',
+					headers: {'Content-Type': 'application/json'},
+					body: JSON.stringify({
+						fund_id: 1, // hardcoded for demo
+						tranche_index: 0, // hardcoded for demo
+						recipient: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC', // student1 anvil key
+						dst_chain_id: 42161
+					})
+				}).then(r => r.json()).then(res => {
+					if (res.error) {
+						alert('Error: ' + res.error);
+					} else {
+						alert('Cross-Chain Bridging Initiated successfully!');
+					}
+				})
+			}
+		}
+		</script>
     </div>
     {{ end }}
 </div>

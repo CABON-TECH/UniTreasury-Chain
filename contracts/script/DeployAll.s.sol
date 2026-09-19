@@ -7,6 +7,7 @@ import {FeeRegistryContract} from "../src/FeeRegistryContract.sol";
 import {ScholarshipEscrowContract} from "../src/ScholarshipEscrowContract.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {MockUSDC} from "../src/MockUSDC.sol";
+import {MockLayerZeroEndpoint} from "../src/MockLayerZeroEndpoint.sol";
 
 contract DeployAllScript is Script {
     function run() external {
@@ -40,6 +41,10 @@ contract DeployAllScript is Script {
         ERC1967Proxy proxy = new ERC1967Proxy(address(logic), data);
         ScholarshipEscrowContract escrow = ScholarshipEscrowContract(address(proxy));
         console.log("SCHOLARSHIP_ESCROW_CONTRACT_ADDRESS=", address(escrow));
+
+        MockLayerZeroEndpoint lzEndpoint = new MockLayerZeroEndpoint();
+        escrow.setLzEndpoint(address(lzEndpoint));
+        console.log("MOCK_LZ_ENDPOINT_ADDRESS=", address(lzEndpoint));
 
         vm.stopBroadcast();
     }

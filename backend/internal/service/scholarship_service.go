@@ -270,3 +270,113 @@ func (s *ScholarshipService) ClawbackFund(ctx context.Context, fundID int64, rec
 	
 	return nil
 }
+func (s *ScholarshipService) SimulateCrossChainClaim(ctx context.Context, fundID int64, studentID string, trancheIndex int, recipient string, dstChainId uint16) error {
+	fund, err := s.repo.GetFundByID(ctx, fundID)
+	if err != nil || fund == nil {
+		return fmt.Errorf("fund not found")
+	}
+
+	student, err := s.studentRepo.GetByStudentID(ctx, studentID)
+	if err != nil || student == nil {
+		return fmt.Errorf("student not found")
+	}
+
+	students, err := s.studentRepo.ListAll(ctx)
+	if err != nil {
+		return err
+	}
+
+	var eligibleLeaves [][]byte
+	onChainFundId := new(big.Int).SetUint64(fund.OnChainID)
+	tIndex := big.NewInt(int64(trancheIndex))
+	recipAddr := common.HexToAddress(recipient)
+	requiredCredits := (trancheIndex + 1) * 15
+
+	var studentLeaf []byte
+	var claimAmount *big.Int
+
+	for _, st := range students {
+		if st.Credits < requiredCredits {
+			continue
+		}
+		
+		amount := new(big.Int).SetUint64(fund.TrancheAmount)
+		if st.GPA >= 3.5 {
+			bonus := new(big.Int).Mul(amount, big.NewInt(20))
+			bonus.Div(bonus, big.NewInt(100))
+			amount.Add(amount, bonus)
+		}
+
+		var sHash [32]byte
+		copy(sHash[:], common.FromHex(st.Hash))
+		
+		leaf := blockchain.GenerateLeaf(onChainFundId, sHash, tIndex, recipAddr, amount)
+		eligibleLeaves = append(eligibleLeaves, leaf)
+		
+		if st.StudentID == studentID {
+			studentLeaf = leaf
+			claimAmount = amount
+		}
+	}
+
+	if studentLeaf == nil {
+		return fmt.Errorf("student not eligible for this tranche")
+	}
+
+	tree := blockchain.GenerateTree(eligibleLeaves)
+	proof := blockchain.GenerateProof(tree, studentLeaf)
+	
+	var proof32 [][32]byte
+	for _, p := range proof {
+		var p32 [32]byte
+		copy(p32[:], p)
+		proof32 = append(proof32, p32)
+	}
+
+	opts, confirm, rollback, err := s.txMgr.TransactOpts(ctx)
+	if err != nil {
+		return fmt.Errorf("transact opts: %w", err)
+	}
+	
+	rootBytes, _ := s.escrow.ScholarshipEscrowContractCaller.TrancheRoots(nil, onChainFundId, tIndex)
+	var emptyRoot [32]byte
+	if rootBytes == emptyRoot {
+	    var treeRoot32 [32]byte
+	    copy(treeRoot32[:], tree[len(tree)-1][0])
+	    _, err := s.escrow.ScholarshipEscrowContractTransactor.PublishTrancheRoot(opts, onChainFundId, tIndex, treeRoot32)
+	    if err != nil {
+	        rollback()
+	        return fmt.Errorf("failed to publish tranche root: %w", err)
+	    }
+	    
+	    confirm()
+	    opts, confirm, rollback, err = s.txMgr.TransactOpts(ctx)
+	    if err != nil {
+	        return fmt.Errorf("transact opts for claim: %w", err)
+	    }
+	}
+
+	// LZ cross-chain fee
+	opts.Value = big.NewInt(500000000000000)
+
+	var sHash [32]byte
+	copy(sHash[:], common.FromHex(student.Hash))
+
+	_, err = s.escrow.ScholarshipEscrowContractTransactor.ClaimCrossChain(
+		opts,
+		onChainFundId,
+		tIndex,
+		sHash,
+		claimAmount,
+		proof32,
+		dstChainId,
+		recipAddr.Bytes(),
+	)
+	if err != nil {
+		rollback()
+		return fmt.Errorf("claim cross chain: %w", err)
+	}
+
+	confirm()
+	return nil
+}

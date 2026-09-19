@@ -1,0 +1,101 @@
+150:func (s *ScholarshipService) SimulateStudentClaim(ctx context.Context, fundID int64, studentID string, trancheIndex int, recipient string) error {
+151-	fund, err := s.repo.GetFundByID(ctx, fundID)
+152-	if err != nil || fund == nil {
+153-		return fmt.Errorf("fund not found")
+154-	}
+155-
+156-	student, err := s.studentRepo.GetByStudentID(ctx, studentID)
+157-	if err != nil || student == nil {
+158-		return fmt.Errorf("student not found")
+159-	}
+160-
+161-	students, err := s.studentRepo.ListAll(ctx)
+162-	if err != nil {
+163-		return err
+164-	}
+165-
+166-	var eligibleLeaves [][]byte
+167-	onChainFundId := new(big.Int).SetUint64(fund.OnChainID)
+168-	tIndex := big.NewInt(int64(trancheIndex))
+169-	recipAddr := common.HexToAddress(recipient)
+170-	requiredCredits := (trancheIndex + 1) * 15
+171-
+172-	var studentLeaf []byte
+173-	var claimAmount *big.Int
+174-
+175-	for _, st := range students {
+176-		if st.Credits < requiredCredits {
+177-			continue
+178-		}
+179-		
+180-		amount := new(big.Int).SetUint64(fund.TrancheAmount)
+181-		if st.GPA >= 3.5 {
+182-			bonus := new(big.Int).Mul(amount, big.NewInt(20))
+183-			bonus.Div(bonus, big.NewInt(100))
+184-			amount.Add(amount, bonus)
+185-		}
+186-
+187-		var sHash [32]byte
+188-		copy(sHash[:], common.FromHex(st.Hash))
+189-		
+190-		leaf := blockchain.GenerateLeaf(onChainFundId, sHash, tIndex, recipAddr, amount)
+191-		eligibleLeaves = append(eligibleLeaves, leaf)
+192-		
+193-		if st.StudentID == studentID {
+194-			studentLeaf = leaf
+195-			claimAmount = amount
+196-		}
+197-	}
+198-
+199-	if studentLeaf == nil {
+200-		return fmt.Errorf("student not eligible for this tranche")
+201-	}
+202-
+203-	tree := blockchain.GenerateTree(eligibleLeaves)
+204-	proof := blockchain.GenerateProof(tree, studentLeaf)
+205-	
+206-	// Convert proof to [][32]byte
+207-	var proof32 [][32]byte
+208-	for _, p := range proof {
+209-		var p32 [32]byte
+210-		copy(p32[:], p)
+211-		proof32 = append(proof32, p32)
+212-	}
+213-
+214-	opts, confirm, rollback, err := s.txMgr.TransactOpts(ctx)
+215-	if err != nil {
+216-		return fmt.Errorf("transact opts: %w", err)
+217-	}
+218-
+219-	var sHash [32]byte
+220-	copy(sHash[:], common.FromHex(student.Hash))
+221-
+222-	_, err = s.escrow.ScholarshipEscrowContractTransactor.ClaimTranche(
+223-		opts,
+224-		onChainFundId,
+225-		sHash,
+226-		tIndex,
+227-		recipAddr,
+228-		claimAmount,
+229-		proof32,
+230-	)
+231-	if err != nil {
+232-		rollback()
+233-		return fmt.Errorf("claim tranche: %w", err)
+234-	}
+235-
+236-	confirm()
+237-	return nil
+238-}
+239-
+240-// ClawbackFund allows the admin to reclaim unused funds
+241-func (s *ScholarshipService) ClawbackFund(ctx context.Context, fundID int64, recipient string) error {
+242-	fund, err := s.repo.GetFundByID(ctx, fundID)
+243-	if err != nil || fund == nil {
+244-		return fmt.Errorf("fund not found")
+245-	}
+246-
+247-	onChainFundId := new(big.Int).SetUint64(fund.OnChainID)
+248-	recipAddr := common.HexToAddress(recipient)
+249-
+250-	opts, confirm, rollback, err := s.txMgr.TransactOpts(ctx)

@@ -8,6 +8,7 @@ import {MerkleProof} from "@openzeppelin/contracts/utils/cryptography/MerkleProo
 import {IScholarshipEscrow} from "./interfaces/IScholarshipEscrow.sol";
 import {Initializable} from "@openzeppelin/contracts/proxy/utils/Initializable.sol";
 import {UUPSUpgradeable} from "@openzeppelin/contracts/proxy/utils/UUPSUpgradeable.sol";
+import {ILayerZeroEndpoint} from "./interfaces/ILayerZeroEndpoint.sol";
 
 contract ScholarshipEscrowContract is Initializable, IScholarshipEscrow, AccessControl, ReentrancyGuard, UUPSUpgradeable {
     bytes32 public constant ADMIN_ROLE = DEFAULT_ADMIN_ROLE;
@@ -26,6 +27,7 @@ contract ScholarshipEscrowContract is Initializable, IScholarshipEscrow, AccessC
     mapping(uint256 => mapping(bytes32 => mapping(uint256 => bool))) public hasClaimed;
 
     address public trustedAttestor; // The entity allowed to publish roots
+    address public lzEndpoint;
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -147,4 +149,42 @@ contract ScholarshipEscrowContract is Initializable, IScholarshipEscrow, AccessC
     }
 
     function _authorizeUpgrade(address newImplementation) internal override onlyRole(ADMIN_ROLE) {}
+
+    function setLzEndpoint(address _lzEndpoint) external onlyRole(ADMIN_ROLE) {
+        lzEndpoint = _lzEndpoint;
+    }
+
+    function claimCrossChain(
+        uint256 fundId,
+        uint256 trancheIndex,
+        bytes32 studentHash,
+        uint256 amount,
+        bytes32[] calldata merkleProof,
+        uint16 dstChainId,
+        bytes calldata dstAddress
+    ) external payable nonReentrant {
+        require(!hasClaimed[fundId][studentHash][trancheIndex], "already claimed");
+        require(trancheRoots[fundId][trancheIndex] != bytes32(0), "tranche not authorized");
+
+        bytes32 leaf = keccak256(bytes.concat(keccak256(abi.encode(fundId, studentHash, trancheIndex, msg.sender, amount))));
+        require(MerkleProof.verify(merkleProof, trancheRoots[fundId][trancheIndex], leaf), "invalid merkle proof");
+
+        ScholarshipFund storage fund = funds[fundId];
+        require(fund.totalAmount - fund.releasedAmount >= amount, "Insufficient funds");
+
+        hasClaimed[fundId][studentHash][trancheIndex] = true;
+        fund.releasedAmount += amount;
+
+        bytes memory payload = abi.encode(amount);
+        ILayerZeroEndpoint(lzEndpoint).send{value: msg.value}(
+            dstChainId,
+            dstAddress,
+            payload,
+            payable(msg.sender),
+            address(0),
+            bytes("")
+        );
+
+        emit TrancheClaimed(fundId, studentHash, trancheIndex, amount, msg.sender);
+    }
 }

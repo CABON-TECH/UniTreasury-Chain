@@ -139,7 +139,16 @@ func main() {
 	}()
 
 	// ── Handlers ──────────────────────────────────────────────────────────────────
-	studentH := handler.NewStudentHandler(studentSvc, log)
+
+	var scholarshipSvc *service.ScholarshipService
+	var escrowContract *bindings.ScholarshipEscrowContract
+	if ethClient != nil {
+		escrowAddr := common.HexToAddress(os.Getenv("SCHOLARSHIP_ESCROW_CONTRACT_ADDRESS"))
+		escrowContract, _ = bindings.NewScholarshipEscrowContract(escrowAddr, ethClient)
+		scholarshipSvc, _ = service.NewScholarshipService(scholarshipRepo, studentRepo, txMgr, escrowContract, nil, log)
+	}
+
+	studentH := handler.NewStudentHandler(studentSvc, scholarshipSvc, log)
 	var paymentH *handler.PaymentHandler
 	var treasuryH *handler.TreasuryHandler
 	var reportH *handler.ReportHandler
@@ -201,6 +210,7 @@ func main() {
 	students.GET("", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance), studentH.List)
 	students.GET("/:id", auth.RequireRole(auth.RoleAdmin, auth.RoleFinance, auth.RoleStudent), studentH.Get)
 	students.POST("/:id/kyc", auth.RequireRole(auth.RoleAdmin, auth.RoleStudent), studentH.VerifyKYC)
+	students.POST("/:id/claim-l2", auth.RequireRole(auth.RoleAdmin, auth.RoleStudent), studentH.ClaimCrossChain)
 	// Add mock endpoint to add credits for a student so the scholarship worker triggers
 	students.POST("/:id/credits", auth.RequireRole(auth.RoleAdmin, auth.RoleProfessor), func(c *gin.Context) {
 		var req struct { Credits int `json:"credits"` }

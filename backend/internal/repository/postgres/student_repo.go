@@ -74,7 +74,7 @@ func (r *StudentRepo) List(ctx context.Context, offset, limit int) ([]*domain.St
 	for rows.Next() {
 		s := &domain.Student{}
 		if err := rows.Scan(&s.ID, &s.StudentID, &s.Hash, &s.Name, &s.Program,
-			&s.Year, &s.Credits, &s.GPA, &s.CreatedAt, &s.UpdatedAt); err != nil {
+			&s.Year, &s.Credits, &s.GPA, &s.KYCVerified, &s.CreatedAt, &s.UpdatedAt); err != nil {
 			return nil, 0, fmt.Errorf("student_repo: scan: %w", err)
 		}
 		students = append(students, s)
@@ -127,7 +127,7 @@ func (r *StudentRepo) ListAll(ctx context.Context) ([]*domain.Student, error) {
 		var s domain.Student
 		if err := rows.Scan(
 			&s.ID, &s.StudentID, &s.Hash, &s.Name, &s.Program,
-			&s.Year, &s.Credits, &s.GPA, &s.CreatedAt, &s.UpdatedAt,s.Year, &s.Credits, &s.GPA, &s.CreatedAt, &s.UpdatedAt,
+			&s.Year, &s.Credits, &s.GPA, &s.KYCVerified, &s.CreatedAt, &s.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}

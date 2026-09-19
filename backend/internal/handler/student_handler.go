@@ -17,12 +17,13 @@ import (
 // StudentHandler handles student-related HTTP endpoints.
 type StudentHandler struct {
 	svc *service.StudentService
+	scholarshipService *service.ScholarshipService
 	log *zap.Logger
 }
 
 // NewStudentHandler creates a StudentHandler.
-func NewStudentHandler(svc *service.StudentService, log *zap.Logger) *StudentHandler {
-	return &StudentHandler{svc: svc, log: log}
+func NewStudentHandler(svc *service.StudentService, scholarshipService *service.ScholarshipService, log *zap.Logger) *StudentHandler {
+	return &StudentHandler{svc: svc, scholarshipService: scholarshipService, log: log}
 }
 
 // Create handles POST /api/v1/students
@@ -108,4 +109,27 @@ func (h *StudentHandler) VerifyKYC(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"status": "kyc verified"})
+}
+
+func (h *StudentHandler) ClaimCrossChain(c *gin.Context) {
+	studentID := c.Param("id")
+	
+	var req struct {
+		FundID       int64  `json:"fund_id"`
+		TrancheIndex int    `json:"tranche_index"`
+		Recipient    string `json:"recipient"`
+		DstChainId   uint16 `json:"dst_chain_id"`
+	}
+	if err := c.BindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": "invalid request"})
+		return
+	}
+	
+	err := h.scholarshipService.SimulateCrossChainClaim(c, req.FundID, studentID, req.TrancheIndex, req.Recipient, req.DstChainId)
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	
+	c.JSON(200, gin.H{"message": "success"})
 }

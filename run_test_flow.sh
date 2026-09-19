@@ -31,4 +31,5 @@ sleep 2
 
 echo "Running Python test script..."
 python3 test_claim_final2.py
+python3 test_gasless_claim.py
 echo "Done!"

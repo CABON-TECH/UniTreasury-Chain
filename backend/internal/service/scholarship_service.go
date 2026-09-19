@@ -1,6 +1,7 @@
 package service
 
 import (
+		"os"
 	"time"
 	"context"
 	"crypto/ecdsa"
@@ -22,6 +23,7 @@ type ScholarshipService struct {
 	studentRepo  domain.StudentRepository
 	txMgr        *blockchain.TxManager
 	escrow       *bindings.ScholarshipEscrowContract
+	entryPoint  *bindings.MockEntryPoint
 	attestorKey  *ecdsa.PrivateKey
 	
 	log          *zap.Logger
@@ -32,6 +34,7 @@ func NewScholarshipService(
 	studentRepo domain.StudentRepository,
 	txMgr *blockchain.TxManager,
 	escrow *bindings.ScholarshipEscrowContract,
+	entryPoint *bindings.MockEntryPoint,
 	attestorKey *ecdsa.PrivateKey,
 	log *zap.Logger,
 ) (*ScholarshipService, error) {
@@ -42,6 +45,7 @@ func NewScholarshipService(
 		studentRepo: studentRepo,
 		txMgr:       txMgr,
 		escrow:      escrow,
+		entryPoint:  entryPoint,
 		attestorKey: attestorKey,
 		
 		log:         log,
@@ -377,6 +381,119 @@ func (s *ScholarshipService) SimulateCrossChainClaim(ctx context.Context, fundID
 		return fmt.Errorf("claim cross chain: %w", err)
 	}
 
+	confirm()
+	return nil
+}
+
+
+func (s *ScholarshipService) SimulateGaslessClaim(ctx context.Context, fundId int64, studentId string, trancheIndex int, recipient common.Address) error {
+	fund, err := s.repo.GetFundByID(ctx, fundId)
+	if err != nil {
+		return err
+	}
+	student, err := s.studentRepo.GetByStudentID(ctx, studentId)
+	if err != nil {
+		return err
+	}
+	
+	escrowAbi, _ := bindings.ScholarshipEscrowContractMetaData.GetAbi()
+	
+var studentHash [32]byte
+	copy(studentHash[:], common.FromHex(student.Hash))
+	students, err := s.studentRepo.ListAll(ctx)
+	if err != nil {
+		return err
+	}
+
+	var eligibleLeaves [][]byte
+	onChainFundId := new(big.Int).SetUint64(fund.OnChainID)
+	tIndex := big.NewInt(int64(trancheIndex))
+
+	var studentLeaf []byte
+	var claimAmount *big.Int
+
+	for _, st := range students {
+		if st.Credits < (trancheIndex + 1) * 15 { continue }
+		
+		amount := new(big.Int).SetUint64(fund.TrancheAmount)
+		if st.GPA >= 3.5 {
+			bonus := new(big.Int).Mul(amount, big.NewInt(20))
+			bonus.Div(bonus, big.NewInt(100))
+			amount.Add(amount, bonus)
+		}
+
+		var sHash [32]byte
+		copy(sHash[:], common.FromHex(st.Hash))
+		
+		leaf := blockchain.GenerateLeaf(onChainFundId, sHash, tIndex, recipient, amount)
+		eligibleLeaves = append(eligibleLeaves, leaf)
+		
+		if st.StudentID == studentId {
+			studentLeaf = leaf
+			claimAmount = amount
+		}
+	}
+
+	if studentLeaf == nil { return fmt.Errorf("student not eligible") }
+
+	tree := blockchain.GenerateTree(eligibleLeaves)
+	proof := blockchain.GenerateProof(tree, studentLeaf)
+	
+	var proof32 [][32]byte
+	for _, p := range proof {
+		var p32 [32]byte
+		copy(p32[:], p)
+		proof32 = append(proof32, p32)
+	}
+
+		
+	rootBytes, _ := s.escrow.ScholarshipEscrowContractCaller.TrancheRoots(nil, onChainFundId, tIndex)
+	var emptyRoot [32]byte
+	if rootBytes == emptyRoot {
+	    opts, confirm, rollback, err := s.txMgr.TransactOpts(ctx)
+	    if err != nil {
+	        return err
+	    }
+	    var treeRoot32 [32]byte
+	    copy(treeRoot32[:], tree[len(tree)-1][0])
+	    _, err = s.escrow.ScholarshipEscrowContractTransactor.PublishTrancheRoot(opts, onChainFundId, tIndex, treeRoot32)
+	    if err != nil {
+	        rollback()
+	        return err
+	    }
+	    confirm()
+	}
+callData, err := escrowAbi.Pack("claimTranche", onChainFundId, studentHash, tIndex, recipient, claimAmount, proof32)
+	if err != nil {
+		return err
+	}
+
+	opts, confirm, rollback, err := s.txMgr.TransactOpts(ctx)
+	if err != nil {
+		return err
+	}
+
+	op := bindings.UserOperation{
+		Sender:               common.HexToAddress(os.Getenv("SCHOLARSHIP_ESCROW_CONTRACT_ADDRESS")),
+		Nonce:                big.NewInt(0),
+		InitCode:             []byte{},
+		CallData:             callData,
+		CallGasLimit:         big.NewInt(500000),
+		VerificationGasLimit: big.NewInt(100000),
+		PreVerificationGas:   big.NewInt(50000),
+		MaxFeePerGas:         big.NewInt(1000000000),
+		MaxPriorityFeePerGas: big.NewInt(1000000000),
+		PaymasterAndData:     []byte{}, // Real setup would put paymaster address + sig here
+	}
+
+	ops := []bindings.UserOperation{op}
+	
+	_, err = s.entryPoint.HandleOps(opts, ops, recipient)
+	if err != nil {
+		rollback()
+		return err
+	}
+	
 	confirm()
 	return nil
 }

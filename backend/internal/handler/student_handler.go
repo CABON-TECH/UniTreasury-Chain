@@ -4,6 +4,8 @@
 package handler
 
 import (
+	"github.com/ethereum/go-ethereum/common"
+
 	"net/http"
 	"strconv"
 
@@ -132,4 +134,28 @@ func (h *StudentHandler) ClaimCrossChain(c *gin.Context) {
 	}
 	
 	c.JSON(200, gin.H{"message": "success"})
+}
+
+
+func (h *StudentHandler) ClaimGasless(c *gin.Context) {
+	studentID := c.Param("id")
+
+	var req struct {
+		FundID       int64          `json:"fund_id"`
+		TrancheIndex int            `json:"tranche_index"`
+		Recipient    common.Address `json:"recipient"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err := h.scholarshipService.SimulateGaslessClaim(c.Request.Context(), req.FundID, studentID, req.TrancheIndex, req.Recipient)
+	if err != nil {
+		h.log.Error("Failed to claim gasless", zap.Error(err))
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "success"})
 }

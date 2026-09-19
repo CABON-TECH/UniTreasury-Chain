@@ -8,6 +8,10 @@ import {ScholarshipEscrowContract} from "../src/ScholarshipEscrowContract.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {MockUSDC} from "../src/MockUSDC.sol";
 import {MockLayerZeroEndpoint} from "../src/MockLayerZeroEndpoint.sol";
+import {MockEntryPoint} from "../src/MockEntryPoint.sol";
+import {UniPaymaster} from "../src/UniPaymaster.sol";
+
+import {UniPaymaster} from "../src/UniPaymaster.sol";
 
 contract DeployAllScript is Script {
     function run() external {
@@ -45,6 +49,23 @@ contract DeployAllScript is Script {
         MockLayerZeroEndpoint lzEndpoint = new MockLayerZeroEndpoint();
         escrow.setLzEndpoint(address(lzEndpoint));
         console.log("MOCK_LZ_ENDPOINT_ADDRESS=", address(lzEndpoint));
+
+        MockEntryPoint entryPoint = new MockEntryPoint();
+        console.log("ENTRYPOINT_ADDRESS=", address(entryPoint));
+
+        UniPaymaster paymaster = new UniPaymaster(address(entryPoint));
+        paymaster.setAllowedTarget(address(escrow), true);
+        console.log("PAYMASTER_ADDRESS=", address(paymaster));
+
+
+
+
+
+
+
+
+
+
 
         vm.stopBroadcast();
     }

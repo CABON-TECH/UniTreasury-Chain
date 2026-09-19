@@ -90,6 +90,13 @@ func (r *ProposalRepo) UpdateApprovalCount(ctx context.Context, onChainID uint64
 	return err
 }
 
+func (r *ProposalRepo) UpdateOnChainID(ctx context.Context, id int64, onChainID uint64) error {
+	const q = `UPDATE withdrawal_proposals SET on_chain_id = $1, updated_at = NOW() WHERE id = $2`
+	_, err := r.pool.Exec(ctx, q, onChainID, id)
+	return err
+}
+
+
 func (r *ProposalRepo) scanProposal(row pgx.Row) (*domain.WithdrawalProposal, error) {
 	p := &domain.WithdrawalProposal{}
 	var txHash *string

@@ -30,7 +30,7 @@ contract TreasurySignerRecoveryTest is Test {
         approvers[2] = approver3;
 
         // 3 signers, 2 required approvals
-        treasury = new TreasuryContract(admin, approvers, 2, 10000 * 10**6, address(usdc));
+        treasury = new TreasuryContract(admin, approvers, 2, 10000 * 10**6, address(usdc), address(0), address(0));
     }
 
     function testSignerRecovery() public {

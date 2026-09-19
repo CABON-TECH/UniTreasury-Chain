@@ -41,6 +41,7 @@ type ProposalRepository interface {
 	List(ctx context.Context, offset, limit int) ([]*WithdrawalProposal, int64, error)
 	UpdateStatus(ctx context.Context, id int64, status ProposalStatus, txHash string) error
 	UpdateApprovalCount(ctx context.Context, onChainID uint64, count int) error
+	UpdateOnChainID(ctx context.Context, id int64, onChainID uint64) error
 }
 
 // ── Scholarship Repository ─────────────────────────────────────────────────────

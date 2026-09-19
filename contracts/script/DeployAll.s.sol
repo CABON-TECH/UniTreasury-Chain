@@ -6,6 +6,8 @@ import {TreasuryContract} from "../src/TreasuryContract.sol";
 import {FeeRegistryContract} from "../src/FeeRegistryContract.sol";
 import {ScholarshipEscrowContract} from "../src/ScholarshipEscrowContract.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
+import {MockLendingPool} from "../src/MockLendingPool.sol";
+import {MockAToken} from "../src/MockAToken.sol";
 import {MockUSDC} from "../src/MockUSDC.sol";
 import {MockLayerZeroEndpoint} from "../src/MockLayerZeroEndpoint.sol";
 import {MockEntryPoint} from "../src/MockEntryPoint.sol";
@@ -24,6 +26,11 @@ contract DeployAllScript is Script {
         usdc.mint(deployer, 1_000_000 * 10**18);
         console.log("MOCK_USDC_ADDRESS=", address(usdc));
 
+        MockLendingPool lendingPool = new MockLendingPool();
+        MockAToken aUsdc = new MockAToken("Aave interest bearing USDC", "aUSDC", address(usdc));
+        lendingPool.initReserve(address(usdc), address(aUsdc));
+        // Transfer ownership of aUsdc to lending pool so it can mint/burn
+        aUsdc.transferOwnership(address(lendingPool));
         address[] memory approvers = new address[](1);
         approvers[0] = deployer;
 
@@ -32,10 +39,13 @@ contract DeployAllScript is Script {
             approvers,
             1,
             1000 * 10**18,
-            address(usdc)
+            address(usdc),
+            address(lendingPool),
+            address(aUsdc)
         );
         console.log("TREASURY_CONTRACT_ADDRESS=", address(treasury));
-        usdc.transfer(address(treasury), 500_000 * 10**18);
+        usdc.approve(address(treasury), 500_000 * 10**18);
+        treasury.deposit(500_000 * 10**18);
 
         FeeRegistryContract feeRegistry = new FeeRegistryContract(deployer, deployer, address(usdc));
         console.log("FEE_REGISTRY_CONTRACT_ADDRESS=", address(feeRegistry));
@@ -67,6 +77,10 @@ contract DeployAllScript is Script {
 
 
 
+        
         vm.stopBroadcast();
+        
+        
+
     }
 }

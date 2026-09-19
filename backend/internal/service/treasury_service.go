@@ -69,13 +69,34 @@ func (s *TreasuryService) ProposeWithdrawal(ctx context.Context, in ProposeInput
 		return nil, fmt.Errorf("propose tx: %w", err)
 	}
 	confirm()
-	
+
+	// Wait for the tx to be mined so we can extract the on-chain proposalId
+	receipt, err := s.txMgr.WaitMined(ctx, tx)
+	if err != nil {
+		return nil, fmt.Errorf("wait mined: %w", err)
+	}
+
+	// Parse the WithdrawalProposed event to get the on-chain proposal ID
+	var onChainProposalID uint64
+	for _, log := range receipt.Logs {
+		ev, parseErr := s.treasury.TreasuryContractFilterer.ParseWithdrawalProposed(*log)
+		if parseErr == nil && ev != nil {
+			onChainProposalID = ev.ProposalId.Uint64()
+			break
+		}
+	}
+
 	p.TxHash = tx.Hash().Hex()
 	_ = s.repo.UpdateStatus(ctx, p.ID, domain.ProposalStatusPending, p.TxHash)
+	if onChainProposalID > 0 {
+		p.OnChainID = onChainProposalID
+		_ = s.repo.UpdateOnChainID(ctx, p.ID, onChainProposalID)
+	}
 
 	s.log.Info("withdrawal proposed", zap.Int64("proposal_id", p.ID), zap.String("tx_hash", p.TxHash))
 	return p, nil
 }
+
 
 func (s *TreasuryService) ApproveWithdrawal(ctx context.Context, proposalID int64) error {
 	p, err := s.repo.GetByID(ctx, proposalID)

@@ -1,0 +1,37 @@
+No files changed, compilation skipped
+Script ran successfully.
+
+== Logs ==
+  MOCK_USDC_ADDRESS= 0x5FbDB2315678afecb367f032d93F642f64180aa3
+  TREASURY_CONTRACT_ADDRESS= 0x0165878A594ca255338adfa4d48449f69242Eb8F
+  FEE_REGISTRY_CONTRACT_ADDRESS= 0x8A791620dd6260079BF849Dc5567aDC3F2FdC318
+  SCHOLARSHIP_ESCROW_CONTRACT_ADDRESS= 0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e
+  MOCK_LZ_ENDPOINT_ADDRESS= 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
+  ENTRYPOINT_ADDRESS= 0x9A676e781A523b5d0C0e43731313A708CB607508
+  PAYMASTER_ADDRESS= 0x0B306BF915C4d645ff596e518fAf3F9669b97016
+
+## Setting up 1 EVM.
+
+==========================
+
+Chain 31337
+
+Estimated max fee per gas: 2.000000001 gwei
+Estimated base fee per gas: 1 gwei
+Estimated max priority fee per gas: 0.000000001 gwei
+
+Estimated total gas used for script: 10136991
+
+Estimated amount required: 0.020273982010136991 ETH
+
+==========================
+
+
+==========================
+
+ONCHAIN EXECUTION COMPLETE & SUCCESSFUL.
+
+Transactions saved to: /home/cabon-tech/UniTreasury-Chain/contracts/broadcast/DeployAll.s.sol/31337/run-latest.json
+
+Sensitive values saved to: /home/cabon-tech/UniTreasury-Chain/contracts/cache/DeployAll.s.sol/31337/run-latest.json
+

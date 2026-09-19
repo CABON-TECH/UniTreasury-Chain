@@ -12,7 +12,9 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
     bytes32 public constant APPROVER_ROLE = keccak256("APPROVER_ROLE");
     bytes32 public constant EXECUTOR_ROLE = keccak256("EXECUTOR_ROLE");
 
-    IERC20 public immutable usdcToken;
+    IERC20 public usdcToken;
+    address public aavePool;
+    address public aUsdcToken;
 
     uint256 public requiredApprovals;
     uint256 public dailyLimit;
@@ -34,7 +36,9 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
         address[] memory initialApprovers,
         uint256 _requiredApprovals,
         uint256 _dailyLimit,
-        address _usdcToken
+        address _usdcToken,
+        address _aavePool,
+        address _aUsdcToken
     ) {
         if (admin == address(0)) revert Treasury__ZeroAddress();
         require(_requiredApprovals > 0 && _requiredApprovals <= initialApprovers.length, "Invalid approval threshold");
@@ -52,11 +56,22 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
         requiredApprovals = _requiredApprovals;
         dailyLimit = _dailyLimit;
         usdcToken = IERC20(_usdcToken);
+        aavePool = _aavePool;
+        aUsdcToken = _aUsdcToken;
+        // Approve LendingPool to spend USDC
+        if (_aavePool != address(0)) {
+            usdcToken.approve(_aavePool, type(uint256).max);
+        }
     }
 
     function deposit(uint256 amount) external override {
         require(amount > 0, "Amount must be > 0");
         require(usdcToken.transferFrom(msg.sender, address(this), amount), "Transfer failed");
+        
+        if (aavePool != address(0)) {
+            ILendingPool(aavePool).supply(address(usdcToken), amount, address(this), 0);
+        }
+        
         emit Deposited(msg.sender, amount, getBalance());
     }
 
@@ -114,6 +129,10 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
         proposal.status = ProposalStatus.Executed;
         _dailyWithdrawn[today] = alreadyToday + proposal.amount;
         
+        if (aavePool != address(0)) {
+            ILendingPool(aavePool).withdraw(address(usdcToken), proposal.amount, address(this));
+        }
+        
         require(usdcToken.transfer(proposal.recipient, proposal.amount), "Transfer failed");
 
         emit WithdrawalExecuted(proposalId, proposal.recipient, proposal.amount);
@@ -160,7 +179,11 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
     }
 
     function getBalance() public view override returns (uint256) {
-        return usdcToken.balanceOf(address(this));
+        uint256 bal = usdcToken.balanceOf(address(this));
+        if (aUsdcToken != address(0)) {
+            bal += IERC20(aUsdcToken).balanceOf(address(this));
+        }
+        return bal;
     }
 
     function isFrozen() external view override returns (bool) {
@@ -263,4 +286,9 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
         if (proposal.id == 0) revert Treasury__ProposalNotFound(proposalId);
         if (proposal.status != ProposalStatus.Pending) revert Treasury__ProposalNotPending(proposalId);
     }
+}
+
+interface ILendingPool {
+    function supply(address asset, uint256 amount, address onBehalfOf, uint16 referralCode) external;
+    function withdraw(address asset, uint256 amount, address to) external returns (uint256);
 }

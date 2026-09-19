@@ -14,6 +14,8 @@ for tx in data.get("transactions", []):
     elif contract_name == "MockLayerZeroEndpoint": env_vars["MOCK_LZ_ENDPOINT_ADDRESS"] = addr
     elif contract_name == "MockEntryPoint": env_vars["ENTRYPOINT_ADDRESS"] = addr
     elif contract_name == "UniPaymaster": env_vars["PAYMASTER_ADDRESS"] = addr
+    elif contract_name == "MockZKVerifier": env_vars["ZK_VERIFIER_ADDRESS"] = addr
+    elif contract_name == "ZKEnrollmentRegistry": env_vars["ZK_REGISTRY_ADDRESS"] = addr
 
 with open("backend/.env", "r") as f:
     lines = f.readlines()

@@ -262,8 +262,31 @@ func main() {
 	audit.Use(auth.RequireRole(auth.RoleAdmin))
 	audit.GET("/events", placeholder("list audit events — available directly in DB for now"))
 
+	// ZK Identity (Feature 4)
+	var zkH *handler.ZKHandler
+	if ethClient != nil {
+		zkRegistryAddr := common.HexToAddress(os.Getenv("ZK_REGISTRY_ADDRESS"))
+		zkRegistry, zkErr := bindings.NewZKEnrollmentRegistry(zkRegistryAddr, ethClient)
+		if zkErr == nil {
+			zkSvc := service.NewZKService(txMgr, zkRegistry, log)
+			zkH = handler.NewZKHandler(zkSvc, log)
+		}
+	}
+	zk := v1.Group("/zk")
+	if zkH != nil {
+		zk.POST("/update-root", auth.RequireRole(auth.RoleAdmin), zkH.UpdateMerkleRoot)
+		zk.POST("/prove-enrollment", zkH.ProveEnrollment)
+		zk.GET("/root", zkH.GetCurrentRoot)
+		zk.GET("/nullifier/:nullifier", zkH.CheckNullifier)
+	} else {
+		zk.POST("/update-root", unavailable("blockchain not connected"))
+		zk.POST("/prove-enrollment", unavailable("blockchain not connected"))
+		zk.GET("/root", unavailable("blockchain not connected"))
+	}
+
 	// Auth
 	r.POST("/api/v1/auth/login", loginHandler(authSvc))
+
 
 	srv := &http.Server{
 		Addr:         ":" + cfg.Port,

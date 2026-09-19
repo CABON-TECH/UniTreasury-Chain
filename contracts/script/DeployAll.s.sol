@@ -13,7 +13,8 @@ import {MockLayerZeroEndpoint} from "../src/MockLayerZeroEndpoint.sol";
 import {MockEntryPoint} from "../src/MockEntryPoint.sol";
 import {UniPaymaster} from "../src/UniPaymaster.sol";
 
-import {UniPaymaster} from "../src/UniPaymaster.sol";
+import {MockZKVerifier} from "../src/MockZKVerifier.sol";
+import {ZKEnrollmentRegistry} from "../src/ZKEnrollmentRegistry.sol";
 
 contract DeployAllScript is Script {
     function run() external {
@@ -77,8 +78,14 @@ contract DeployAllScript is Script {
 
 
 
-        
+        // Feature 4: ZK Identity - deploy MockZKVerifier and ZKEnrollmentRegistry
+        MockZKVerifier zkVerifier = new MockZKVerifier();
+        ZKEnrollmentRegistry zkRegistry = new ZKEnrollmentRegistry(deployer, address(zkVerifier));
+        console.log("ZK_VERIFIER_ADDRESS=", address(zkVerifier));
+        console.log("ZK_REGISTRY_ADDRESS=", address(zkRegistry));
+
         vm.stopBroadcast();
+
         
         
 

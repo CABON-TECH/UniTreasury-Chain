@@ -18,7 +18,8 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
 
     uint256 public requiredApprovals;
     uint256 public dailyLimit;
-    
+    uint256 public timelockDelay; // seconds; default 48 hours
+
     bool private _frozen;
     uint256 private _proposalCounter;
     
@@ -38,7 +39,8 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
         uint256 _dailyLimit,
         address _usdcToken,
         address _aavePool,
-        address _aUsdcToken
+        address _aUsdcToken,
+        uint256 _timelockDelay
     ) {
         if (admin == address(0)) revert Treasury__ZeroAddress();
         require(_requiredApprovals > 0 && _requiredApprovals <= initialApprovers.length, "Invalid approval threshold");
@@ -55,6 +57,7 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
 
         requiredApprovals = _requiredApprovals;
         dailyLimit = _dailyLimit;
+        timelockDelay = _timelockDelay;
         usdcToken = IERC20(_usdcToken);
         aavePool = _aavePool;
         aUsdcToken = _aUsdcToken;
@@ -118,6 +121,8 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
 
         if (proposal.approvalCount < requiredApprovals)
             revert Treasury__InsufficientApprovals(proposal.approvalCount, requiredApprovals);
+        if (block.timestamp < proposal.createdAt + timelockDelay)
+            revert Treasury__TimelockNotExpired(proposal.createdAt + timelockDelay, block.timestamp);
         if (getBalance() < proposal.amount)
             revert Treasury__InsufficientBalance(proposal.amount, getBalance());
 
@@ -167,6 +172,11 @@ contract TreasuryContract is ITreasury, AccessControl, ReentrancyGuard {
         require(newRequired > 0, "Must require >= 1 approval");
         emit RequiredApprovalsUpdated(requiredApprovals, newRequired);
         requiredApprovals = newRequired;
+    }
+
+    function setTimelockDelay(uint256 newDelay) external override onlyRole(ADMIN_ROLE) {
+        emit TimelockDelayUpdated(timelockDelay, newDelay);
+        timelockDelay = newDelay;
     }
 
     function getProposal(uint256 proposalId) external view override returns (WithdrawalProposal memory) {

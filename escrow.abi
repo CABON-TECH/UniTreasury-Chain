@@ -71,6 +71,49 @@
   },
   {
     "type": "function",
+    "name": "claimCrossChain",
+    "inputs": [
+      {
+        "name": "fundId",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "trancheIndex",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "studentHash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "merkleProof",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      },
+      {
+        "name": "dstChainId",
+        "type": "uint16",
+        "internalType": "uint16"
+      },
+      {
+        "name": "dstAddress",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "payable"
+  },
+  {
+    "type": "function",
     "name": "claimTranche",
     "inputs": [
       {
@@ -318,6 +361,19 @@
   },
   {
     "type": "function",
+    "name": "lzEndpoint",
+    "inputs": [],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "pauseFund",
     "inputs": [
       {
@@ -394,6 +450,19 @@
       },
       {
         "name": "account",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setLzEndpoint",
+    "inputs": [
+      {
+        "name": "_lzEndpoint",
         "type": "address",
         "internalType": "address"
       }

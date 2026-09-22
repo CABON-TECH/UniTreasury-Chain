@@ -11,6 +11,7 @@ interface ITreasury {
     event TreasuryUnfrozen(address indexed by);
     event DailyLimitUpdated(uint256 oldLimit, uint256 newLimit);
     event RequiredApprovalsUpdated(uint256 oldRequired, uint256 newRequired);
+    event TimelockDelayUpdated(uint256 oldDelay, uint256 newDelay);
 
     event SignerChangeProposed(uint256 indexed proposalId, address indexed proposer, address target, address replacement, uint8 changeType);
     event SignerChangeApproved(uint256 indexed proposalId, address indexed approver, uint256 approvalCount);
@@ -27,6 +28,7 @@ interface ITreasury {
     error Treasury__ZeroAddress();
     error Treasury__ZeroAmount();
     error Treasury__NotAuthorized();
+    error Treasury__TimelockNotExpired(uint256 readyAt, uint256 currentTime);
 
     enum ProposalStatus { Pending, Executed, Cancelled }
 
@@ -63,6 +65,7 @@ interface ITreasury {
     function unfreeze() external;
     function setDailyLimit(uint256 newLimit) external;
     function setRequiredApprovals(uint256 newRequired) external;
+    function setTimelockDelay(uint256 newDelay) external;
     function getProposal(uint256 proposalId) external view returns (WithdrawalProposal memory);
     function hasApproved(uint256 proposalId, address approver) external view returns (bool);
     function getBalance() external view returns (uint256);

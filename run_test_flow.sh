@@ -49,3 +49,4 @@ python3 test_gasless_claim.py
 python3 test_treasury_yield.py
 echo "Done!"
 python3 test_zk_identity.py
+python3 test_timelock.py

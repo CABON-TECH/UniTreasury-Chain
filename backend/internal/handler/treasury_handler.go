@@ -65,6 +65,22 @@ func (h *TreasuryHandler) Cancel(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"status": "cancelled"})
 }
 
+func (h *TreasuryHandler) SetTimelock(c *gin.Context) {
+	var in struct {
+		Delay uint64 `json:"delay"`
+	}
+	if err := c.ShouldBindJSON(&in); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := h.svc.SetTimelockDelay(c.Request.Context(), in.Delay); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"status": "timelock delay updated"})
+}
+
 func (h *TreasuryHandler) List(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "20"))

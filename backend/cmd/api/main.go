@@ -249,12 +249,14 @@ func main() {
 		treasury.POST("/proposals/:id/approve", auth.RequireRole(auth.RoleAdmin), treasuryH.Approve)
 		treasury.POST("/proposals/:id/execute", auth.RequireRole(auth.RoleAdmin), treasuryH.Execute)
 		treasury.POST("/proposals/:id/cancel", auth.RequireRole(auth.RoleAdmin), treasuryH.Cancel)
+		treasury.POST("/timelock", auth.RequireRole(auth.RoleAdmin), treasuryH.SetTimelock)
 	} else {
 		treasury.GET("/proposals", unavailable("blockchain not connected"))
 		treasury.POST("/proposals", unavailable("blockchain not connected"))
 		treasury.POST("/proposals/:id/approve", unavailable("blockchain not connected"))
 		treasury.POST("/proposals/:id/execute", unavailable("blockchain not connected"))
 		treasury.POST("/proposals/:id/cancel", unavailable("blockchain not connected"))
+		treasury.POST("/timelock", unavailable("blockchain not connected"))
 	}
 
 	// Audit

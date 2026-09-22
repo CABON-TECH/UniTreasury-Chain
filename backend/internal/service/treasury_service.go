@@ -175,6 +175,22 @@ func (s *TreasuryService) CancelWithdrawal(ctx context.Context, proposalID int64
 	return nil
 }
 
+func (s *TreasuryService) SetTimelockDelay(ctx context.Context, newDelay uint64) error {
+	opts, confirm, rollback, err := s.txMgr.TransactOpts(ctx)
+	if err != nil {
+		return err
+	}
+
+	tx, err := s.treasury.TreasuryContractTransactor.SetTimelockDelay(opts, new(big.Int).SetUint64(newDelay))
+	if err != nil {
+		rollback()
+		return fmt.Errorf("set timelock delay tx: %w", err)
+	}
+	confirm()
+	s.log.Info("timelock delay updated", zap.String("tx", tx.Hash().Hex()), zap.Uint64("delay", newDelay))
+	return nil
+}
+
 func (s *TreasuryService) ListProposals(ctx context.Context, page, pageSize int) ([]*domain.WithdrawalProposal, int64, error) {
 	if page < 1 { page = 1 }
 	if pageSize <= 0 || pageSize > 100 { pageSize = 20 }

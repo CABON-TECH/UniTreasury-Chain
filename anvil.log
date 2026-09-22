@@ -62,7 +62,7 @@ Gas Limit
 Genesis Timestamp
 ==================
 
-1789840818
+1790090041
 
 Genesis Number
 ==================
@@ -104,60 +104,60 @@ anvil_metadata
 eth_getBlockByHash
 anvil_nodeInfo
 anvil_metadata
-eth_getCode
-eth_getTransactionCount
-eth_getBalance
 eth_getAccountInfo
 eth_getAccount
 eth_getCode
-eth_getBalance
-eth_getCode
 eth_getTransactionCount
 eth_getBalance
 eth_getCode
-eth_getTransactionCount
-eth_getTransactionCount
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getBalance
-eth_getTransactionCount
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getBalance
-eth_getTransactionCount
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getBalance
-eth_getTransactionCount
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getBalance
-eth_getTransactionCount
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getBalance
-eth_getBalance
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getTransactionCount
-eth_getTransactionCount
-eth_getBalance
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getTransactionCount
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getBalance
-eth_getTransactionCount
-eth_getBalance
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getTransactionCount
-eth_getBalance
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getTransactionCount
-eth_getBalance
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getBalance
-eth_getTransactionCount
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getBalance
-eth_getTransactionCount
+eth_getAccountInfo
+eth_getAccount
 eth_getCode
-eth_getTransactionCount
-eth_getBalance
+eth_getAccountInfo
+eth_getAccount
+eth_getCode
+eth_getAccountInfo
+eth_getAccount
+eth_getCode
 anvil_nodeInfo
 anvil_metadata
 eth_getBlockByHash
@@ -166,299 +166,3 @@ anvil_metadata
 eth_gasPrice
 anvil_nodeInfo
 anvil_metadata
-eth_feeHistory
-eth_feeHistory
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-eth_sendRawTransaction
-
-    Transaction: 0x1c43e3af6b0a8a3c05f241983d147bdff7cdc1e98b4e2d16ff80a6cf6bc5e622
-    Contract created: 0x5FbDB2315678afecb367f032d93F642f64180aa3
-    Gas used: 607148
-
-    Transaction: 0x48b79f290f30836c299ebffd7cd810e514b61c84255bdbdba428e6849b5bbba3
-    Gas used: 70703
-
-    Transaction: 0x4d64b2f5be388615f43a71686d52892a96c01a6f8fb9f676c5fcf31e9f3c049f
-    Contract created: 0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0
-    Gas used: 346734
-
-    Transaction: 0x2ce5af9041bb1aae9276121dae8c0fda82ecd455f06bf0db8912fe0be8d49a89
-    Contract created: 0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9
-    Gas used: 671293
-
-    Transaction: 0xf7cdc0f56f8c02b3069184c10ddbfd25e505f6dcbea7869af0d2c38cddec9c8e
-    Gas used: 44449
-
-    Transaction: 0x3964745d30a33b3db42f1301def4a62ce166911cb83903bb6ed16dfbe99e91fe
-    Gas used: 28653
-
-    Transaction: 0x0d4286b6a0b8323381aed9b7d6509659bc267fe6eaf246a0d926db5dc045e579
-    Contract created: 0x0165878A594ca255338adfa4d48449f69242Eb8F
-    Gas used: 2280429
-
-    Transaction: 0x66459e4d93cf5507cc348cab046a8aeb4936875e49f39988d9854e156f8a221a
-    Gas used: 46391
-
-    Transaction: 0x65b9f69ff0544090a16d39355fdf397e6c40edfa0e98f203fae69a46a84965ad
-    Gas used: 131598
-
-    Transaction: 0x76fbb166ee1ca0efe35659cdedf367271ef8efc9aabc327638a3a63361f12521
-    Contract created: 0x8A791620dd6260079BF849Dc5567aDC3F2FdC318
-    Gas used: 502422
-
-    Block Number: 1
-    Block Hash: 0x9cabb26db2a5dd783792d1f92c175109bfbea1f0224ad527070c72bdbdf21b99
-    Block Time: "Sat, 19 Sep 2026 18:00:25 +0000"
-
-
-    Transaction: 0xfc8d214b0eebf2c54db7937f3fa031f37adfeffabd6fa046d94750ca4417b52e
-    Contract created: 0x610178dA211FEF7D417bC0e6FeD39F05609AD788
-    Gas used: 2066744
-
-    Transaction: 0x4b1c59027caffbd73705e7c2947be24b268f4ca9ae90a9af4f87f978373036ef
-    Contract created: 0xB7f8BC63BbcaD18155201308C8f3540b07f84F5e
-    Gas used: 248612
-
-    Transaction: 0x571e1f21a847ffbf0f369468f04050203c1966b27f7c53797c9a2db145217145
-    Contract created: 0xA51c1fc2f0D1a1b8494Ed1FE312d7C3a78Ed91C0
-    Gas used: 180615
-
-    Transaction: 0xc63ff0be02a49a4b300380b8df44e7109ff071bd2df0c8d27a6f1cb709e54986
-    Gas used: 51209
-
-    Transaction: 0xeea5b3a6509ebc8073fc6ee68bbde91a202a96fb8ab1b56a28b311fbd2e4a5a0
-    Contract created: 0x9A676e781A523b5d0C0e43731313A708CB607508
-    Gas used: 207168
-
-    Transaction: 0x7b7dfe79a1b1294467f793dfe1e4e23d6024ff000b6323758d3a4161a2ec4b17
-    Contract created: 0x0B306BF915C4d645ff596e518fAf3F9669b97016
-    Gas used: 237303
-
-    Transaction: 0x14a4bf9995b4bd66519ccf7ea85316340aa7257a090eaf87db91d69b059a18fb
-    Gas used: 44173
-
-    Transaction: 0xaaebbe0657dd7e16a62af38eca55a81166b7dfcfeabed4e598e31f6cfaa50266
-    Contract created: 0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE
-    Gas used: 181527
-
-    Transaction: 0x496c1002615719f4022760f2d506aff0a932d7927e85bd1f01d8b291cd9bd28f
-    Contract created: 0x68B1D87F95878fE05B998F19b66F4baba5De1aed
-    Gas used: 556301
-
-    Block Number: 2
-    Block Hash: 0x5a9555d275119d3a15713a16af0334dcac7288852d30916f51d382541d8a2434
-    Block Time: "Sat, 19 Sep 2026 18:00:25 +0000"
-
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_chainId
-eth_getTransactionCount
-eth_feeHistory
-eth_estimateGas
-eth_sendRawTransaction
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_blockNumber
-eth_getBlockByNumber
-eth_getTransactionReceipt
-eth_getBlockByNumber
-
-    Transaction: 0x832bbcb2374c95f3b5c21767dce0fd345747936c24babff55d43be1bd169e3cc
-    Gas used: 46319
-
-    Block Number: 3
-    Block Hash: 0xcb2f635b6e634fab363024a65d9f14eb87cdeea59ea3d1b44b383ee313968895
-    Block Time: "Sat, 19 Sep 2026 18:00:25 +0000"
-
-eth_getTransactionReceipt
-eth_blockNumber
-eth_getBlockByNumber
-eth_chainId
-eth_getTransactionCount
-eth_feeHistory
-eth_estimateGas
-eth_sendRawTransaction
-eth_getTransactionReceipt
-eth_getTransactionReceipt
-eth_blockNumber
-eth_getBlockByNumber
-eth_getBlockByNumber
-eth_getTransactionReceipt
-
-    Transaction: 0x2d26fdeb2f0cd28bbf34756af979e751f1e1772970066e00f9ae5a9a5f5f0d01
-    Gas used: 183381
-
-    Block Number: 4
-    Block Hash: 0x2228407bf4a2b4e9715ef37c3e3bed34635901fa54e12f98aff3ea7f5932633c
-    Block Time: "Sat, 19 Sep 2026 18:00:25 +0000"
-
-eth_blockNumber
-eth_getTransactionReceipt
-eth_chainId
-eth_getTransactionCount
-eth_call
-eth_getBlockByNumber
-eth_maxPriorityFeePerGas
-eth_getCode
-eth_estimateGas
-eth_sendRawTransaction
-eth_getBlockByNumber
-eth_maxPriorityFeePerGas
-eth_getCode
-eth_estimateGas
-eth_sendRawTransaction
-
-    Transaction: 0xf46ce71171a725ee0a2148d8adc5c8ef60a0d4d10758ede54fba9490d9662e04
-    Gas used: 60304
-
-    Transaction: 0xd15501b7cab950d530297efb0e0d5ae5af15257f4f5e65bb5214e2466461a4f7
-    Gas used: 120057
-
-    Block Number: 5
-    Block Hash: 0xff886d70d39ef8496654988b7c5f0a55756f7a630e18feb37534bf8d20f0ff54
-    Block Time: "Sat, 19 Sep 2026 18:00:31 +0000"
-
-eth_call
-eth_getBlockByNumber
-eth_maxPriorityFeePerGas
-eth_getCode
-eth_estimateGas
-eth_sendRawTransaction
-eth_getBlockByNumber
-eth_maxPriorityFeePerGas
-eth_getCode
-eth_estimateGas
-eth_sendRawTransaction
-
-    Transaction: 0x833ffbbb562d32be8880d4be21cada6f1a87b2868b53a1b59c3d5ae95adc24d6
-    Gas used: 60316
-
-    Transaction: 0x5d889d1ad9d73197b040050479c3c094796167624509e6ca969e004ba0b9c8aa
-    Gas used: 95798
-
-    Block Number: 6
-    Block Hash: 0xd30248ac0a8cde00a1d98897c9672e8b5e596b9f59402a942a331dfb400d15cb
-    Block Time: "Sat, 19 Sep 2026 18:00:32 +0000"
-
-eth_getBlockByNumber
-eth_maxPriorityFeePerGas
-eth_getCode
-eth_estimateGas
-eth_sendRawTransaction
-eth_getTransactionReceipt
-
-    Transaction: 0xfbf93dc90d45075070a9e4809d4a9814651e14b0c2378ce23dd25c22ff29d23a
-    Gas used: 206391
-
-    Block Number: 7
-    Block Hash: 0xd978871bc89fa619fe0530f302bb112e0aac8bf5a6c79ca6a71f718db7de1477
-    Block Time: "Sat, 19 Sep 2026 18:00:32 +0000"
-
-eth_getTransactionReceipt
-eth_getBlockByNumber
-eth_maxPriorityFeePerGas
-eth_getCode
-eth_estimateGas
-eth_sendRawTransaction
-
-    Transaction: 0x4d8504fb658a4067058c4a97709f5a88867b6d4038a8eaf8dd19eaacba927cc1
-    Gas used: 74945
-
-    Block Number: 8
-    Block Hash: 0x35acce083afc9f7bb9d5a31d11a8f6611f03caa5685bf030cf0932dc0b067560
-    Block Time: "Sat, 19 Sep 2026 18:00:36 +0000"
-
-eth_getBlockByNumber
-eth_maxPriorityFeePerGas
-eth_getCode
-eth_estimateGas
-eth_sendRawTransaction
-
-    Transaction: 0xdfe0826036d444b15aa89dbb437425dc5b86ec8d30485d99d0f1ce28b3861b23
-    Gas used: 159355
-
-    Block Number: 9
-    Block Hash: 0x0cbcb06a9c5656c73a3b686234005483d1c80b5d2e52944eab044b2b2db613c7
-    Block Time: "Sat, 19 Sep 2026 18:00:39 +0000"
-
-eth_getBlockByNumber
-eth_maxPriorityFeePerGas
-eth_getCode
-eth_estimateGas
-eth_sendRawTransaction
-
-    Transaction: 0x011f915849ab5f3861b6bf8a92f10835bc1f45ceaff0d6da6baadf156a135b18
-    Gas used: 47802
-
-    Block Number: 10
-    Block Hash: 0x94a9966ccfd83c0da49bf1c1331e8063b0a302a6ffda166a5816bb8c397d3025
-    Block Time: "Sat, 19 Sep 2026 18:00:39 +0000"
-
-eth_call
-eth_getBlockByNumber
-eth_maxPriorityFeePerGas
-eth_getCode
-eth_estimateGas
-eth_sendRawTransaction
-
-    Transaction: 0x4f3f09f65e75dc097fbeee8311dd2d59097f517c78ddee83976e1dd4e35fd216
-    Gas used: 78834
-
-    Block Number: 11
-    Block Hash: 0x8833e497e84b543ea9e27f62fc6a7644150653389d4d1bf25f33e83e85cf6349
-    Block Time: "Sat, 19 Sep 2026 18:00:41 +0000"
-
-eth_call

@@ -1,5 +1,5 @@
 #!/bin/bash
-ng existing services..."
+g services..."
 killall anvil || true
 killall api || true
 echo "Starting anvil..."

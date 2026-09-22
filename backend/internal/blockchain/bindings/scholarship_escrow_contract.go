@@ -1,15 +1,10 @@
-// Code generated - DO NOT EDIT.
-// This file is a generated binding and any manual changes will be lost.
-
 package bindings
-
 import (
 	"context"
 	"errors"
 	"math/big"
 	"strings"
 	"time"
-
 	ethereum "github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -17,8 +12,6 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/event"
 )
-
-// Reference imports to suppress errors if they are not otherwise used.
 var (
 	_ = errors.New
 	_ = big.NewInt
@@ -32,76 +25,46 @@ var (
 	_ = time.Tick
 	_ = context.Background
 )
-
-// ScholarshipEscrowContractMetaData contains all meta data concerning the ScholarshipEscrowContract contract.
 var ScholarshipEscrowContractMetaData = &bind.MetaData{
 	ABI: "[{\"type\":\"constructor\",\"inputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"ATTESTOR_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"DEFAULT_ADMIN_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"SPONSOR_ROLE\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"UPGRADE_INTERFACE_VERSION\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"string\",\"internalType\":\"string\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"claimCrossChain\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheIndex\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"studentHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"merkleProof\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"},{\"name\":\"dstChainId\",\"type\":\"uint16\",\"internalType\":\"uint16\"},{\"name\":\"dstAddress\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"claimTranche\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"studentHash\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"trancheIndex\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"amount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"merkleProof\",\"type\":\"bytes32[]\",\"internalType\":\"bytes32[]\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"clawbackFund\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"createFund\",\"inputs\":[{\"name\":\"sponsor\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"totalAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheCount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"funds\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"sponsor\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"totalAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"releasedAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheCount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheAmount\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"paused\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"getRoleAdmin\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"grantRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"hasClaimed\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"hasRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"initialize\",\"inputs\":[{\"name\":\"admin\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"attestor\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"_usdcToken\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"lzEndpoint\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"pauseFund\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"proxiableUUID\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"publishTrancheRoot\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"trancheIndex\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"merkleRoot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"renounceRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"callerConfirmation\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"revokeRole\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setLzEndpoint\",\"inputs\":[{\"name\":\"_lzEndpoint\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"setTrustedAttestor\",\"inputs\":[{\"name\":\"newAttestor\",\"type\":\"address\",\"internalType\":\"address\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"supportsInterface\",\"inputs\":[{\"name\":\"interfaceId\",\"type\":\"bytes4\",\"internalType\":\"bytes4\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bool\",\"internalType\":\"bool\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"trancheRoots\",\"inputs\":[{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"},{\"name\":\"\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[{\"name\":\"\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"trustedAttestor\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"address\"}],\"stateMutability\":\"view\"},{\"type\":\"function\",\"name\":\"unpauseFund\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"internalType\":\"uint256\"}],\"outputs\":[],\"stateMutability\":\"nonpayable\"},{\"type\":\"function\",\"name\":\"upgradeToAndCall\",\"inputs\":[{\"name\":\"newImplementation\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"data\",\"type\":\"bytes\",\"internalType\":\"bytes\"}],\"outputs\":[],\"stateMutability\":\"payable\"},{\"type\":\"function\",\"name\":\"usdcToken\",\"inputs\":[],\"outputs\":[{\"name\":\"\",\"type\":\"address\",\"internalType\":\"contractIERC20\"}],\"stateMutability\":\"view\"},{\"type\":\"event\",\"name\":\"FundClawedBack\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"FundCreated\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"sponsor\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"totalAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"trancheCount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"trancheAmount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Initialized\",\"inputs\":[{\"name\":\"version\",\"type\":\"uint64\",\"indexed\":false,\"internalType\":\"uint64\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"MerkleRootPublished\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"trancheIndex\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"merkleRoot\",\"type\":\"bytes32\",\"indexed\":false,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleAdminChanged\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"previousAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"newAdminRole\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleGranted\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"RoleRevoked\",\"inputs\":[{\"name\":\"role\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"account\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"},{\"name\":\"sender\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"TrancheClaimed\",\"inputs\":[{\"name\":\"fundId\",\"type\":\"uint256\",\"indexed\":true,\"internalType\":\"uint256\"},{\"name\":\"studentHash\",\"type\":\"bytes32\",\"indexed\":true,\"internalType\":\"bytes32\"},{\"name\":\"trancheIndex\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"amount\",\"type\":\"uint256\",\"indexed\":false,\"internalType\":\"uint256\"},{\"name\":\"recipient\",\"type\":\"address\",\"indexed\":false,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"event\",\"name\":\"Upgraded\",\"inputs\":[{\"name\":\"implementation\",\"type\":\"address\",\"indexed\":true,\"internalType\":\"address\"}],\"anonymous\":false},{\"type\":\"error\",\"name\":\"AccessControlBadConfirmation\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"AccessControlUnauthorizedAccount\",\"inputs\":[{\"name\":\"account\",\"type\":\"address\",\"internalType\":\"address\"},{\"name\":\"neededRole\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]},{\"type\":\"error\",\"name\":\"AddressEmptyCode\",\"inputs\":[{\"name\":\"target\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"ERC1967InvalidImplementation\",\"inputs\":[{\"name\":\"implementation\",\"type\":\"address\",\"internalType\":\"address\"}]},{\"type\":\"error\",\"name\":\"ERC1967NonPayable\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"FailedCall\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"InvalidInitialization\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"NotInitializing\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"ReentrancyGuardReentrantCall\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"UUPSUnauthorizedCallContext\",\"inputs\":[]},{\"type\":\"error\",\"name\":\"UUPSUnsupportedProxiableUUID\",\"inputs\":[{\"name\":\"slot\",\"type\":\"bytes32\",\"internalType\":\"bytes32\"}]}]",
 }
-
-// ScholarshipEscrowContractABI is the input ABI used to generate the binding from.
-// Deprecated: Use ScholarshipEscrowContractMetaData.ABI instead.
 var ScholarshipEscrowContractABI = ScholarshipEscrowContractMetaData.ABI
-
-// ScholarshipEscrowContract is an auto generated Go binding around an Ethereum contract.
 type ScholarshipEscrowContract struct {
-	ScholarshipEscrowContractCaller     // Read-only binding to the contract
-	ScholarshipEscrowContractTransactor // Write-only binding to the contract
-	ScholarshipEscrowContractFilterer   // Log filterer for contract events
+	ScholarshipEscrowContractCaller     
+	ScholarshipEscrowContractTransactor 
+	ScholarshipEscrowContractFilterer   
 }
-
-// ScholarshipEscrowContractCaller is an auto generated read-only Go binding around an Ethereum contract.
 type ScholarshipEscrowContractCaller struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *bind.BoundContract 
 }
-
-// ScholarshipEscrowContractTransactor is an auto generated write-only Go binding around an Ethereum contract.
 type ScholarshipEscrowContractTransactor struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *bind.BoundContract 
 }
-
-// ScholarshipEscrowContractFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
 type ScholarshipEscrowContractFilterer struct {
-	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+	contract *bind.BoundContract 
 }
-
-// ScholarshipEscrowContractSession is an auto generated Go binding around an Ethereum contract,
-// with pre-set call and transact options.
 type ScholarshipEscrowContractSession struct {
-	Contract     *ScholarshipEscrowContract // Generic contract binding to set the session for
-	CallOpts     bind.CallOpts              // Call options to use throughout this session
-	TransactOpts bind.TransactOpts          // Transaction auth options to use throughout this session
+	Contract     *ScholarshipEscrowContract 
+	CallOpts     bind.CallOpts              
+	TransactOpts bind.TransactOpts          
 }
-
-// ScholarshipEscrowContractCallerSession is an auto generated read-only Go binding around an Ethereum contract,
-// with pre-set call options.
 type ScholarshipEscrowContractCallerSession struct {
-	Contract *ScholarshipEscrowContractCaller // Generic contract caller binding to set the session for
-	CallOpts bind.CallOpts                    // Call options to use throughout this session
+	Contract *ScholarshipEscrowContractCaller 
+	CallOpts bind.CallOpts                    
 }
-
-// ScholarshipEscrowContractTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
-// with pre-set transact options.
 type ScholarshipEscrowContractTransactorSession struct {
-	Contract     *ScholarshipEscrowContractTransactor // Generic contract transactor binding to set the session for
-	TransactOpts bind.TransactOpts                    // Transaction auth options to use throughout this session
+	Contract     *ScholarshipEscrowContractTransactor 
+	TransactOpts bind.TransactOpts                    
 }
-
-// ScholarshipEscrowContractRaw is an auto generated low-level Go binding around an Ethereum contract.
 type ScholarshipEscrowContractRaw struct {
-	Contract *ScholarshipEscrowContract // Generic contract binding to access the raw methods on
+	Contract *ScholarshipEscrowContract 
 }
-
-// ScholarshipEscrowContractCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
 type ScholarshipEscrowContractCallerRaw struct {
-	Contract *ScholarshipEscrowContractCaller // Generic read-only contract binding to access the raw methods on
+	Contract *ScholarshipEscrowContractCaller 
 }
-
-// ScholarshipEscrowContractTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
 type ScholarshipEscrowContractTransactorRaw struct {
-	Contract *ScholarshipEscrowContractTransactor // Generic write-only contract binding to access the raw methods on
+	Contract *ScholarshipEscrowContractTransactor 
 }
-
-// NewScholarshipEscrowContract creates a new instance of ScholarshipEscrowContract, bound to a specific deployed contract.
 func NewScholarshipEscrowContract(address common.Address, backend bind.ContractBackend) (*ScholarshipEscrowContract, error) {
 	contract, err := bindScholarshipEscrowContract(address, backend, backend, backend)
 	if err != nil {
@@ -109,8 +72,6 @@ func NewScholarshipEscrowContract(address common.Address, backend bind.ContractB
 	}
 	return &ScholarshipEscrowContract{ScholarshipEscrowContractCaller: ScholarshipEscrowContractCaller{contract: contract}, ScholarshipEscrowContractTransactor: ScholarshipEscrowContractTransactor{contract: contract}, ScholarshipEscrowContractFilterer: ScholarshipEscrowContractFilterer{contract: contract}}, nil
 }
-
-// NewScholarshipEscrowContractCaller creates a new read-only instance of ScholarshipEscrowContract, bound to a specific deployed contract.
 func NewScholarshipEscrowContractCaller(address common.Address, caller bind.ContractCaller) (*ScholarshipEscrowContractCaller, error) {
 	contract, err := bindScholarshipEscrowContract(address, caller, nil, nil)
 	if err != nil {
@@ -118,8 +79,6 @@ func NewScholarshipEscrowContractCaller(address common.Address, caller bind.Cont
 	}
 	return &ScholarshipEscrowContractCaller{contract: contract}, nil
 }
-
-// NewScholarshipEscrowContractTransactor creates a new write-only instance of ScholarshipEscrowContract, bound to a specific deployed contract.
 func NewScholarshipEscrowContractTransactor(address common.Address, transactor bind.ContractTransactor) (*ScholarshipEscrowContractTransactor, error) {
 	contract, err := bindScholarshipEscrowContract(address, nil, transactor, nil)
 	if err != nil {
@@ -127,8 +86,6 @@ func NewScholarshipEscrowContractTransactor(address common.Address, transactor b
 	}
 	return &ScholarshipEscrowContractTransactor{contract: contract}, nil
 }
-
-// NewScholarshipEscrowContractFilterer creates a new log filterer instance of ScholarshipEscrowContract, bound to a specific deployed contract.
 func NewScholarshipEscrowContractFilterer(address common.Address, filterer bind.ContractFilterer) (*ScholarshipEscrowContractFilterer, error) {
 	contract, err := bindScholarshipEscrowContract(address, nil, nil, filterer)
 	if err != nil {
@@ -136,8 +93,6 @@ func NewScholarshipEscrowContractFilterer(address common.Address, filterer bind.
 	}
 	return &ScholarshipEscrowContractFilterer{contract: contract}, nil
 }
-
-// bindScholarshipEscrowContract binds a generic wrapper to an already deployed contract.
 func bindScholarshipEscrowContract(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
 	parsed, err := ScholarshipEscrowContractMetaData.GetAbi()
 	if err != nil {
@@ -145,203 +100,99 @@ func bindScholarshipEscrowContract(address common.Address, caller bind.ContractC
 	}
 	return bind.NewBoundContract(address, *parsed, caller, transactor, filterer), nil
 }
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _ScholarshipEscrowContract.Contract.ScholarshipEscrowContractCaller.contract.Call(opts, result, method, params...)
 }
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.ScholarshipEscrowContractTransactor.contract.Transfer(opts)
 }
-
-// Transact invokes the (paid) contract method with params as input values.
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.ScholarshipEscrowContractTransactor.contract.Transact(opts, method, params...)
 }
-
-// Call invokes the (constant) contract method with params as input values and
-// sets the output to result. The result type might be a single field for simple
-// returns, a slice of interfaces for anonymous returns and a struct for named
-// returns.
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerRaw) Call(opts *bind.CallOpts, result *[]interface{}, method string, params ...interface{}) error {
 	return _ScholarshipEscrowContract.Contract.contract.Call(opts, result, method, params...)
 }
-
-// Transfer initiates a plain transaction to move funds to the contract, calling
-// its default method if one is available.
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.contract.Transfer(opts)
 }
-
-// Transact invokes the (paid) contract method with params as input values.
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.contract.Transact(opts, method, params...)
 }
-
-// ADMINROLE is a free data retrieval call binding the contract method 0x75b238fc.
-//
-// Solidity: function ADMIN_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) ADMINROLE(opts *bind.CallOpts) ([32]byte, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "ADMIN_ROLE")
-
 	if err != nil {
 		return *new([32]byte), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
 	return out0, err
-
 }
-
-// ADMINROLE is a free data retrieval call binding the contract method 0x75b238fc.
-//
-// Solidity: function ADMIN_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) ADMINROLE() ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.ADMINROLE(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// ADMINROLE is a free data retrieval call binding the contract method 0x75b238fc.
-//
-// Solidity: function ADMIN_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) ADMINROLE() ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.ADMINROLE(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// ATTESTORROLE is a free data retrieval call binding the contract method 0x62723644.
-//
-// Solidity: function ATTESTOR_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) ATTESTORROLE(opts *bind.CallOpts) ([32]byte, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "ATTESTOR_ROLE")
-
 	if err != nil {
 		return *new([32]byte), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
 	return out0, err
-
 }
-
-// ATTESTORROLE is a free data retrieval call binding the contract method 0x62723644.
-//
-// Solidity: function ATTESTOR_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) ATTESTORROLE() ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.ATTESTORROLE(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// ATTESTORROLE is a free data retrieval call binding the contract method 0x62723644.
-//
-// Solidity: function ATTESTOR_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) ATTESTORROLE() ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.ATTESTORROLE(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// DEFAULTADMINROLE is a free data retrieval call binding the contract method 0xa217fddf.
-//
-// Solidity: function DEFAULT_ADMIN_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) DEFAULTADMINROLE(opts *bind.CallOpts) ([32]byte, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "DEFAULT_ADMIN_ROLE")
-
 	if err != nil {
 		return *new([32]byte), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
 	return out0, err
-
 }
-
-// DEFAULTADMINROLE is a free data retrieval call binding the contract method 0xa217fddf.
-//
-// Solidity: function DEFAULT_ADMIN_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) DEFAULTADMINROLE() ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.DEFAULTADMINROLE(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// DEFAULTADMINROLE is a free data retrieval call binding the contract method 0xa217fddf.
-//
-// Solidity: function DEFAULT_ADMIN_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) DEFAULTADMINROLE() ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.DEFAULTADMINROLE(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// SPONSORROLE is a free data retrieval call binding the contract method 0xc2d79444.
-//
-// Solidity: function SPONSOR_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) SPONSORROLE(opts *bind.CallOpts) ([32]byte, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "SPONSOR_ROLE")
-
 	if err != nil {
 		return *new([32]byte), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
 	return out0, err
-
 }
-
-// SPONSORROLE is a free data retrieval call binding the contract method 0xc2d79444.
-//
-// Solidity: function SPONSOR_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) SPONSORROLE() ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.SPONSORROLE(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// SPONSORROLE is a free data retrieval call binding the contract method 0xc2d79444.
-//
-// Solidity: function SPONSOR_ROLE() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) SPONSORROLE() ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.SPONSORROLE(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// UPGRADEINTERFACEVERSION is a free data retrieval call binding the contract method 0xad3cb1cc.
-//
-// Solidity: function UPGRADE_INTERFACE_VERSION() view returns(string)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) UPGRADEINTERFACEVERSION(opts *bind.CallOpts) (string, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "UPGRADE_INTERFACE_VERSION")
-
 	if err != nil {
 		return *new(string), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new(string)).(*string)
-
 	return out0, err
-
 }
-
-// UPGRADEINTERFACEVERSION is a free data retrieval call binding the contract method 0xad3cb1cc.
-//
-// Solidity: function UPGRADE_INTERFACE_VERSION() view returns(string)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) UPGRADEINTERFACEVERSION() (string, error) {
 	return _ScholarshipEscrowContract.Contract.UPGRADEINTERFACEVERSION(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// UPGRADEINTERFACEVERSION is a free data retrieval call binding the contract method 0xad3cb1cc.
-//
-// Solidity: function UPGRADE_INTERFACE_VERSION() view returns(string)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) UPGRADEINTERFACEVERSION() (string, error) {
 	return _ScholarshipEscrowContract.Contract.UPGRADEINTERFACEVERSION(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// Funds is a free data retrieval call binding the contract method 0x7b8e8895.
-//
-// Solidity: function funds(uint256 ) view returns(address sponsor, uint256 totalAmount, uint256 releasedAmount, uint256 trancheCount, uint256 trancheAmount, bool paused)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) Funds(opts *bind.CallOpts, arg0 *big.Int) (struct {
 	Sponsor        common.Address
 	TotalAmount    *big.Int
@@ -352,7 +203,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) Funds(opts *b
 }, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "funds", arg0)
-
 	outstruct := new(struct {
 		Sponsor        common.Address
 		TotalAmount    *big.Int
@@ -364,21 +214,14 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) Funds(opts *b
 	if err != nil {
 		return *outstruct, err
 	}
-
 	outstruct.Sponsor = *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
 	outstruct.TotalAmount = *abi.ConvertType(out[1], new(*big.Int)).(**big.Int)
 	outstruct.ReleasedAmount = *abi.ConvertType(out[2], new(*big.Int)).(**big.Int)
 	outstruct.TrancheCount = *abi.ConvertType(out[3], new(*big.Int)).(**big.Int)
 	outstruct.TrancheAmount = *abi.ConvertType(out[4], new(*big.Int)).(**big.Int)
 	outstruct.Paused = *abi.ConvertType(out[5], new(bool)).(*bool)
-
 	return *outstruct, err
-
 }
-
-// Funds is a free data retrieval call binding the contract method 0x7b8e8895.
-//
-// Solidity: function funds(uint256 ) view returns(address sponsor, uint256 totalAmount, uint256 releasedAmount, uint256 trancheCount, uint256 trancheAmount, bool paused)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) Funds(arg0 *big.Int) (struct {
 	Sponsor        common.Address
 	TotalAmount    *big.Int
@@ -389,10 +232,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) Funds(arg0 *
 }, error) {
 	return _ScholarshipEscrowContract.Contract.Funds(&_ScholarshipEscrowContract.CallOpts, arg0)
 }
-
-// Funds is a free data retrieval call binding the contract method 0x7b8e8895.
-//
-// Solidity: function funds(uint256 ) view returns(address sponsor, uint256 totalAmount, uint256 releasedAmount, uint256 trancheCount, uint256 trancheAmount, bool paused)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) Funds(arg0 *big.Int) (struct {
 	Sponsor        common.Address
 	TotalAmount    *big.Int
@@ -403,602 +242,280 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) Funds(
 }, error) {
 	return _ScholarshipEscrowContract.Contract.Funds(&_ScholarshipEscrowContract.CallOpts, arg0)
 }
-
-// GetRoleAdmin is a free data retrieval call binding the contract method 0x248a9ca3.
-//
-// Solidity: function getRoleAdmin(bytes32 role) view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) GetRoleAdmin(opts *bind.CallOpts, role [32]byte) ([32]byte, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "getRoleAdmin", role)
-
 	if err != nil {
 		return *new([32]byte), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
 	return out0, err
-
 }
-
-// GetRoleAdmin is a free data retrieval call binding the contract method 0x248a9ca3.
-//
-// Solidity: function getRoleAdmin(bytes32 role) view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) GetRoleAdmin(role [32]byte) ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.GetRoleAdmin(&_ScholarshipEscrowContract.CallOpts, role)
 }
-
-// GetRoleAdmin is a free data retrieval call binding the contract method 0x248a9ca3.
-//
-// Solidity: function getRoleAdmin(bytes32 role) view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) GetRoleAdmin(role [32]byte) ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.GetRoleAdmin(&_ScholarshipEscrowContract.CallOpts, role)
 }
-
-// HasClaimed is a free data retrieval call binding the contract method 0xf6cf3dca.
-//
-// Solidity: function hasClaimed(uint256 , bytes32 , uint256 ) view returns(bool)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) HasClaimed(opts *bind.CallOpts, arg0 *big.Int, arg1 [32]byte, arg2 *big.Int) (bool, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "hasClaimed", arg0, arg1, arg2)
-
 	if err != nil {
 		return *new(bool), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
 	return out0, err
-
 }
-
-// HasClaimed is a free data retrieval call binding the contract method 0xf6cf3dca.
-//
-// Solidity: function hasClaimed(uint256 , bytes32 , uint256 ) view returns(bool)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) HasClaimed(arg0 *big.Int, arg1 [32]byte, arg2 *big.Int) (bool, error) {
 	return _ScholarshipEscrowContract.Contract.HasClaimed(&_ScholarshipEscrowContract.CallOpts, arg0, arg1, arg2)
 }
-
-// HasClaimed is a free data retrieval call binding the contract method 0xf6cf3dca.
-//
-// Solidity: function hasClaimed(uint256 , bytes32 , uint256 ) view returns(bool)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) HasClaimed(arg0 *big.Int, arg1 [32]byte, arg2 *big.Int) (bool, error) {
 	return _ScholarshipEscrowContract.Contract.HasClaimed(&_ScholarshipEscrowContract.CallOpts, arg0, arg1, arg2)
 }
-
-// HasRole is a free data retrieval call binding the contract method 0x91d14854.
-//
-// Solidity: function hasRole(bytes32 role, address account) view returns(bool)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) HasRole(opts *bind.CallOpts, role [32]byte, account common.Address) (bool, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "hasRole", role, account)
-
 	if err != nil {
 		return *new(bool), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
 	return out0, err
-
 }
-
-// HasRole is a free data retrieval call binding the contract method 0x91d14854.
-//
-// Solidity: function hasRole(bytes32 role, address account) view returns(bool)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) HasRole(role [32]byte, account common.Address) (bool, error) {
 	return _ScholarshipEscrowContract.Contract.HasRole(&_ScholarshipEscrowContract.CallOpts, role, account)
 }
-
-// HasRole is a free data retrieval call binding the contract method 0x91d14854.
-//
-// Solidity: function hasRole(bytes32 role, address account) view returns(bool)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) HasRole(role [32]byte, account common.Address) (bool, error) {
 	return _ScholarshipEscrowContract.Contract.HasRole(&_ScholarshipEscrowContract.CallOpts, role, account)
 }
-
-// LzEndpoint is a free data retrieval call binding the contract method 0xb353aaa7.
-//
-// Solidity: function lzEndpoint() view returns(address)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) LzEndpoint(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "lzEndpoint")
-
 	if err != nil {
 		return *new(common.Address), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
 	return out0, err
-
 }
-
-// LzEndpoint is a free data retrieval call binding the contract method 0xb353aaa7.
-//
-// Solidity: function lzEndpoint() view returns(address)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) LzEndpoint() (common.Address, error) {
 	return _ScholarshipEscrowContract.Contract.LzEndpoint(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// LzEndpoint is a free data retrieval call binding the contract method 0xb353aaa7.
-//
-// Solidity: function lzEndpoint() view returns(address)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) LzEndpoint() (common.Address, error) {
 	return _ScholarshipEscrowContract.Contract.LzEndpoint(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// ProxiableUUID is a free data retrieval call binding the contract method 0x52d1902d.
-//
-// Solidity: function proxiableUUID() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) ProxiableUUID(opts *bind.CallOpts) ([32]byte, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "proxiableUUID")
-
 	if err != nil {
 		return *new([32]byte), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
 	return out0, err
-
 }
-
-// ProxiableUUID is a free data retrieval call binding the contract method 0x52d1902d.
-//
-// Solidity: function proxiableUUID() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) ProxiableUUID() ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.ProxiableUUID(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// ProxiableUUID is a free data retrieval call binding the contract method 0x52d1902d.
-//
-// Solidity: function proxiableUUID() view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) ProxiableUUID() ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.ProxiableUUID(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
-//
-// Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) SupportsInterface(opts *bind.CallOpts, interfaceId [4]byte) (bool, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "supportsInterface", interfaceId)
-
 	if err != nil {
 		return *new(bool), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new(bool)).(*bool)
-
 	return out0, err
-
 }
-
-// SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
-//
-// Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) SupportsInterface(interfaceId [4]byte) (bool, error) {
 	return _ScholarshipEscrowContract.Contract.SupportsInterface(&_ScholarshipEscrowContract.CallOpts, interfaceId)
 }
-
-// SupportsInterface is a free data retrieval call binding the contract method 0x01ffc9a7.
-//
-// Solidity: function supportsInterface(bytes4 interfaceId) view returns(bool)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) SupportsInterface(interfaceId [4]byte) (bool, error) {
 	return _ScholarshipEscrowContract.Contract.SupportsInterface(&_ScholarshipEscrowContract.CallOpts, interfaceId)
 }
-
-// TrancheRoots is a free data retrieval call binding the contract method 0x4b23c222.
-//
-// Solidity: function trancheRoots(uint256 , uint256 ) view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) TrancheRoots(opts *bind.CallOpts, arg0 *big.Int, arg1 *big.Int) ([32]byte, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "trancheRoots", arg0, arg1)
-
 	if err != nil {
 		return *new([32]byte), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new([32]byte)).(*[32]byte)
-
 	return out0, err
-
 }
-
-// TrancheRoots is a free data retrieval call binding the contract method 0x4b23c222.
-//
-// Solidity: function trancheRoots(uint256 , uint256 ) view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) TrancheRoots(arg0 *big.Int, arg1 *big.Int) ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.TrancheRoots(&_ScholarshipEscrowContract.CallOpts, arg0, arg1)
 }
-
-// TrancheRoots is a free data retrieval call binding the contract method 0x4b23c222.
-//
-// Solidity: function trancheRoots(uint256 , uint256 ) view returns(bytes32)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) TrancheRoots(arg0 *big.Int, arg1 *big.Int) ([32]byte, error) {
 	return _ScholarshipEscrowContract.Contract.TrancheRoots(&_ScholarshipEscrowContract.CallOpts, arg0, arg1)
 }
-
-// TrustedAttestor is a free data retrieval call binding the contract method 0xac6bffbd.
-//
-// Solidity: function trustedAttestor() view returns(address)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) TrustedAttestor(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "trustedAttestor")
-
 	if err != nil {
 		return *new(common.Address), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
 	return out0, err
-
 }
-
-// TrustedAttestor is a free data retrieval call binding the contract method 0xac6bffbd.
-//
-// Solidity: function trustedAttestor() view returns(address)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) TrustedAttestor() (common.Address, error) {
 	return _ScholarshipEscrowContract.Contract.TrustedAttestor(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// TrustedAttestor is a free data retrieval call binding the contract method 0xac6bffbd.
-//
-// Solidity: function trustedAttestor() view returns(address)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) TrustedAttestor() (common.Address, error) {
 	return _ScholarshipEscrowContract.Contract.TrustedAttestor(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// UsdcToken is a free data retrieval call binding the contract method 0x11eac855.
-//
-// Solidity: function usdcToken() view returns(address)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCaller) UsdcToken(opts *bind.CallOpts) (common.Address, error) {
 	var out []interface{}
 	err := _ScholarshipEscrowContract.contract.Call(opts, &out, "usdcToken")
-
 	if err != nil {
 		return *new(common.Address), err
 	}
-
 	out0 := *abi.ConvertType(out[0], new(common.Address)).(*common.Address)
-
 	return out0, err
-
 }
-
-// UsdcToken is a free data retrieval call binding the contract method 0x11eac855.
-//
-// Solidity: function usdcToken() view returns(address)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) UsdcToken() (common.Address, error) {
 	return _ScholarshipEscrowContract.Contract.UsdcToken(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// UsdcToken is a free data retrieval call binding the contract method 0x11eac855.
-//
-// Solidity: function usdcToken() view returns(address)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractCallerSession) UsdcToken() (common.Address, error) {
 	return _ScholarshipEscrowContract.Contract.UsdcToken(&_ScholarshipEscrowContract.CallOpts)
 }
-
-// ClaimCrossChain is a paid mutator transaction binding the contract method 0xe7636e7b.
-//
-// Solidity: function claimCrossChain(uint256 fundId, uint256 trancheIndex, bytes32 studentHash, uint256 amount, bytes32[] merkleProof, uint16 dstChainId, bytes dstAddress) payable returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) ClaimCrossChain(opts *bind.TransactOpts, fundId *big.Int, trancheIndex *big.Int, studentHash [32]byte, amount *big.Int, merkleProof [][32]byte, dstChainId uint16, dstAddress []byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "claimCrossChain", fundId, trancheIndex, studentHash, amount, merkleProof, dstChainId, dstAddress)
 }
-
-// ClaimCrossChain is a paid mutator transaction binding the contract method 0xe7636e7b.
-//
-// Solidity: function claimCrossChain(uint256 fundId, uint256 trancheIndex, bytes32 studentHash, uint256 amount, bytes32[] merkleProof, uint16 dstChainId, bytes dstAddress) payable returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) ClaimCrossChain(fundId *big.Int, trancheIndex *big.Int, studentHash [32]byte, amount *big.Int, merkleProof [][32]byte, dstChainId uint16, dstAddress []byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.ClaimCrossChain(&_ScholarshipEscrowContract.TransactOpts, fundId, trancheIndex, studentHash, amount, merkleProof, dstChainId, dstAddress)
 }
-
-// ClaimCrossChain is a paid mutator transaction binding the contract method 0xe7636e7b.
-//
-// Solidity: function claimCrossChain(uint256 fundId, uint256 trancheIndex, bytes32 studentHash, uint256 amount, bytes32[] merkleProof, uint16 dstChainId, bytes dstAddress) payable returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) ClaimCrossChain(fundId *big.Int, trancheIndex *big.Int, studentHash [32]byte, amount *big.Int, merkleProof [][32]byte, dstChainId uint16, dstAddress []byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.ClaimCrossChain(&_ScholarshipEscrowContract.TransactOpts, fundId, trancheIndex, studentHash, amount, merkleProof, dstChainId, dstAddress)
 }
-
-// ClaimTranche is a paid mutator transaction binding the contract method 0x520962c8.
-//
-// Solidity: function claimTranche(uint256 fundId, bytes32 studentHash, uint256 trancheIndex, address recipient, uint256 amount, bytes32[] merkleProof) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) ClaimTranche(opts *bind.TransactOpts, fundId *big.Int, studentHash [32]byte, trancheIndex *big.Int, recipient common.Address, amount *big.Int, merkleProof [][32]byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "claimTranche", fundId, studentHash, trancheIndex, recipient, amount, merkleProof)
 }
-
-// ClaimTranche is a paid mutator transaction binding the contract method 0x520962c8.
-//
-// Solidity: function claimTranche(uint256 fundId, bytes32 studentHash, uint256 trancheIndex, address recipient, uint256 amount, bytes32[] merkleProof) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) ClaimTranche(fundId *big.Int, studentHash [32]byte, trancheIndex *big.Int, recipient common.Address, amount *big.Int, merkleProof [][32]byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.ClaimTranche(&_ScholarshipEscrowContract.TransactOpts, fundId, studentHash, trancheIndex, recipient, amount, merkleProof)
 }
-
-// ClaimTranche is a paid mutator transaction binding the contract method 0x520962c8.
-//
-// Solidity: function claimTranche(uint256 fundId, bytes32 studentHash, uint256 trancheIndex, address recipient, uint256 amount, bytes32[] merkleProof) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) ClaimTranche(fundId *big.Int, studentHash [32]byte, trancheIndex *big.Int, recipient common.Address, amount *big.Int, merkleProof [][32]byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.ClaimTranche(&_ScholarshipEscrowContract.TransactOpts, fundId, studentHash, trancheIndex, recipient, amount, merkleProof)
 }
-
-// ClawbackFund is a paid mutator transaction binding the contract method 0xd5d8f18a.
-//
-// Solidity: function clawbackFund(uint256 fundId, address recipient) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) ClawbackFund(opts *bind.TransactOpts, fundId *big.Int, recipient common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "clawbackFund", fundId, recipient)
 }
-
-// ClawbackFund is a paid mutator transaction binding the contract method 0xd5d8f18a.
-//
-// Solidity: function clawbackFund(uint256 fundId, address recipient) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) ClawbackFund(fundId *big.Int, recipient common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.ClawbackFund(&_ScholarshipEscrowContract.TransactOpts, fundId, recipient)
 }
-
-// ClawbackFund is a paid mutator transaction binding the contract method 0xd5d8f18a.
-//
-// Solidity: function clawbackFund(uint256 fundId, address recipient) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) ClawbackFund(fundId *big.Int, recipient common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.ClawbackFund(&_ScholarshipEscrowContract.TransactOpts, fundId, recipient)
 }
-
-// CreateFund is a paid mutator transaction binding the contract method 0x1c02efc3.
-//
-// Solidity: function createFund(address sponsor, uint256 totalAmount, uint256 trancheCount, uint256 trancheAmount) returns(uint256)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) CreateFund(opts *bind.TransactOpts, sponsor common.Address, totalAmount *big.Int, trancheCount *big.Int, trancheAmount *big.Int) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "createFund", sponsor, totalAmount, trancheCount, trancheAmount)
 }
-
-// CreateFund is a paid mutator transaction binding the contract method 0x1c02efc3.
-//
-// Solidity: function createFund(address sponsor, uint256 totalAmount, uint256 trancheCount, uint256 trancheAmount) returns(uint256)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) CreateFund(sponsor common.Address, totalAmount *big.Int, trancheCount *big.Int, trancheAmount *big.Int) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.CreateFund(&_ScholarshipEscrowContract.TransactOpts, sponsor, totalAmount, trancheCount, trancheAmount)
 }
-
-// CreateFund is a paid mutator transaction binding the contract method 0x1c02efc3.
-//
-// Solidity: function createFund(address sponsor, uint256 totalAmount, uint256 trancheCount, uint256 trancheAmount) returns(uint256)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) CreateFund(sponsor common.Address, totalAmount *big.Int, trancheCount *big.Int, trancheAmount *big.Int) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.CreateFund(&_ScholarshipEscrowContract.TransactOpts, sponsor, totalAmount, trancheCount, trancheAmount)
 }
-
-// GrantRole is a paid mutator transaction binding the contract method 0x2f2ff15d.
-//
-// Solidity: function grantRole(bytes32 role, address account) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) GrantRole(opts *bind.TransactOpts, role [32]byte, account common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "grantRole", role, account)
 }
-
-// GrantRole is a paid mutator transaction binding the contract method 0x2f2ff15d.
-//
-// Solidity: function grantRole(bytes32 role, address account) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) GrantRole(role [32]byte, account common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.GrantRole(&_ScholarshipEscrowContract.TransactOpts, role, account)
 }
-
-// GrantRole is a paid mutator transaction binding the contract method 0x2f2ff15d.
-//
-// Solidity: function grantRole(bytes32 role, address account) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) GrantRole(role [32]byte, account common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.GrantRole(&_ScholarshipEscrowContract.TransactOpts, role, account)
 }
-
-// Initialize is a paid mutator transaction binding the contract method 0xc0c53b8b.
-//
-// Solidity: function initialize(address admin, address attestor, address _usdcToken) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) Initialize(opts *bind.TransactOpts, admin common.Address, attestor common.Address, _usdcToken common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "initialize", admin, attestor, _usdcToken)
 }
-
-// Initialize is a paid mutator transaction binding the contract method 0xc0c53b8b.
-//
-// Solidity: function initialize(address admin, address attestor, address _usdcToken) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) Initialize(admin common.Address, attestor common.Address, _usdcToken common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.Initialize(&_ScholarshipEscrowContract.TransactOpts, admin, attestor, _usdcToken)
 }
-
-// Initialize is a paid mutator transaction binding the contract method 0xc0c53b8b.
-//
-// Solidity: function initialize(address admin, address attestor, address _usdcToken) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) Initialize(admin common.Address, attestor common.Address, _usdcToken common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.Initialize(&_ScholarshipEscrowContract.TransactOpts, admin, attestor, _usdcToken)
 }
-
-// PauseFund is a paid mutator transaction binding the contract method 0x02bc5803.
-//
-// Solidity: function pauseFund(uint256 fundId) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) PauseFund(opts *bind.TransactOpts, fundId *big.Int) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "pauseFund", fundId)
 }
-
-// PauseFund is a paid mutator transaction binding the contract method 0x02bc5803.
-//
-// Solidity: function pauseFund(uint256 fundId) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) PauseFund(fundId *big.Int) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.PauseFund(&_ScholarshipEscrowContract.TransactOpts, fundId)
 }
-
-// PauseFund is a paid mutator transaction binding the contract method 0x02bc5803.
-//
-// Solidity: function pauseFund(uint256 fundId) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) PauseFund(fundId *big.Int) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.PauseFund(&_ScholarshipEscrowContract.TransactOpts, fundId)
 }
-
-// PublishTrancheRoot is a paid mutator transaction binding the contract method 0x5e3e05fa.
-//
-// Solidity: function publishTrancheRoot(uint256 fundId, uint256 trancheIndex, bytes32 merkleRoot) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) PublishTrancheRoot(opts *bind.TransactOpts, fundId *big.Int, trancheIndex *big.Int, merkleRoot [32]byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "publishTrancheRoot", fundId, trancheIndex, merkleRoot)
 }
-
-// PublishTrancheRoot is a paid mutator transaction binding the contract method 0x5e3e05fa.
-//
-// Solidity: function publishTrancheRoot(uint256 fundId, uint256 trancheIndex, bytes32 merkleRoot) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) PublishTrancheRoot(fundId *big.Int, trancheIndex *big.Int, merkleRoot [32]byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.PublishTrancheRoot(&_ScholarshipEscrowContract.TransactOpts, fundId, trancheIndex, merkleRoot)
 }
-
-// PublishTrancheRoot is a paid mutator transaction binding the contract method 0x5e3e05fa.
-//
-// Solidity: function publishTrancheRoot(uint256 fundId, uint256 trancheIndex, bytes32 merkleRoot) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) PublishTrancheRoot(fundId *big.Int, trancheIndex *big.Int, merkleRoot [32]byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.PublishTrancheRoot(&_ScholarshipEscrowContract.TransactOpts, fundId, trancheIndex, merkleRoot)
 }
-
-// RenounceRole is a paid mutator transaction binding the contract method 0x36568abe.
-//
-// Solidity: function renounceRole(bytes32 role, address callerConfirmation) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) RenounceRole(opts *bind.TransactOpts, role [32]byte, callerConfirmation common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "renounceRole", role, callerConfirmation)
 }
-
-// RenounceRole is a paid mutator transaction binding the contract method 0x36568abe.
-//
-// Solidity: function renounceRole(bytes32 role, address callerConfirmation) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) RenounceRole(role [32]byte, callerConfirmation common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.RenounceRole(&_ScholarshipEscrowContract.TransactOpts, role, callerConfirmation)
 }
-
-// RenounceRole is a paid mutator transaction binding the contract method 0x36568abe.
-//
-// Solidity: function renounceRole(bytes32 role, address callerConfirmation) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) RenounceRole(role [32]byte, callerConfirmation common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.RenounceRole(&_ScholarshipEscrowContract.TransactOpts, role, callerConfirmation)
 }
-
-// RevokeRole is a paid mutator transaction binding the contract method 0xd547741f.
-//
-// Solidity: function revokeRole(bytes32 role, address account) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) RevokeRole(opts *bind.TransactOpts, role [32]byte, account common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "revokeRole", role, account)
 }
-
-// RevokeRole is a paid mutator transaction binding the contract method 0xd547741f.
-//
-// Solidity: function revokeRole(bytes32 role, address account) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) RevokeRole(role [32]byte, account common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.RevokeRole(&_ScholarshipEscrowContract.TransactOpts, role, account)
 }
-
-// RevokeRole is a paid mutator transaction binding the contract method 0xd547741f.
-//
-// Solidity: function revokeRole(bytes32 role, address account) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) RevokeRole(role [32]byte, account common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.RevokeRole(&_ScholarshipEscrowContract.TransactOpts, role, account)
 }
-
-// SetLzEndpoint is a paid mutator transaction binding the contract method 0xd9331a11.
-//
-// Solidity: function setLzEndpoint(address _lzEndpoint) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) SetLzEndpoint(opts *bind.TransactOpts, _lzEndpoint common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "setLzEndpoint", _lzEndpoint)
 }
-
-// SetLzEndpoint is a paid mutator transaction binding the contract method 0xd9331a11.
-//
-// Solidity: function setLzEndpoint(address _lzEndpoint) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) SetLzEndpoint(_lzEndpoint common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.SetLzEndpoint(&_ScholarshipEscrowContract.TransactOpts, _lzEndpoint)
 }
-
-// SetLzEndpoint is a paid mutator transaction binding the contract method 0xd9331a11.
-//
-// Solidity: function setLzEndpoint(address _lzEndpoint) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) SetLzEndpoint(_lzEndpoint common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.SetLzEndpoint(&_ScholarshipEscrowContract.TransactOpts, _lzEndpoint)
 }
-
-// SetTrustedAttestor is a paid mutator transaction binding the contract method 0xe3d477d9.
-//
-// Solidity: function setTrustedAttestor(address newAttestor) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) SetTrustedAttestor(opts *bind.TransactOpts, newAttestor common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "setTrustedAttestor", newAttestor)
 }
-
-// SetTrustedAttestor is a paid mutator transaction binding the contract method 0xe3d477d9.
-//
-// Solidity: function setTrustedAttestor(address newAttestor) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) SetTrustedAttestor(newAttestor common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.SetTrustedAttestor(&_ScholarshipEscrowContract.TransactOpts, newAttestor)
 }
-
-// SetTrustedAttestor is a paid mutator transaction binding the contract method 0xe3d477d9.
-//
-// Solidity: function setTrustedAttestor(address newAttestor) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) SetTrustedAttestor(newAttestor common.Address) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.SetTrustedAttestor(&_ScholarshipEscrowContract.TransactOpts, newAttestor)
 }
-
-// UnpauseFund is a paid mutator transaction binding the contract method 0x22263434.
-//
-// Solidity: function unpauseFund(uint256 fundId) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) UnpauseFund(opts *bind.TransactOpts, fundId *big.Int) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "unpauseFund", fundId)
 }
-
-// UnpauseFund is a paid mutator transaction binding the contract method 0x22263434.
-//
-// Solidity: function unpauseFund(uint256 fundId) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) UnpauseFund(fundId *big.Int) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.UnpauseFund(&_ScholarshipEscrowContract.TransactOpts, fundId)
 }
-
-// UnpauseFund is a paid mutator transaction binding the contract method 0x22263434.
-//
-// Solidity: function unpauseFund(uint256 fundId) returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) UnpauseFund(fundId *big.Int) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.UnpauseFund(&_ScholarshipEscrowContract.TransactOpts, fundId)
 }
-
-// UpgradeToAndCall is a paid mutator transaction binding the contract method 0x4f1ef286.
-//
-// Solidity: function upgradeToAndCall(address newImplementation, bytes data) payable returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactor) UpgradeToAndCall(opts *bind.TransactOpts, newImplementation common.Address, data []byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.contract.Transact(opts, "upgradeToAndCall", newImplementation, data)
 }
-
-// UpgradeToAndCall is a paid mutator transaction binding the contract method 0x4f1ef286.
-//
-// Solidity: function upgradeToAndCall(address newImplementation, bytes data) payable returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractSession) UpgradeToAndCall(newImplementation common.Address, data []byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.UpgradeToAndCall(&_ScholarshipEscrowContract.TransactOpts, newImplementation, data)
 }
-
-// UpgradeToAndCall is a paid mutator transaction binding the contract method 0x4f1ef286.
-//
-// Solidity: function upgradeToAndCall(address newImplementation, bytes data) payable returns()
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractTransactorSession) UpgradeToAndCall(newImplementation common.Address, data []byte) (*types.Transaction, error) {
 	return _ScholarshipEscrowContract.Contract.UpgradeToAndCall(&_ScholarshipEscrowContract.TransactOpts, newImplementation, data)
 }
-
-// ScholarshipEscrowContractFundClawedBackIterator is returned from FilterFundClawedBack and is used to iterate over the raw logs and unpacked data for FundClawedBack events raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractFundClawedBackIterator struct {
-	Event *ScholarshipEscrowContractFundClawedBack // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	Event *ScholarshipEscrowContractFundClawedBack 
+	contract *bind.BoundContract 
+	event    string              
+	logs chan types.Log        
+	sub  ethereum.Subscription 
+	done bool                  
+	fail error                 
 }
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
 func (it *ScholarshipEscrowContractFundClawedBackIterator) Next() bool {
-	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
 	}
-	// If the iterator completed, deliver directly whatever's available
 	if it.done {
 		select {
 		case log := <-it.logs:
@@ -1009,12 +526,10 @@ func (it *ScholarshipEscrowContractFundClawedBackIterator) Next() bool {
 			}
 			it.Event.Raw = log
 			return true
-
 		default:
 			return false
 		}
 	}
-	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
 		it.Event = new(ScholarshipEscrowContractFundClawedBack)
@@ -1024,61 +539,41 @@ func (it *ScholarshipEscrowContractFundClawedBackIterator) Next() bool {
 		}
 		it.Event.Raw = log
 		return true
-
 	case err := <-it.sub.Err():
 		it.done = true
 		it.fail = err
 		return it.Next()
 	}
 }
-
-// Error returns any retrieval or parsing error occurred during filtering.
 func (it *ScholarshipEscrowContractFundClawedBackIterator) Error() error {
 	return it.fail
 }
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
 func (it *ScholarshipEscrowContractFundClawedBackIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
-
-// ScholarshipEscrowContractFundClawedBack represents a FundClawedBack event raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractFundClawedBack struct {
 	FundId    *big.Int
 	Amount    *big.Int
 	Recipient common.Address
-	Raw       types.Log // Blockchain specific contextual infos
+	Raw       types.Log 
 }
-
-// FilterFundClawedBack is a free log retrieval operation binding the contract event 0xd167f5153f28467192ef1bc17e5354f1a28db7895c6acaed300dcc01385b6dbf.
-//
-// Solidity: event FundClawedBack(uint256 indexed fundId, uint256 amount, address recipient)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterFundClawedBack(opts *bind.FilterOpts, fundId []*big.Int) (*ScholarshipEscrowContractFundClawedBackIterator, error) {
-
 	var fundIdRule []interface{}
 	for _, fundIdItem := range fundId {
 		fundIdRule = append(fundIdRule, fundIdItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "FundClawedBack", fundIdRule)
 	if err != nil {
 		return nil, err
 	}
 	return &ScholarshipEscrowContractFundClawedBackIterator{contract: _ScholarshipEscrowContract.contract, event: "FundClawedBack", logs: logs, sub: sub}, nil
 }
-
-// WatchFundClawedBack is a free log subscription operation binding the contract event 0xd167f5153f28467192ef1bc17e5354f1a28db7895c6acaed300dcc01385b6dbf.
-//
-// Solidity: event FundClawedBack(uint256 indexed fundId, uint256 amount, address recipient)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchFundClawedBack(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractFundClawedBack, fundId []*big.Int) (event.Subscription, error) {
-
 	var fundIdRule []interface{}
 	for _, fundIdItem := range fundId {
 		fundIdRule = append(fundIdRule, fundIdItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "FundClawedBack", fundIdRule)
 	if err != nil {
 		return nil, err
@@ -1088,13 +583,11 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchFundCl
 		for {
 			select {
 			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
 				event := new(ScholarshipEscrowContractFundClawedBack)
 				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "FundClawedBack", log); err != nil {
 					return err
 				}
 				event.Raw = log
-
 				select {
 				case sink <- event:
 				case err := <-sub.Err():
@@ -1110,10 +603,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchFundCl
 		}
 	}), nil
 }
-
-// ParseFundClawedBack is a log parse operation binding the contract event 0xd167f5153f28467192ef1bc17e5354f1a28db7895c6acaed300dcc01385b6dbf.
-//
-// Solidity: event FundClawedBack(uint256 indexed fundId, uint256 amount, address recipient)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseFundClawedBack(log types.Log) (*ScholarshipEscrowContractFundClawedBack, error) {
 	event := new(ScholarshipEscrowContractFundClawedBack)
 	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "FundClawedBack", log); err != nil {
@@ -1122,29 +611,19 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseFundCl
 	event.Raw = log
 	return event, nil
 }
-
-// ScholarshipEscrowContractFundCreatedIterator is returned from FilterFundCreated and is used to iterate over the raw logs and unpacked data for FundCreated events raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractFundCreatedIterator struct {
-	Event *ScholarshipEscrowContractFundCreated // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	Event *ScholarshipEscrowContractFundCreated 
+	contract *bind.BoundContract 
+	event    string              
+	logs chan types.Log        
+	sub  ethereum.Subscription 
+	done bool                  
+	fail error                 
 }
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
 func (it *ScholarshipEscrowContractFundCreatedIterator) Next() bool {
-	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
 	}
-	// If the iterator completed, deliver directly whatever's available
 	if it.done {
 		select {
 		case log := <-it.logs:
@@ -1155,12 +634,10 @@ func (it *ScholarshipEscrowContractFundCreatedIterator) Next() bool {
 			}
 			it.Event.Raw = log
 			return true
-
 		default:
 			return false
 		}
 	}
-	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
 		it.Event = new(ScholarshipEscrowContractFundCreated)
@@ -1170,41 +647,28 @@ func (it *ScholarshipEscrowContractFundCreatedIterator) Next() bool {
 		}
 		it.Event.Raw = log
 		return true
-
 	case err := <-it.sub.Err():
 		it.done = true
 		it.fail = err
 		return it.Next()
 	}
 }
-
-// Error returns any retrieval or parsing error occurred during filtering.
 func (it *ScholarshipEscrowContractFundCreatedIterator) Error() error {
 	return it.fail
 }
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
 func (it *ScholarshipEscrowContractFundCreatedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
-
-// ScholarshipEscrowContractFundCreated represents a FundCreated event raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractFundCreated struct {
 	FundId        *big.Int
 	Sponsor       common.Address
 	TotalAmount   *big.Int
 	TrancheCount  *big.Int
 	TrancheAmount *big.Int
-	Raw           types.Log // Blockchain specific contextual infos
+	Raw           types.Log 
 }
-
-// FilterFundCreated is a free log retrieval operation binding the contract event 0x77f65105cac199e98107aec085f9f5785ec5a22994dc9ed45224d96c9cecce0a.
-//
-// Solidity: event FundCreated(uint256 indexed fundId, address indexed sponsor, uint256 totalAmount, uint256 trancheCount, uint256 trancheAmount)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterFundCreated(opts *bind.FilterOpts, fundId []*big.Int, sponsor []common.Address) (*ScholarshipEscrowContractFundCreatedIterator, error) {
-
 	var fundIdRule []interface{}
 	for _, fundIdItem := range fundId {
 		fundIdRule = append(fundIdRule, fundIdItem)
@@ -1213,19 +677,13 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterFundC
 	for _, sponsorItem := range sponsor {
 		sponsorRule = append(sponsorRule, sponsorItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "FundCreated", fundIdRule, sponsorRule)
 	if err != nil {
 		return nil, err
 	}
 	return &ScholarshipEscrowContractFundCreatedIterator{contract: _ScholarshipEscrowContract.contract, event: "FundCreated", logs: logs, sub: sub}, nil
 }
-
-// WatchFundCreated is a free log subscription operation binding the contract event 0x77f65105cac199e98107aec085f9f5785ec5a22994dc9ed45224d96c9cecce0a.
-//
-// Solidity: event FundCreated(uint256 indexed fundId, address indexed sponsor, uint256 totalAmount, uint256 trancheCount, uint256 trancheAmount)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchFundCreated(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractFundCreated, fundId []*big.Int, sponsor []common.Address) (event.Subscription, error) {
-
 	var fundIdRule []interface{}
 	for _, fundIdItem := range fundId {
 		fundIdRule = append(fundIdRule, fundIdItem)
@@ -1234,7 +692,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchFundCr
 	for _, sponsorItem := range sponsor {
 		sponsorRule = append(sponsorRule, sponsorItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "FundCreated", fundIdRule, sponsorRule)
 	if err != nil {
 		return nil, err
@@ -1244,13 +701,11 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchFundCr
 		for {
 			select {
 			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
 				event := new(ScholarshipEscrowContractFundCreated)
 				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "FundCreated", log); err != nil {
 					return err
 				}
 				event.Raw = log
-
 				select {
 				case sink <- event:
 				case err := <-sub.Err():
@@ -1266,10 +721,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchFundCr
 		}
 	}), nil
 }
-
-// ParseFundCreated is a log parse operation binding the contract event 0x77f65105cac199e98107aec085f9f5785ec5a22994dc9ed45224d96c9cecce0a.
-//
-// Solidity: event FundCreated(uint256 indexed fundId, address indexed sponsor, uint256 totalAmount, uint256 trancheCount, uint256 trancheAmount)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseFundCreated(log types.Log) (*ScholarshipEscrowContractFundCreated, error) {
 	event := new(ScholarshipEscrowContractFundCreated)
 	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "FundCreated", log); err != nil {
@@ -1278,29 +729,19 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseFundCr
 	event.Raw = log
 	return event, nil
 }
-
-// ScholarshipEscrowContractInitializedIterator is returned from FilterInitialized and is used to iterate over the raw logs and unpacked data for Initialized events raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractInitializedIterator struct {
-	Event *ScholarshipEscrowContractInitialized // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	Event *ScholarshipEscrowContractInitialized 
+	contract *bind.BoundContract 
+	event    string              
+	logs chan types.Log        
+	sub  ethereum.Subscription 
+	done bool                  
+	fail error                 
 }
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
 func (it *ScholarshipEscrowContractInitializedIterator) Next() bool {
-	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
 	}
-	// If the iterator completed, deliver directly whatever's available
 	if it.done {
 		select {
 		case log := <-it.logs:
@@ -1311,12 +752,10 @@ func (it *ScholarshipEscrowContractInitializedIterator) Next() bool {
 			}
 			it.Event.Raw = log
 			return true
-
 		default:
 			return false
 		}
 	}
-	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
 		it.Event = new(ScholarshipEscrowContractInitialized)
@@ -1326,49 +765,31 @@ func (it *ScholarshipEscrowContractInitializedIterator) Next() bool {
 		}
 		it.Event.Raw = log
 		return true
-
 	case err := <-it.sub.Err():
 		it.done = true
 		it.fail = err
 		return it.Next()
 	}
 }
-
-// Error returns any retrieval or parsing error occurred during filtering.
 func (it *ScholarshipEscrowContractInitializedIterator) Error() error {
 	return it.fail
 }
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
 func (it *ScholarshipEscrowContractInitializedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
-
-// ScholarshipEscrowContractInitialized represents a Initialized event raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractInitialized struct {
 	Version uint64
-	Raw     types.Log // Blockchain specific contextual infos
+	Raw     types.Log 
 }
-
-// FilterInitialized is a free log retrieval operation binding the contract event 0xc7f505b2f371ae2175ee4913f4499e1f2633a7b5936321eed1cdaeb6115181d2.
-//
-// Solidity: event Initialized(uint64 version)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterInitialized(opts *bind.FilterOpts) (*ScholarshipEscrowContractInitializedIterator, error) {
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "Initialized")
 	if err != nil {
 		return nil, err
 	}
 	return &ScholarshipEscrowContractInitializedIterator{contract: _ScholarshipEscrowContract.contract, event: "Initialized", logs: logs, sub: sub}, nil
 }
-
-// WatchInitialized is a free log subscription operation binding the contract event 0xc7f505b2f371ae2175ee4913f4499e1f2633a7b5936321eed1cdaeb6115181d2.
-//
-// Solidity: event Initialized(uint64 version)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchInitialized(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractInitialized) (event.Subscription, error) {
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "Initialized")
 	if err != nil {
 		return nil, err
@@ -1378,13 +799,11 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchInitia
 		for {
 			select {
 			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
 				event := new(ScholarshipEscrowContractInitialized)
 				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "Initialized", log); err != nil {
 					return err
 				}
 				event.Raw = log
-
 				select {
 				case sink <- event:
 				case err := <-sub.Err():
@@ -1400,10 +819,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchInitia
 		}
 	}), nil
 }
-
-// ParseInitialized is a log parse operation binding the contract event 0xc7f505b2f371ae2175ee4913f4499e1f2633a7b5936321eed1cdaeb6115181d2.
-//
-// Solidity: event Initialized(uint64 version)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseInitialized(log types.Log) (*ScholarshipEscrowContractInitialized, error) {
 	event := new(ScholarshipEscrowContractInitialized)
 	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "Initialized", log); err != nil {
@@ -1412,29 +827,19 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseInitia
 	event.Raw = log
 	return event, nil
 }
-
-// ScholarshipEscrowContractMerkleRootPublishedIterator is returned from FilterMerkleRootPublished and is used to iterate over the raw logs and unpacked data for MerkleRootPublished events raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractMerkleRootPublishedIterator struct {
-	Event *ScholarshipEscrowContractMerkleRootPublished // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	Event *ScholarshipEscrowContractMerkleRootPublished 
+	contract *bind.BoundContract 
+	event    string              
+	logs chan types.Log        
+	sub  ethereum.Subscription 
+	done bool                  
+	fail error                 
 }
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
 func (it *ScholarshipEscrowContractMerkleRootPublishedIterator) Next() bool {
-	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
 	}
-	// If the iterator completed, deliver directly whatever's available
 	if it.done {
 		select {
 		case log := <-it.logs:
@@ -1445,12 +850,10 @@ func (it *ScholarshipEscrowContractMerkleRootPublishedIterator) Next() bool {
 			}
 			it.Event.Raw = log
 			return true
-
 		default:
 			return false
 		}
 	}
-	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
 		it.Event = new(ScholarshipEscrowContractMerkleRootPublished)
@@ -1460,39 +863,26 @@ func (it *ScholarshipEscrowContractMerkleRootPublishedIterator) Next() bool {
 		}
 		it.Event.Raw = log
 		return true
-
 	case err := <-it.sub.Err():
 		it.done = true
 		it.fail = err
 		return it.Next()
 	}
 }
-
-// Error returns any retrieval or parsing error occurred during filtering.
 func (it *ScholarshipEscrowContractMerkleRootPublishedIterator) Error() error {
 	return it.fail
 }
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
 func (it *ScholarshipEscrowContractMerkleRootPublishedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
-
-// ScholarshipEscrowContractMerkleRootPublished represents a MerkleRootPublished event raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractMerkleRootPublished struct {
 	FundId       *big.Int
 	TrancheIndex *big.Int
 	MerkleRoot   [32]byte
-	Raw          types.Log // Blockchain specific contextual infos
+	Raw          types.Log 
 }
-
-// FilterMerkleRootPublished is a free log retrieval operation binding the contract event 0xe649294352ae0b15ac227a22fb744ab148b2c5e053d26fd38e97890ad47dbd8f.
-//
-// Solidity: event MerkleRootPublished(uint256 indexed fundId, uint256 indexed trancheIndex, bytes32 merkleRoot)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterMerkleRootPublished(opts *bind.FilterOpts, fundId []*big.Int, trancheIndex []*big.Int) (*ScholarshipEscrowContractMerkleRootPublishedIterator, error) {
-
 	var fundIdRule []interface{}
 	for _, fundIdItem := range fundId {
 		fundIdRule = append(fundIdRule, fundIdItem)
@@ -1501,19 +891,13 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterMerkl
 	for _, trancheIndexItem := range trancheIndex {
 		trancheIndexRule = append(trancheIndexRule, trancheIndexItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "MerkleRootPublished", fundIdRule, trancheIndexRule)
 	if err != nil {
 		return nil, err
 	}
 	return &ScholarshipEscrowContractMerkleRootPublishedIterator{contract: _ScholarshipEscrowContract.contract, event: "MerkleRootPublished", logs: logs, sub: sub}, nil
 }
-
-// WatchMerkleRootPublished is a free log subscription operation binding the contract event 0xe649294352ae0b15ac227a22fb744ab148b2c5e053d26fd38e97890ad47dbd8f.
-//
-// Solidity: event MerkleRootPublished(uint256 indexed fundId, uint256 indexed trancheIndex, bytes32 merkleRoot)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchMerkleRootPublished(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractMerkleRootPublished, fundId []*big.Int, trancheIndex []*big.Int) (event.Subscription, error) {
-
 	var fundIdRule []interface{}
 	for _, fundIdItem := range fundId {
 		fundIdRule = append(fundIdRule, fundIdItem)
@@ -1522,7 +906,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchMerkle
 	for _, trancheIndexItem := range trancheIndex {
 		trancheIndexRule = append(trancheIndexRule, trancheIndexItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "MerkleRootPublished", fundIdRule, trancheIndexRule)
 	if err != nil {
 		return nil, err
@@ -1532,13 +915,11 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchMerkle
 		for {
 			select {
 			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
 				event := new(ScholarshipEscrowContractMerkleRootPublished)
 				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "MerkleRootPublished", log); err != nil {
 					return err
 				}
 				event.Raw = log
-
 				select {
 				case sink <- event:
 				case err := <-sub.Err():
@@ -1554,10 +935,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchMerkle
 		}
 	}), nil
 }
-
-// ParseMerkleRootPublished is a log parse operation binding the contract event 0xe649294352ae0b15ac227a22fb744ab148b2c5e053d26fd38e97890ad47dbd8f.
-//
-// Solidity: event MerkleRootPublished(uint256 indexed fundId, uint256 indexed trancheIndex, bytes32 merkleRoot)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseMerkleRootPublished(log types.Log) (*ScholarshipEscrowContractMerkleRootPublished, error) {
 	event := new(ScholarshipEscrowContractMerkleRootPublished)
 	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "MerkleRootPublished", log); err != nil {
@@ -1566,29 +943,19 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseMerkle
 	event.Raw = log
 	return event, nil
 }
-
-// ScholarshipEscrowContractRoleAdminChangedIterator is returned from FilterRoleAdminChanged and is used to iterate over the raw logs and unpacked data for RoleAdminChanged events raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractRoleAdminChangedIterator struct {
-	Event *ScholarshipEscrowContractRoleAdminChanged // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	Event *ScholarshipEscrowContractRoleAdminChanged 
+	contract *bind.BoundContract 
+	event    string              
+	logs chan types.Log        
+	sub  ethereum.Subscription 
+	done bool                  
+	fail error                 
 }
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
 func (it *ScholarshipEscrowContractRoleAdminChangedIterator) Next() bool {
-	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
 	}
-	// If the iterator completed, deliver directly whatever's available
 	if it.done {
 		select {
 		case log := <-it.logs:
@@ -1599,12 +966,10 @@ func (it *ScholarshipEscrowContractRoleAdminChangedIterator) Next() bool {
 			}
 			it.Event.Raw = log
 			return true
-
 		default:
 			return false
 		}
 	}
-	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
 		it.Event = new(ScholarshipEscrowContractRoleAdminChanged)
@@ -1614,39 +979,26 @@ func (it *ScholarshipEscrowContractRoleAdminChangedIterator) Next() bool {
 		}
 		it.Event.Raw = log
 		return true
-
 	case err := <-it.sub.Err():
 		it.done = true
 		it.fail = err
 		return it.Next()
 	}
 }
-
-// Error returns any retrieval or parsing error occurred during filtering.
 func (it *ScholarshipEscrowContractRoleAdminChangedIterator) Error() error {
 	return it.fail
 }
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
 func (it *ScholarshipEscrowContractRoleAdminChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
-
-// ScholarshipEscrowContractRoleAdminChanged represents a RoleAdminChanged event raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractRoleAdminChanged struct {
 	Role              [32]byte
 	PreviousAdminRole [32]byte
 	NewAdminRole      [32]byte
-	Raw               types.Log // Blockchain specific contextual infos
+	Raw               types.Log 
 }
-
-// FilterRoleAdminChanged is a free log retrieval operation binding the contract event 0xbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff.
-//
-// Solidity: event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterRoleAdminChanged(opts *bind.FilterOpts, role [][32]byte, previousAdminRole [][32]byte, newAdminRole [][32]byte) (*ScholarshipEscrowContractRoleAdminChangedIterator, error) {
-
 	var roleRule []interface{}
 	for _, roleItem := range role {
 		roleRule = append(roleRule, roleItem)
@@ -1659,19 +1011,13 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterRoleA
 	for _, newAdminRoleItem := range newAdminRole {
 		newAdminRoleRule = append(newAdminRoleRule, newAdminRoleItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "RoleAdminChanged", roleRule, previousAdminRoleRule, newAdminRoleRule)
 	if err != nil {
 		return nil, err
 	}
 	return &ScholarshipEscrowContractRoleAdminChangedIterator{contract: _ScholarshipEscrowContract.contract, event: "RoleAdminChanged", logs: logs, sub: sub}, nil
 }
-
-// WatchRoleAdminChanged is a free log subscription operation binding the contract event 0xbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff.
-//
-// Solidity: event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleAdminChanged(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractRoleAdminChanged, role [][32]byte, previousAdminRole [][32]byte, newAdminRole [][32]byte) (event.Subscription, error) {
-
 	var roleRule []interface{}
 	for _, roleItem := range role {
 		roleRule = append(roleRule, roleItem)
@@ -1684,7 +1030,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleAd
 	for _, newAdminRoleItem := range newAdminRole {
 		newAdminRoleRule = append(newAdminRoleRule, newAdminRoleItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "RoleAdminChanged", roleRule, previousAdminRoleRule, newAdminRoleRule)
 	if err != nil {
 		return nil, err
@@ -1694,13 +1039,11 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleAd
 		for {
 			select {
 			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
 				event := new(ScholarshipEscrowContractRoleAdminChanged)
 				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "RoleAdminChanged", log); err != nil {
 					return err
 				}
 				event.Raw = log
-
 				select {
 				case sink <- event:
 				case err := <-sub.Err():
@@ -1716,10 +1059,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleAd
 		}
 	}), nil
 }
-
-// ParseRoleAdminChanged is a log parse operation binding the contract event 0xbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff.
-//
-// Solidity: event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseRoleAdminChanged(log types.Log) (*ScholarshipEscrowContractRoleAdminChanged, error) {
 	event := new(ScholarshipEscrowContractRoleAdminChanged)
 	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "RoleAdminChanged", log); err != nil {
@@ -1728,29 +1067,19 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseRoleAd
 	event.Raw = log
 	return event, nil
 }
-
-// ScholarshipEscrowContractRoleGrantedIterator is returned from FilterRoleGranted and is used to iterate over the raw logs and unpacked data for RoleGranted events raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractRoleGrantedIterator struct {
-	Event *ScholarshipEscrowContractRoleGranted // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	Event *ScholarshipEscrowContractRoleGranted 
+	contract *bind.BoundContract 
+	event    string              
+	logs chan types.Log        
+	sub  ethereum.Subscription 
+	done bool                  
+	fail error                 
 }
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
 func (it *ScholarshipEscrowContractRoleGrantedIterator) Next() bool {
-	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
 	}
-	// If the iterator completed, deliver directly whatever's available
 	if it.done {
 		select {
 		case log := <-it.logs:
@@ -1761,12 +1090,10 @@ func (it *ScholarshipEscrowContractRoleGrantedIterator) Next() bool {
 			}
 			it.Event.Raw = log
 			return true
-
 		default:
 			return false
 		}
 	}
-	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
 		it.Event = new(ScholarshipEscrowContractRoleGranted)
@@ -1776,39 +1103,26 @@ func (it *ScholarshipEscrowContractRoleGrantedIterator) Next() bool {
 		}
 		it.Event.Raw = log
 		return true
-
 	case err := <-it.sub.Err():
 		it.done = true
 		it.fail = err
 		return it.Next()
 	}
 }
-
-// Error returns any retrieval or parsing error occurred during filtering.
 func (it *ScholarshipEscrowContractRoleGrantedIterator) Error() error {
 	return it.fail
 }
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
 func (it *ScholarshipEscrowContractRoleGrantedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
-
-// ScholarshipEscrowContractRoleGranted represents a RoleGranted event raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractRoleGranted struct {
 	Role    [32]byte
 	Account common.Address
 	Sender  common.Address
-	Raw     types.Log // Blockchain specific contextual infos
+	Raw     types.Log 
 }
-
-// FilterRoleGranted is a free log retrieval operation binding the contract event 0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d.
-//
-// Solidity: event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterRoleGranted(opts *bind.FilterOpts, role [][32]byte, account []common.Address, sender []common.Address) (*ScholarshipEscrowContractRoleGrantedIterator, error) {
-
 	var roleRule []interface{}
 	for _, roleItem := range role {
 		roleRule = append(roleRule, roleItem)
@@ -1821,19 +1135,13 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterRoleG
 	for _, senderItem := range sender {
 		senderRule = append(senderRule, senderItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "RoleGranted", roleRule, accountRule, senderRule)
 	if err != nil {
 		return nil, err
 	}
 	return &ScholarshipEscrowContractRoleGrantedIterator{contract: _ScholarshipEscrowContract.contract, event: "RoleGranted", logs: logs, sub: sub}, nil
 }
-
-// WatchRoleGranted is a free log subscription operation binding the contract event 0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d.
-//
-// Solidity: event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleGranted(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractRoleGranted, role [][32]byte, account []common.Address, sender []common.Address) (event.Subscription, error) {
-
 	var roleRule []interface{}
 	for _, roleItem := range role {
 		roleRule = append(roleRule, roleItem)
@@ -1846,7 +1154,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleGr
 	for _, senderItem := range sender {
 		senderRule = append(senderRule, senderItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "RoleGranted", roleRule, accountRule, senderRule)
 	if err != nil {
 		return nil, err
@@ -1856,13 +1163,11 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleGr
 		for {
 			select {
 			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
 				event := new(ScholarshipEscrowContractRoleGranted)
 				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "RoleGranted", log); err != nil {
 					return err
 				}
 				event.Raw = log
-
 				select {
 				case sink <- event:
 				case err := <-sub.Err():
@@ -1878,10 +1183,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleGr
 		}
 	}), nil
 }
-
-// ParseRoleGranted is a log parse operation binding the contract event 0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d.
-//
-// Solidity: event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseRoleGranted(log types.Log) (*ScholarshipEscrowContractRoleGranted, error) {
 	event := new(ScholarshipEscrowContractRoleGranted)
 	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "RoleGranted", log); err != nil {
@@ -1890,29 +1191,19 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseRoleGr
 	event.Raw = log
 	return event, nil
 }
-
-// ScholarshipEscrowContractRoleRevokedIterator is returned from FilterRoleRevoked and is used to iterate over the raw logs and unpacked data for RoleRevoked events raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractRoleRevokedIterator struct {
-	Event *ScholarshipEscrowContractRoleRevoked // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	Event *ScholarshipEscrowContractRoleRevoked 
+	contract *bind.BoundContract 
+	event    string              
+	logs chan types.Log        
+	sub  ethereum.Subscription 
+	done bool                  
+	fail error                 
 }
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
 func (it *ScholarshipEscrowContractRoleRevokedIterator) Next() bool {
-	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
 	}
-	// If the iterator completed, deliver directly whatever's available
 	if it.done {
 		select {
 		case log := <-it.logs:
@@ -1923,12 +1214,10 @@ func (it *ScholarshipEscrowContractRoleRevokedIterator) Next() bool {
 			}
 			it.Event.Raw = log
 			return true
-
 		default:
 			return false
 		}
 	}
-	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
 		it.Event = new(ScholarshipEscrowContractRoleRevoked)
@@ -1938,39 +1227,26 @@ func (it *ScholarshipEscrowContractRoleRevokedIterator) Next() bool {
 		}
 		it.Event.Raw = log
 		return true
-
 	case err := <-it.sub.Err():
 		it.done = true
 		it.fail = err
 		return it.Next()
 	}
 }
-
-// Error returns any retrieval or parsing error occurred during filtering.
 func (it *ScholarshipEscrowContractRoleRevokedIterator) Error() error {
 	return it.fail
 }
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
 func (it *ScholarshipEscrowContractRoleRevokedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
-
-// ScholarshipEscrowContractRoleRevoked represents a RoleRevoked event raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractRoleRevoked struct {
 	Role    [32]byte
 	Account common.Address
 	Sender  common.Address
-	Raw     types.Log // Blockchain specific contextual infos
+	Raw     types.Log 
 }
-
-// FilterRoleRevoked is a free log retrieval operation binding the contract event 0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b.
-//
-// Solidity: event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterRoleRevoked(opts *bind.FilterOpts, role [][32]byte, account []common.Address, sender []common.Address) (*ScholarshipEscrowContractRoleRevokedIterator, error) {
-
 	var roleRule []interface{}
 	for _, roleItem := range role {
 		roleRule = append(roleRule, roleItem)
@@ -1983,19 +1259,13 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterRoleR
 	for _, senderItem := range sender {
 		senderRule = append(senderRule, senderItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "RoleRevoked", roleRule, accountRule, senderRule)
 	if err != nil {
 		return nil, err
 	}
 	return &ScholarshipEscrowContractRoleRevokedIterator{contract: _ScholarshipEscrowContract.contract, event: "RoleRevoked", logs: logs, sub: sub}, nil
 }
-
-// WatchRoleRevoked is a free log subscription operation binding the contract event 0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b.
-//
-// Solidity: event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleRevoked(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractRoleRevoked, role [][32]byte, account []common.Address, sender []common.Address) (event.Subscription, error) {
-
 	var roleRule []interface{}
 	for _, roleItem := range role {
 		roleRule = append(roleRule, roleItem)
@@ -2008,7 +1278,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleRe
 	for _, senderItem := range sender {
 		senderRule = append(senderRule, senderItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "RoleRevoked", roleRule, accountRule, senderRule)
 	if err != nil {
 		return nil, err
@@ -2018,13 +1287,11 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleRe
 		for {
 			select {
 			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
 				event := new(ScholarshipEscrowContractRoleRevoked)
 				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "RoleRevoked", log); err != nil {
 					return err
 				}
 				event.Raw = log
-
 				select {
 				case sink <- event:
 				case err := <-sub.Err():
@@ -2040,10 +1307,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchRoleRe
 		}
 	}), nil
 }
-
-// ParseRoleRevoked is a log parse operation binding the contract event 0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b.
-//
-// Solidity: event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseRoleRevoked(log types.Log) (*ScholarshipEscrowContractRoleRevoked, error) {
 	event := new(ScholarshipEscrowContractRoleRevoked)
 	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "RoleRevoked", log); err != nil {
@@ -2052,29 +1315,19 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseRoleRe
 	event.Raw = log
 	return event, nil
 }
-
-// ScholarshipEscrowContractTrancheClaimedIterator is returned from FilterTrancheClaimed and is used to iterate over the raw logs and unpacked data for TrancheClaimed events raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractTrancheClaimedIterator struct {
-	Event *ScholarshipEscrowContractTrancheClaimed // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	Event *ScholarshipEscrowContractTrancheClaimed 
+	contract *bind.BoundContract 
+	event    string              
+	logs chan types.Log        
+	sub  ethereum.Subscription 
+	done bool                  
+	fail error                 
 }
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
 func (it *ScholarshipEscrowContractTrancheClaimedIterator) Next() bool {
-	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
 	}
-	// If the iterator completed, deliver directly whatever's available
 	if it.done {
 		select {
 		case log := <-it.logs:
@@ -2085,12 +1338,10 @@ func (it *ScholarshipEscrowContractTrancheClaimedIterator) Next() bool {
 			}
 			it.Event.Raw = log
 			return true
-
 		default:
 			return false
 		}
 	}
-	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
 		it.Event = new(ScholarshipEscrowContractTrancheClaimed)
@@ -2100,41 +1351,28 @@ func (it *ScholarshipEscrowContractTrancheClaimedIterator) Next() bool {
 		}
 		it.Event.Raw = log
 		return true
-
 	case err := <-it.sub.Err():
 		it.done = true
 		it.fail = err
 		return it.Next()
 	}
 }
-
-// Error returns any retrieval or parsing error occurred during filtering.
 func (it *ScholarshipEscrowContractTrancheClaimedIterator) Error() error {
 	return it.fail
 }
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
 func (it *ScholarshipEscrowContractTrancheClaimedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
-
-// ScholarshipEscrowContractTrancheClaimed represents a TrancheClaimed event raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractTrancheClaimed struct {
 	FundId       *big.Int
 	StudentHash  [32]byte
 	TrancheIndex *big.Int
 	Amount       *big.Int
 	Recipient    common.Address
-	Raw          types.Log // Blockchain specific contextual infos
+	Raw          types.Log 
 }
-
-// FilterTrancheClaimed is a free log retrieval operation binding the contract event 0x7beb97e8a642fc5efdb2a6eafecdd3f6dc96464d6d2098ae9d32061c79487455.
-//
-// Solidity: event TrancheClaimed(uint256 indexed fundId, bytes32 indexed studentHash, uint256 trancheIndex, uint256 amount, address recipient)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterTrancheClaimed(opts *bind.FilterOpts, fundId []*big.Int, studentHash [][32]byte) (*ScholarshipEscrowContractTrancheClaimedIterator, error) {
-
 	var fundIdRule []interface{}
 	for _, fundIdItem := range fundId {
 		fundIdRule = append(fundIdRule, fundIdItem)
@@ -2143,19 +1381,13 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterTranc
 	for _, studentHashItem := range studentHash {
 		studentHashRule = append(studentHashRule, studentHashItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "TrancheClaimed", fundIdRule, studentHashRule)
 	if err != nil {
 		return nil, err
 	}
 	return &ScholarshipEscrowContractTrancheClaimedIterator{contract: _ScholarshipEscrowContract.contract, event: "TrancheClaimed", logs: logs, sub: sub}, nil
 }
-
-// WatchTrancheClaimed is a free log subscription operation binding the contract event 0x7beb97e8a642fc5efdb2a6eafecdd3f6dc96464d6d2098ae9d32061c79487455.
-//
-// Solidity: event TrancheClaimed(uint256 indexed fundId, bytes32 indexed studentHash, uint256 trancheIndex, uint256 amount, address recipient)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchTrancheClaimed(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractTrancheClaimed, fundId []*big.Int, studentHash [][32]byte) (event.Subscription, error) {
-
 	var fundIdRule []interface{}
 	for _, fundIdItem := range fundId {
 		fundIdRule = append(fundIdRule, fundIdItem)
@@ -2164,7 +1396,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchTranch
 	for _, studentHashItem := range studentHash {
 		studentHashRule = append(studentHashRule, studentHashItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "TrancheClaimed", fundIdRule, studentHashRule)
 	if err != nil {
 		return nil, err
@@ -2174,13 +1405,11 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchTranch
 		for {
 			select {
 			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
 				event := new(ScholarshipEscrowContractTrancheClaimed)
 				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "TrancheClaimed", log); err != nil {
 					return err
 				}
 				event.Raw = log
-
 				select {
 				case sink <- event:
 				case err := <-sub.Err():
@@ -2196,10 +1425,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchTranch
 		}
 	}), nil
 }
-
-// ParseTrancheClaimed is a log parse operation binding the contract event 0x7beb97e8a642fc5efdb2a6eafecdd3f6dc96464d6d2098ae9d32061c79487455.
-//
-// Solidity: event TrancheClaimed(uint256 indexed fundId, bytes32 indexed studentHash, uint256 trancheIndex, uint256 amount, address recipient)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseTrancheClaimed(log types.Log) (*ScholarshipEscrowContractTrancheClaimed, error) {
 	event := new(ScholarshipEscrowContractTrancheClaimed)
 	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "TrancheClaimed", log); err != nil {
@@ -2208,29 +1433,19 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseTranch
 	event.Raw = log
 	return event, nil
 }
-
-// ScholarshipEscrowContractUpgradedIterator is returned from FilterUpgraded and is used to iterate over the raw logs and unpacked data for Upgraded events raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractUpgradedIterator struct {
-	Event *ScholarshipEscrowContractUpgraded // Event containing the contract specifics and raw log
-
-	contract *bind.BoundContract // Generic contract to use for unpacking event data
-	event    string              // Event name to use for unpacking event data
-
-	logs chan types.Log        // Log channel receiving the found contract events
-	sub  ethereum.Subscription // Subscription for errors, completion and termination
-	done bool                  // Whether the subscription completed delivering logs
-	fail error                 // Occurred error to stop iteration
+	Event *ScholarshipEscrowContractUpgraded 
+	contract *bind.BoundContract 
+	event    string              
+	logs chan types.Log        
+	sub  ethereum.Subscription 
+	done bool                  
+	fail error                 
 }
-
-// Next advances the iterator to the subsequent event, returning whether there
-// are any more events found. In case of a retrieval or parsing error, false is
-// returned and Error() can be queried for the exact failure.
 func (it *ScholarshipEscrowContractUpgradedIterator) Next() bool {
-	// If the iterator failed, stop iterating
 	if it.fail != nil {
 		return false
 	}
-	// If the iterator completed, deliver directly whatever's available
 	if it.done {
 		select {
 		case log := <-it.logs:
@@ -2241,12 +1456,10 @@ func (it *ScholarshipEscrowContractUpgradedIterator) Next() bool {
 			}
 			it.Event.Raw = log
 			return true
-
 		default:
 			return false
 		}
 	}
-	// Iterator still in progress, wait for either a data or an error event
 	select {
 	case log := <-it.logs:
 		it.Event = new(ScholarshipEscrowContractUpgraded)
@@ -2256,59 +1469,39 @@ func (it *ScholarshipEscrowContractUpgradedIterator) Next() bool {
 		}
 		it.Event.Raw = log
 		return true
-
 	case err := <-it.sub.Err():
 		it.done = true
 		it.fail = err
 		return it.Next()
 	}
 }
-
-// Error returns any retrieval or parsing error occurred during filtering.
 func (it *ScholarshipEscrowContractUpgradedIterator) Error() error {
 	return it.fail
 }
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
 func (it *ScholarshipEscrowContractUpgradedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
-
-// ScholarshipEscrowContractUpgraded represents a Upgraded event raised by the ScholarshipEscrowContract contract.
 type ScholarshipEscrowContractUpgraded struct {
 	Implementation common.Address
-	Raw            types.Log // Blockchain specific contextual infos
+	Raw            types.Log 
 }
-
-// FilterUpgraded is a free log retrieval operation binding the contract event 0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b.
-//
-// Solidity: event Upgraded(address indexed implementation)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) FilterUpgraded(opts *bind.FilterOpts, implementation []common.Address) (*ScholarshipEscrowContractUpgradedIterator, error) {
-
 	var implementationRule []interface{}
 	for _, implementationItem := range implementation {
 		implementationRule = append(implementationRule, implementationItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.FilterLogs(opts, "Upgraded", implementationRule)
 	if err != nil {
 		return nil, err
 	}
 	return &ScholarshipEscrowContractUpgradedIterator{contract: _ScholarshipEscrowContract.contract, event: "Upgraded", logs: logs, sub: sub}, nil
 }
-
-// WatchUpgraded is a free log subscription operation binding the contract event 0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b.
-//
-// Solidity: event Upgraded(address indexed implementation)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchUpgraded(opts *bind.WatchOpts, sink chan<- *ScholarshipEscrowContractUpgraded, implementation []common.Address) (event.Subscription, error) {
-
 	var implementationRule []interface{}
 	for _, implementationItem := range implementation {
 		implementationRule = append(implementationRule, implementationItem)
 	}
-
 	logs, sub, err := _ScholarshipEscrowContract.contract.WatchLogs(opts, "Upgraded", implementationRule)
 	if err != nil {
 		return nil, err
@@ -2318,13 +1511,11 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchUpgrad
 		for {
 			select {
 			case log := <-logs:
-				// New log arrived, parse the event and forward to the user
 				event := new(ScholarshipEscrowContractUpgraded)
 				if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "Upgraded", log); err != nil {
 					return err
 				}
 				event.Raw = log
-
 				select {
 				case sink <- event:
 				case err := <-sub.Err():
@@ -2340,10 +1531,6 @@ func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) WatchUpgrad
 		}
 	}), nil
 }
-
-// ParseUpgraded is a log parse operation binding the contract event 0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b.
-//
-// Solidity: event Upgraded(address indexed implementation)
 func (_ScholarshipEscrowContract *ScholarshipEscrowContractFilterer) ParseUpgraded(log types.Log) (*ScholarshipEscrowContractUpgraded, error) {
 	event := new(ScholarshipEscrowContractUpgraded)
 	if err := _ScholarshipEscrowContract.contract.UnpackLog(event, "Upgraded", log); err != nil {

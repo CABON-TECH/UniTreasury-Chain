@@ -43,7 +43,7 @@ contract DeployAllScript is Script {
             address(usdc),
             address(lendingPool),
             address(aUsdc),
-            0 // For development/testing, initially set to 0. It can be modified later via setTimelockDelay.
+            0 // timelockDelay
         );
         console.log("TREASURY_CONTRACT_ADDRESS=", address(treasury));
         usdc.approve(address(treasury), 500_000 * 10**18);

@@ -61,7 +61,7 @@ def main():
         f"{BASE_URL}/treasury/proposals",
         json={
             "recipient": "0x1111222233334444555566667777888899990000",
-            "amount": "10",
+            "amount": 10,
             "purpose": "Timelock test"
         },
         headers=admin_headers

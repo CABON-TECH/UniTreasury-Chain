@@ -1,4 +1,3 @@
-// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 import "forge-std/Script.sol";
 import {ScholarshipEscrowContractV2} from "../src/ScholarshipEscrowContractV2.sol";

@@ -1,12 +1,10 @@
 package blockchain
-
 import (
 	"context"
 	"crypto/ecdsa"
 	"fmt"
 	"math/big"
 	"strings"
-
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi/bind"
 	"github.com/ethereum/go-ethereum/common"
@@ -15,20 +13,15 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"go.uber.org/zap"
 )
-
-// Client wraps multiple ethclient.Client instances with convenience helpers and failover.
 type Client struct {
 	clients []*ethclient.Client
 	chainID *big.Int
 	log     *zap.Logger
 }
-
-// NewClient dials a comma-separated list of Ethereum node RPC URLs and returns a Client.
 func NewClient(ctx context.Context, rpcURLs string, chainID int64, log *zap.Logger) (*Client, error) {
 	urls := strings.Split(rpcURLs, ",")
 	var clients []*ethclient.Client
 	var firstChainID *big.Int
-
 	for _, u := range urls {
 		u = strings.TrimSpace(u)
 		if u == "" {
@@ -39,7 +32,6 @@ func NewClient(ctx context.Context, rpcURLs string, chainID int64, log *zap.Logg
 			log.Warn("failed to dial node, skipping", zap.String("url", u), zap.Error(err))
 			continue
 		}
-
 		gotChainID, err := ec.ChainID(ctx)
 		if err != nil {
 			log.Warn("failed to get chain ID, skipping", zap.String("url", u), zap.Error(err))
@@ -49,38 +41,29 @@ func NewClient(ctx context.Context, rpcURLs string, chainID int64, log *zap.Logg
 			log.Warn("chain ID mismatch, skipping", zap.String("url", u), zap.Int64("expected", chainID), zap.Int64("got", gotChainID.Int64()))
 			continue
 		}
-		
 		if len(clients) == 0 {
 			firstChainID = gotChainID
 		}
 		clients = append(clients, ec)
 		log.Info("connected to Ethereum node", zap.String("rpc_url", u), zap.Int64("chain_id", gotChainID.Int64()))
 	}
-
 	if len(clients) == 0 {
 		return nil, fmt.Errorf("blockchain: could not connect to any RPC nodes for chain %d", chainID)
 	}
-
 	return &Client{
 		clients: clients,
 		chainID: firstChainID,
 		log:     log,
 	}, nil
 }
-
-// ChainID returns the connected chain ID.
 func (c *Client) ChainID() *big.Int {
 	return c.chainID
 }
-
-// Close terminates all underlying connections.
 func (c *Client) Close() {
 	for _, client := range c.clients {
 		client.Close()
 	}
 }
-
-// TransactOpts builds a bind.TransactOpts for signing transactions.
 func (c *Client) TransactOpts(ctx context.Context, privateKey *ecdsa.PrivateKey) (*bind.TransactOpts, error) {
 	opts, err := bind.NewKeyedTransactorWithChainID(privateKey, c.chainID)
 	if err != nil {
@@ -89,7 +72,6 @@ func (c *Client) TransactOpts(ctx context.Context, privateKey *ecdsa.PrivateKey)
 	opts.Context = ctx
 	return opts, nil
 }
-
 func ParsePrivateKey(hexKey string) (*ecdsa.PrivateKey, error) {
 	if len(hexKey) > 2 && hexKey[:2] == "0x" {
 		hexKey = hexKey[2:]
@@ -100,15 +82,9 @@ func ParsePrivateKey(hexKey string) (*ecdsa.PrivateKey, error) {
 	}
 	return pk, nil
 }
-
 func AddressFromKey(pk *ecdsa.PrivateKey) common.Address {
 	return crypto.PubkeyToAddress(pk.PublicKey)
 }
-
-// ==========================================
-// FALLBACK / MULTI-NODE IMPLEMENTATION
-// ==========================================
-
 func (c *Client) CodeAt(ctx context.Context, contract common.Address, blockNumber *big.Int) ([]byte, error) {
 	var err error
 	for i, client := range c.clients {
@@ -121,7 +97,6 @@ func (c *Client) CodeAt(ctx context.Context, contract common.Address, blockNumbe
 	}
 	return nil, err
 }
-
 func (c *Client) CallContract(ctx context.Context, call ethereum.CallMsg, blockNumber *big.Int) ([]byte, error) {
 	var err error
 	for i, client := range c.clients {
@@ -134,7 +109,6 @@ func (c *Client) CallContract(ctx context.Context, call ethereum.CallMsg, blockN
 	}
 	return nil, err
 }
-
 func (c *Client) PendingCodeAt(ctx context.Context, account common.Address) ([]byte, error) {
 	var err error
 	for i, client := range c.clients {
@@ -147,7 +121,6 @@ func (c *Client) PendingCodeAt(ctx context.Context, account common.Address) ([]b
 	}
 	return nil, err
 }
-
 func (c *Client) PendingNonceAt(ctx context.Context, account common.Address) (uint64, error) {
 	var err error
 	for i, client := range c.clients {
@@ -160,7 +133,6 @@ func (c *Client) PendingNonceAt(ctx context.Context, account common.Address) (ui
 	}
 	return 0, err
 }
-
 func (c *Client) SuggestGasPrice(ctx context.Context) (*big.Int, error) {
 	var err error
 	for i, client := range c.clients {
@@ -173,7 +145,6 @@ func (c *Client) SuggestGasPrice(ctx context.Context) (*big.Int, error) {
 	}
 	return nil, err
 }
-
 func (c *Client) SuggestGasTipCap(ctx context.Context) (*big.Int, error) {
 	var err error
 	for i, client := range c.clients {
@@ -186,7 +157,6 @@ func (c *Client) SuggestGasTipCap(ctx context.Context) (*big.Int, error) {
 	}
 	return nil, err
 }
-
 func (c *Client) EstimateGas(ctx context.Context, call ethereum.CallMsg) (uint64, error) {
 	var err error
 	for i, client := range c.clients {
@@ -199,7 +169,6 @@ func (c *Client) EstimateGas(ctx context.Context, call ethereum.CallMsg) (uint64
 	}
 	return 0, err
 }
-
 func (c *Client) SendTransaction(ctx context.Context, tx *types.Transaction) error {
 	var err error
 	for i, client := range c.clients {
@@ -211,7 +180,6 @@ func (c *Client) SendTransaction(ctx context.Context, tx *types.Transaction) err
 	}
 	return err
 }
-
 func (c *Client) FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]types.Log, error) {
 	var err error
 	for i, client := range c.clients {
@@ -224,7 +192,6 @@ func (c *Client) FilterLogs(ctx context.Context, query ethereum.FilterQuery) ([]
 	}
 	return nil, err
 }
-
 func (c *Client) SubscribeFilterLogs(ctx context.Context, query ethereum.FilterQuery, ch chan<- types.Log) (ethereum.Subscription, error) {
 	var err error
 	for i, client := range c.clients {
@@ -237,7 +204,6 @@ func (c *Client) SubscribeFilterLogs(ctx context.Context, query ethereum.FilterQ
 	}
 	return nil, err
 }
-
 func (c *Client) HeaderByNumber(ctx context.Context, number *big.Int) (*types.Header, error) {
 	var err error
 	for i, client := range c.clients {
@@ -250,7 +216,6 @@ func (c *Client) HeaderByNumber(ctx context.Context, number *big.Int) (*types.He
 	}
 	return nil, err
 }
-
 func (c *Client) TransactionReceipt(ctx context.Context, txHash common.Hash) (*types.Receipt, error) {
 	var err error
 	for i, client := range c.clients {
@@ -259,7 +224,6 @@ func (c *Client) TransactionReceipt(ctx context.Context, txHash common.Hash) (*t
 		if err == nil {
 			return res, nil
 		}
-		// If error is "not found", we shouldn't necessarily log it as a failure because it's just pending.
 		if err == ethereum.NotFound {
 			return nil, err
 		}
@@ -267,7 +231,6 @@ func (c *Client) TransactionReceipt(ctx context.Context, txHash common.Hash) (*t
 	}
 	return nil, err
 }
-
 func (c *Client) BlockNumber(ctx context.Context) (uint64, error) {
 	var err error
 	for i, client := range c.clients {

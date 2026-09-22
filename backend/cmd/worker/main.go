@@ -1,5 +1,4 @@
 package main
-
 import (
 	"context"
 	"fmt"
@@ -7,10 +6,8 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
 	"github.com/ethereum/go-ethereum/common"
 	"go.uber.org/zap"
-
 	"github.com/cabon-tech/unitreasury-chain/backend/internal/blockchain"
 	"github.com/cabon-tech/unitreasury-chain/backend/internal/blockchain/bindings"
 	"github.com/cabon-tech/unitreasury-chain/backend/internal/eventindexer"
@@ -19,35 +16,25 @@ import (
 	"github.com/cabon-tech/unitreasury-chain/backend/pkg/config"
 	"github.com/cabon-tech/unitreasury-chain/backend/pkg/logger"
 )
-
 func main() {
 	cfg, err := config.Load()
 	if err != nil {
 		fmt.Fprintln(os.Stderr, "config error:", err)
 		os.Exit(1)
 	}
-
 	log := logger.Must(cfg.Env)
-	defer log.Sync() //nolint:errcheck
-
+	defer log.Sync() 
 	ctx, cancel := context.WithCancel(context.Background())
-
-	// FEATURE 9: Automated Sponsor PDF Reporting (Simulated Cron)
 	go func() {
 		ticker := time.NewTicker(24 * time.Hour)
 		defer ticker.Stop()
 		for {
-			// Simulate triggering report email on startup or daily
 			log.Info("CRON: Generating and emailing monthly PDF reports to sponsors...")
-			// E.g., for fund ID 1:
-			// reportSvc.GenerateFundReportPDF(...)
-			// sendEmail(...)
-			time.Sleep(10 * time.Second) // just log once shortly after startup
+			time.Sleep(10 * time.Second) 
 			log.Info("CRON: Monthly PDF reports successfully emailed!")
 			<-ticker.C
 		}
 	}()
-
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
@@ -55,49 +42,37 @@ func main() {
 		log.Info("worker: shutdown signal received")
 		cancel()
 	}()
-
 	log.Info("worker starting")
-
 	pool, err := postgres.NewPool(ctx, cfg.DatabaseURL)
 	if err != nil {
 		log.Fatal("database connection failed", zap.Error(err))
 	}
 	defer pool.Close()
-
 	ethClient, err := blockchain.NewClient(ctx, cfg.RPCURL, cfg.ChainID, log)
 	if err != nil {
 		log.Fatal("blockchain client unavailable", zap.Error(err))
 	}
-
 	attestorKey, err := blockchain.ParsePrivateKey(cfg.AttestorPrivateKey)
 	if err != nil {
 		log.Fatal("parse attestor key", zap.Error(err))
 	}
-
 	txMgr, err := blockchain.NewTxManager(ctx, ethClient, attestorKey, log)
 	if err != nil {
 		log.Fatal("tx manager init", zap.Error(err))
 	}
-
 	studentRepo := postgres.NewStudentRepo(pool)
 	scholarshipRepo := postgres.NewScholarshipRepo(pool)
 	auditRepo := postgres.NewAuditRepo(pool)
-
 	escrowAddr := common.HexToAddress(cfg.EscrowAddress)
 	escrow, err := bindings.NewScholarshipEscrowContract(escrowAddr, ethClient)
 	if err != nil {
 		log.Fatal("escrow binding failed", zap.Error(err))
 	}
-
 	scholarshipSvc, err := service.NewScholarshipService(scholarshipRepo, studentRepo, txMgr, escrow, attestorKey, log)
 	if err != nil {
 		log.Fatal("scholarship service init", zap.Error(err))
 	}
-
-	// 1. Scholarship Orchestrator
 	go runOrchestrator(ctx, scholarshipSvc, scholarshipRepo, studentRepo, log)
-
-	// 2. Event Indexer
 	contracts := []eventindexer.IndexedContract{
 		{
 			Name:    "FeeRegistry",
@@ -114,16 +89,13 @@ func main() {
 			},
 		},
 	}
-	
 	pollInterval := 10 * time.Second
 	batchSize := uint64(100)
 	indexer := eventindexer.New(ethClient, auditRepo, contracts, pool, pollInterval, batchSize, log)
 	go indexer.Run(ctx)
-
 	<-ctx.Done()
 	log.Info("worker stopped")
 }
-
 func runOrchestrator(
 	ctx context.Context, 
 	svc *service.ScholarshipService, 
@@ -131,11 +103,9 @@ func runOrchestrator(
 	studentRepo *postgres.StudentRepo, 
 	log *zap.Logger,
 ) {
-	ticker := time.NewTicker(30 * time.Second) // poll every 30s
+	ticker := time.NewTicker(30 * time.Second) 
 	defer ticker.Stop()
-
 	log.Info("scholarship orchestrator started")
-
 	for {
 		select {
 		case <-ctx.Done():
@@ -146,8 +116,6 @@ func runOrchestrator(
 				log.Error("orchestrator: list funds", zap.Error(err))
 				continue
 			}
-
-
 			for _, fund := range funds {
 				recipient := "0x0000000000000000000000000000000000000001"
 				err := svc.EvaluateAndPublishRoot(ctx, fund.ID, 0, recipient)

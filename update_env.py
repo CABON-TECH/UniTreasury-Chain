@@ -1,8 +1,6 @@
 import json
-
 with open("contracts/broadcast/DeployAll.s.sol/31337/run-latest.json") as f:
     data = json.load(f)
-
 env_vars = {}
 for tx in data.get("transactions", []):
     contract_name = tx.get("contractName")
@@ -16,10 +14,8 @@ for tx in data.get("transactions", []):
     elif contract_name == "UniPaymaster": env_vars["PAYMASTER_ADDRESS"] = addr
     elif contract_name == "MockZKVerifier": env_vars["ZK_VERIFIER_ADDRESS"] = addr
     elif contract_name == "ZKEnrollmentRegistry": env_vars["ZK_REGISTRY_ADDRESS"] = addr
-
 with open("backend/.env", "r") as f:
     lines = f.readlines()
-
 with open("backend/.env", "w") as f:
     for line in lines:
         if "=" in line:

@@ -1,24 +1,18 @@
 package postgres
-
 import (
 	"context"
 	"errors"
 	"time"
-
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
-
 	"github.com/cabon-tech/unitreasury-chain/backend/internal/domain"
 )
-
 type ScholarshipRepo struct {
 	pool *pgxpool.Pool
 }
-
 func NewScholarshipRepo(pool *pgxpool.Pool) *ScholarshipRepo {
 	return &ScholarshipRepo{pool: pool}
 }
-
 func (r *ScholarshipRepo) CreateFund(ctx context.Context, f *domain.ScholarshipFund) error {
 	const q = `
 		INSERT INTO scholarship_funds
@@ -30,17 +24,14 @@ func (r *ScholarshipRepo) CreateFund(ctx context.Context, f *domain.ScholarshipF
 		f.OnChainID, f.Sponsor, f.TotalAmount, f.ReleasedAmount, f.TrancheCount, f.TrancheAmount, f.Paused, f.CreatedAt,
 	).Scan(&f.ID)
 }
-
 func (r *ScholarshipRepo) GetFundByID(ctx context.Context, id int64) (*domain.ScholarshipFund, error) {
 	const q = `SELECT id, on_chain_id, sponsor, total_amount, released_amount, tranche_count, tranche_amount, paused, created_at FROM scholarship_funds WHERE id = $1`
 	return r.scanFund(r.pool.QueryRow(ctx, q, id))
 }
-
 func (r *ScholarshipRepo) GetFundByOnChainID(ctx context.Context, onChainID uint64) (*domain.ScholarshipFund, error) {
 	const q = `SELECT id, on_chain_id, sponsor, total_amount, released_amount, tranche_count, tranche_amount, paused, created_at FROM scholarship_funds WHERE on_chain_id = $1`
 	return r.scanFund(r.pool.QueryRow(ctx, q, onChainID))
 }
-
 func (r *ScholarshipRepo) ListActiveFunds(ctx context.Context) ([]*domain.ScholarshipFund, error) {
 	const q = `SELECT id, on_chain_id, sponsor, total_amount, released_amount, tranche_count, tranche_amount, paused, created_at FROM scholarship_funds WHERE paused = false AND released_amount < total_amount`
 	rows, err := r.pool.Query(ctx, q)
@@ -48,7 +39,6 @@ func (r *ScholarshipRepo) ListActiveFunds(ctx context.Context) ([]*domain.Schola
 		return nil, err
 	}
 	defer rows.Close()
-
 	var funds []*domain.ScholarshipFund
 	for rows.Next() {
 		f, err := r.scanFund(rows)
@@ -59,13 +49,11 @@ func (r *ScholarshipRepo) ListActiveFunds(ctx context.Context) ([]*domain.Schola
 	}
 	return funds, nil
 }
-
 func (r *ScholarshipRepo) UpdateFundReleasedAmount(ctx context.Context, fundID int64, releasedAmount uint64) error {
 	const q = `UPDATE scholarship_funds SET released_amount = $1 WHERE id = $2`
 	_, err := r.pool.Exec(ctx, q, releasedAmount, fundID)
 	return err
 }
-
 func (r *ScholarshipRepo) CreateTrancheRelease(ctx context.Context, t *domain.TrancheRelease) error {
 	const q = `
 		INSERT INTO tranche_releases
@@ -85,7 +73,6 @@ func (r *ScholarshipRepo) CreateTrancheRelease(ctx context.Context, t *domain.Tr
 		t.FundID, t.OnChainFundID, t.StudentHash, t.TrancheIndex, t.Amount, t.Recipient, txHash, blockNum, t.ReleasedAt,
 	).Scan(&t.ID)
 }
-
 func (r *ScholarshipRepo) HasReleased(ctx context.Context, fundID int64, studentHash string, trancheIndex int) (bool, error) {
 	const q = `SELECT 1 FROM tranche_releases WHERE fund_id = $1 AND student_hash = $2 AND tranche_index = $3`
 	var dummy int
@@ -98,7 +85,6 @@ func (r *ScholarshipRepo) HasReleased(ctx context.Context, fundID int64, student
 	}
 	return true, nil
 }
-
 func (r *ScholarshipRepo) scanFund(row pgx.Row) (*domain.ScholarshipFund, error) {
 	f := &domain.ScholarshipFund{}
 	var onChainID *uint64
@@ -117,12 +103,10 @@ func (r *ScholarshipRepo) scanFund(row pgx.Row) (*domain.ScholarshipFund, error)
 	}
 	return f, nil
 }
-
 func (r *ScholarshipRepo) DeleteTrancheRelease(ctx context.Context, fundID int64, studentHash string, trancheIndex int) error {
 	_, err := r.pool.Exec(ctx, "DELETE FROM tranche_releases WHERE fund_id = $1 AND student_hash = $2 AND tranche_index = $3", fundID, studentHash, trancheIndex)
 	return err
 }
-
 func (r *ScholarshipRepo) GetReportRows(ctx context.Context, fundID int64) ([]*domain.TrancheReportRow, error) {
 	const q = `
 		SELECT s.name, s.gpa, t.tranche_index, t.amount, t.tx_hash, t.released_at
@@ -136,7 +120,6 @@ func (r *ScholarshipRepo) GetReportRows(ctx context.Context, fundID int64) ([]*d
 		return nil, err
 	}
 	defer rows.Close()
-
 	var result []*domain.TrancheReportRow
 	for rows.Next() {
 		row := &domain.TrancheReportRow{}

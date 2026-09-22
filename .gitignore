@@ -3,3 +3,8 @@ backend/worker
 backend/api.log
 backend/worker.log
 anvil.log
+
+contracts/out
+contracts/cache
+contracts/broadcast
+backend/api

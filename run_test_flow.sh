@@ -43,10 +43,10 @@ nohup ./api > api.log 2>&1 &
 cd ..
 sleep 2
 
-echo "Running Python test script..."
-python3 test_claim_final2.py
-python3 test_gasless_claim.py
-python3 test_treasury_yield.py
+echo "Running Python test scripts..."
+python3 e2e/test_claim_final2.py
+python3 e2e/test_gasless_claim.py
+python3 e2e/test_treasury_yield.py
+python3 e2e/test_zk_identity.py
+python3 e2e/test_timelock.py
 echo "Done!"
-python3 test_zk_identity.py
-python3 test_timelock.py
